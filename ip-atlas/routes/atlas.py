@@ -4,6 +4,10 @@ from helper import *
 
 bp_atlas = Blueprint('atlas', __name__)
 
+@bp_atlas.route('/')
+def index():
+    return render_template('ip/list.html')
+
 @bp_atlas.route('/ip/list')
 def list():
     return render_template('ip/list.html')
