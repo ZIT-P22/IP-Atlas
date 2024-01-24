@@ -39,6 +39,114 @@ def loadJson():
         f.close()
         return data
 
+#! json use functions
+
+# this function will be used to save the json document
+def saveJson(data):
+    with open(gPath, "w") as f:
+        json.dump(data, f)
+        f.close()
+# this function will be used to add a new host inclusive an running id, his name, the ip, the openend ports to the json document
+def writeJson(name, ip, ipv6, ports):
+    data = loadJson()
+    if checkJsonEmpty():
+        data["hosts"] = []
+        data["hosts"].append({
+            "id": 1,
+            "name": name,
+            "ip": ip,
+            "ipv6": ipv6,
+            "ports": [ports]  
+        })
+        saveJson(data)
+    else:
+        data["hosts"].append({
+            "id": len(data["hosts"]) + 1,
+            "name": name,
+            "ip": ip,
+            "ipv6": ipv6,
+            "ports": [ports]  
+        })
+        saveJson(data)
+    
+# this function will be used to delete a host from the json document
+def deleteJson(id):
+    data = loadJson()
+    if not checkJsonEmpty():
+        for i in range(len(data["hosts"])):
+            if data["hosts"][i]["id"] == id:
+                del data["hosts"][i]
+                saveJson(data)
+                break
+    else:
+        print("Json document is empty")
+    
+# this function will be used to update a host in the json document
+def updateJson(id, name, ip, ipv6, ports):
+    data = loadJson()
+    if not checkJsonEmpty():
+        for i in range(len(data["hosts"])):
+            if data["hosts"][i]["id"] == id:
+                data["hosts"][i]["name"] = name
+                data["hosts"][i]["ip"] = ip
+                data["hosts"][i]["ipv6"] = ipv6
+                data["hosts"][i]["ports"] = ports
+                saveJson(data)
+                break
+    else:
+        print("Json document is empty")
+        
+# this function will be used to get the host by id
+def getHostById(id):
+    data = loadJson()
+    if not checkJsonEmpty():
+        for i in range(len(data["hosts"])):
+            if data["hosts"][i]["id"] == id:
+                return data["hosts"][i]
+    else:
+        print("Json document is empty")
+        
+
+# this function will be used to get the host by name
+def getHostByName(name):
+    data = loadJson()
+    if not checkJsonEmpty():
+        for i in range(len(data["hosts"])):
+            if data["hosts"][i]["name"] == name:
+                return data["hosts"][i]
+    else:
+        print("Json document is empty")
+        
+# this function will be used to get the host by ip
+def getHostByIp(ip):
+    data = loadJson()
+    if not checkJsonEmpty():
+        for i in range(len(data["hosts"])):
+            if data["hosts"][i]["ip"] == ip:
+                return data["hosts"][i]
+    else:
+        print("Json document is empty")
+        
+# this function will be used to get the host by ipv6
+def getHostByIpv6(ipv6):
+    data = loadJson()
+    if not checkJsonEmpty():
+        for i in range(len(data["hosts"])):
+            if data["hosts"][i]["ipv6"] == ipv6:
+                return data["hosts"][i]
+    else:
+        print("Json document is empty")
+        
+# this function will be used to get the host by port
+def getHostByPort(port):
+    data = loadJson()
+    if not checkJsonEmpty():
+        for i in range(len(data["hosts"])):
+            if port in data["hosts"][i]["ports"]:
+                return data["hosts"][i]
+    else:
+        print("Json document is empty")
+
 # check if dokument exists
 def checkDokument(path):
     if os.path.exists(path):
