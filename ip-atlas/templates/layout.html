@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='src/input.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}" />
+    <title>Layout</title>
+</head>
+
+<body class="flex flex-col min-h-screen bg-gray-700">
+    <header class="bg-gray-800 text-white py-4">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="#" class="text-xl font-bold">IP-Atlas</a>
+            <ul class="flex space-x-4">
+                <li><a href="/ip/list" class="hover:text-gray-300">IP-Liste</a></li>
+                <li><a href="#" class="hover:text-gray-300">About</a></li>
+                <li><a href="#" class="hover:text-gray-300">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-gray-800 text-white py-4">
+        <div class="container mx-auto text-center">
+            &copy; 2024 Zitau GMBH. All rights reserved.
+        </div>
+    </footer>
+
+</body>
+
+</html>

@@ -32,6 +32,8 @@ def createJson():
     else:
         print("Json document already exists")
 
+#! json use functions
+
 # this function will be used to load the json document
 def loadJson():
     with open(gPath) as f:
@@ -39,13 +41,12 @@ def loadJson():
         f.close()
         return data
 
-#! json use functions
-
 # this function will be used to save the json document
 def saveJson(data):
     with open(gPath, "w") as f:
         json.dump(data, f)
         f.close()
+
 # this function will be used to add a new host inclusive an running id, his name, the ip, the openend ports to the json document
 def writeJson(name, ip, ipv6, ports):
     data = loadJson()
@@ -68,7 +69,7 @@ def writeJson(name, ip, ipv6, ports):
             "ports": [ports]  
         })
         saveJson(data)
-    
+
 # this function will be used to delete a host from the json document
 def deleteJson(id):
     data = loadJson()
@@ -80,7 +81,7 @@ def deleteJson(id):
                 break
     else:
         print("Json document is empty")
-    
+
 # this function will be used to update a host in the json document
 def updateJson(id, name, ip, ipv6, ports):
     data = loadJson()
@@ -95,7 +96,7 @@ def updateJson(id, name, ip, ipv6, ports):
                 break
     else:
         print("Json document is empty")
-        
+
 # this function will be used to get the host by id
 def getHostById(id):
     data = loadJson()
@@ -105,7 +106,6 @@ def getHostById(id):
                 return data["hosts"][i]
     else:
         print("Json document is empty")
-        
 
 # this function will be used to get the host by name
 def getHostByName(name):
@@ -116,7 +116,7 @@ def getHostByName(name):
                 return data["hosts"][i]
     else:
         print("Json document is empty")
-        
+
 # this function will be used to get the host by ip
 def getHostByIp(ip):
     data = loadJson()
@@ -126,7 +126,7 @@ def getHostByIp(ip):
                 return data["hosts"][i]
     else:
         print("Json document is empty")
-        
+
 # this function will be used to get the host by ipv6
 def getHostByIpv6(ipv6):
     data = loadJson()
@@ -136,7 +136,7 @@ def getHostByIpv6(ipv6):
                 return data["hosts"][i]
     else:
         print("Json document is empty")
-        
+
 # this function will be used to get the host by port
 def getHostByPort(port):
     data = loadJson()
@@ -146,6 +146,18 @@ def getHostByPort(port):
                 return data["hosts"][i]
     else:
         print("Json document is empty")
+
+
+#! test functions
+
+# prints the json document
+def printJson():
+    data = loadJson()
+    if not checkJsonEmpty():
+        print(data)
+    else:
+        print("Json document is empty")
+
 
 # check if dokument exists
 def checkDokument(path):
@@ -173,5 +185,5 @@ global gpath
 gPath = getRootDirectory() + getOS() + "data" + getOS() + "host.json"
 
 # test the functions
-createJson()
-print(checkJsonEmpty())
+# writeJson("Host1", "192.168.0.1", "2001:0db8:85a3:0000:0000:8a2e:0370:7334", [80, 443])
+# writeJson("Host2", "192.168.0.2", "2001:0db8:85a3:0000:0000:8a2e:0370:7335", [22, 8080])
