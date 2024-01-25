@@ -1,0 +1,39 @@
+{% extends "layout.html" %} {% block content %}
+
+<form class="max-w-md mx-auto mt-5">
+    <h1 class="text-2xl font-bold mb-4 text-gray-200">IP-Adresse hinzufügen</h1>
+    <div class="mb-4">
+        <label class="block text-gray-200 text-sm font-bold mb-2" for="name">Name</label>
+        <input
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="name" type="text" placeholder="Geben Sie den IP-Namen ein">
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-200 text-sm font-bold mb-2" for="ipv4">IPv4</label>
+        <input
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="ipv4" type="text" placeholder="Geben Sie die IPv4-Adresse ein">
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-200 text-sm font-bold mb-2" for="ipv6">IPv6</label>
+        <input
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="ipv6" type="text" placeholder="Geben Sie die IPv6-Adresse ein">
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-200 text-sm font-bold mb-2" for="ports">Ports</label>
+        <input
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="ports" type="text" placeholder="Geben Sie die Ports ein (durch Komma getrennt)">
+    </div>
+    <div class="flex items-center justify-center">
+        <button
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            type="submit">
+            Absenden
+        </button>
+    </div>
+</form>
+
+
+{% endblock %}
