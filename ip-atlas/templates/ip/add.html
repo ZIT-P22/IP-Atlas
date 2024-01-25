@@ -1,39 +1,69 @@
 {% extends "layout.html" %} {% block content %}
 
-<form class="max-w-md mx-auto mt-5">
+<form action="{{ url_for('atlas.save') }}" method="POST" class="max-w-md mx-auto mt-5">
     <h1 class="text-2xl font-bold mb-4 text-gray-200">IP-Adresse hinzufügen</h1>
     <div class="mb-4">
         <label class="block text-gray-200 text-sm font-bold mb-2" for="name">Name</label>
         <input
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="name" type="text" placeholder="Geben Sie den IP-Namen ein">
+            name="name" id="name" type="text" placeholder="Geben Sie den IP-Namen ein">
     </div>
     <div class="mb-4">
         <label class="block text-gray-200 text-sm font-bold mb-2" for="ipv4">IPv4</label>
         <input
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="ipv4" type="text" placeholder="Geben Sie die IPv4-Adresse ein">
+            name="ipv4" id="ipv4" type="text" placeholder="Geben Sie die IPv4-Adresse ein">
     </div>
     <div class="mb-4">
         <label class="block text-gray-200 text-sm font-bold mb-2" for="ipv6">IPv6</label>
         <input
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="ipv6" type="text" placeholder="Geben Sie die IPv6-Adresse ein">
+            name="ipv6" id="ipv6" type="text" placeholder="Geben Sie die IPv6-Adresse ein">
     </div>
     <div class="mb-4">
         <label class="block text-gray-200 text-sm font-bold mb-2" for="ports">Ports</label>
         <input
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="ports" type="text" placeholder="Geben Sie die Ports ein (durch Komma getrennt)">
+            name="ports" id="ports" type="text" placeholder="Geben Sie die Ports ein (durch Komma getrennt)">
     </div>
     <div class="flex items-center justify-center">
         <button
             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            type="submit">
+            type="submit" onclick="return validateInput()">
             Absenden
         </button>
     </div>
 </form>
 
+<script>
+    function validateInput() {
+        var ipv4Regex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+        var ipv6Regex = /^(([0-9a-fA-F]{1,4}:){6}|([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){5}:(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4})$/i;
+        var portsRegex = /^(\d+\s*,\s*)*\d+$/;
+
+        var ipv4Input = document.getElementById("ipv4").value;
+        var ipv6Input = document.getElementById("ipv6").value;
+        var portsInput = document.getElementById("ports").value;
+
+        var isValid = true;
+
+        if (ipv4Input && !ipv4Regex.test(ipv4Input)) {
+            isValid = false;
+            alert("Ungültige IPv4-Adresse");
+        }
+
+        if (ipv6Input && !ipv6Regex.test(ipv6Input)) {
+            isValid = false;
+            alert("Ungültige IPv6-Adresse");
+        }
+
+        if (portsInput && !portsRegex.test(portsInput)) {
+            isValid = false;
+            alert("Ungültiges Format für Ports");
+        }
+
+        return isValid;
+    }
+</script>
 
 {% endblock %}

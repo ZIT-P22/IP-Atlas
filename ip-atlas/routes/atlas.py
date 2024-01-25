@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, abort, jsonify, request
+from flask import Blueprint, render_template, request, abort
 from jinja2 import TemplateNotFound
 from helper import *
 
@@ -29,15 +29,17 @@ def add():
 
 @bp_atlas.route('/ip/save', methods=['POST'])
 def save():
-    
-    name = request.form.get('name')
-    ipv4 = request.form.get('ipv4')
-    ipv6 = request.form.get('ipv6')
-    ports = request.form.get('ports')
-    
-    # convert ports from comma sepperated to list
-    ports = ports.split(',')
-    
-    print(name, ipv4, ipv6, ports)
-    
-    return render_template('ip/add.html')
+    if request.method == 'POST':
+        # get form data
+        name = request.form.get('name')
+        ipv4 = request.form.get('ipv4')
+        ipv6 = request.form.get('ipv6')
+        ports = request.form.get('ports')
+
+        if ports:
+            # convert ports from comma separated to list
+            ports = ports.split(',')
+        
+        #print(name, ipv4, ipv6, ports)
+        writeJson(name, ipv4, ipv6, ports)
+    return render_template('ip/list.html')
