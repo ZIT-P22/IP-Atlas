@@ -59,3 +59,17 @@ def delete(id):
     deleteHost(id)
     print("Host with id: ", id, " deleted")
     return render_template('ip/list.html')
+
+
+@bp_atlas.route('/port/list')
+def port():
+    return render_template('port/list.html')
+
+@bp_atlas.route('/statistic')
+def statistic():
+    return render_template('statistic.html')
+
+@bp_atlas.route('/scan')
+def scan():
+    scanIPs()
+    print("Scan finished")
