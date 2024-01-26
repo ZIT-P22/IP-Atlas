@@ -49,13 +49,14 @@ def saveJson(data):
         f.close()
 
 # this function will be used to add a new host inclusive an running id, his name, the ip, the openend ports to the json document
-def writeJson(name, ip, ipv6, ports):
+def writeJson(name, ip, ipv6, ports, tags):
     data = loadJson()
     if checkJsonEmpty():
         data["hosts"] = []
         data["hosts"].append({
             "id": 1,
             "name": name,
+            "tags": [tags],
             "ip": ip,
             "ipv6": ipv6,
             "ports": [ports]  
@@ -65,6 +66,7 @@ def writeJson(name, ip, ipv6, ports):
         data["hosts"].append({
             "id": len(data["hosts"]) + 1,
             "name": name,
+            "tags": [tags],
             "ip": ip,
             "ipv6": ipv6,
             "ports": [ports]  

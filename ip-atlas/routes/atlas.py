@@ -47,13 +47,17 @@ def save():
         ipv4 = request.form.get('ipv4')
         ipv6 = request.form.get('ipv6')
         ports = request.form.get('ports')
+        tags = request.form.get('tags')
 
         if ports:
             # convert ports from comma separated to list
             ports = ports.split(',')
+        if tags:
+            # convert tags from comma separated to list
+            tags = tags.split(',')
         
         #print(name, ipv4, ipv6, ports)
-        writeJson(name, ipv4, ipv6, ports)
+        writeJson(name, ipv4, ipv6, ports, tags)
     return render_template('ip/list.html')
 
 
