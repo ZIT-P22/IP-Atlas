@@ -26,7 +26,7 @@
                     <td class="py-2 px-4 border-b border-gray-600">{{ host.ipv6 }}</td>
                     <td class="py-2 px-4 border-b border-gray-600">{{ host.ports[0]|join(", ") }}</td>
                     <td class="py-2 border-b border-gray-600">
-                        <a href="#" class="inline-block px-2 py-2 bg-red-400 hover:bg-red-600 text-white rounded">
+                        <a href="/ip/delete/{{host.id}}" class="inline-block px-2 py-2 bg-red-400 hover:bg-red-600 text-white rounded">
                             Delete
                         </a>
                     </td>

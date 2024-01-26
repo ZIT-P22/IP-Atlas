@@ -22,9 +22,9 @@ def show(id):
     createJson()
     #get type of id
     id = int(id)
-    print("ID:",id,":")
+    # print("ID:",id,":")
     data = getHostById(id)
-    print("Daten der ID: ", id, " :", data)
+    # print("Daten der ID: ", id, " :", data)
     return render_template('ip/show.html', data=data)
 
 # add new host
@@ -55,6 +55,7 @@ def save():
 # delete host
 @bp_atlas.route('/ip/delete/<id>')
 def delete(id):
+    id = int(id)
     deleteHost(id)
     print("Host with id: ", id, " deleted")
     return render_template('ip/list.html')
