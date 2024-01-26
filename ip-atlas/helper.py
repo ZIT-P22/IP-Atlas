@@ -71,8 +71,8 @@ def writeJson(name, ip, ipv6, ports):
         saveJson(data)
 
 # this function will be used to delete a host from the json document
-def deleteJson(id):
-    data = loadJson()
+def deleteHost(id):
+    data = loadJson()     
     if not checkJsonEmpty():
         for i in range(len(data["hosts"])):
             if data["hosts"][i]["id"] == id:
@@ -100,12 +100,19 @@ def updateJson(id, name, ip, ipv6, ports):
 # this function will be used to get the host by id
 def getHostById(id):
     data = loadJson()
+    # cut spaces from the front and from the back of the id
+    # id = id.strip()
     if not checkJsonEmpty():
         for i in range(len(data["hosts"])):
             if data["hosts"][i]["id"] == id:
+                print("Daten der ID: ", id, " :", data["hosts"][i])
                 return data["hosts"][i]
+            else:
+                print("Host with id: ", id, " not found")
     else:
         print("Json document is empty")
+
+
 
 # this function will be used to get the host by name
 def getHostByName(name):
@@ -183,6 +190,12 @@ def getRootDirectory():
 #! variable Section
 global gpath
 gPath = getRootDirectory() + getOS() + "data" + getOS() + "host.json"
+
+
+
+# data = getHostById(1)
+# print(data)
+# deleteHost(3)
 
 # test the functions
 # writeJson("Host1", "192.168.0.1", "2001:0db8:85a3:0000:0000:8a2e:0370:7334", [80, 443])

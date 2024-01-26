@@ -6,7 +6,9 @@ bp_atlas = Blueprint('atlas', __name__)
 
 @bp_atlas.route('/')
 def index():
-    return render_template('ip/list.html')
+    createJson()
+    data = loadJson()
+    return render_template('ip/list.html', data=data)
 
 @bp_atlas.route('/ip/list')
 def list():
@@ -18,7 +20,11 @@ def list():
 @bp_atlas.route('/ip/<id>')
 def show(id):
     createJson()
+    #get type of id
+    id = int(id)
+    print("ID:",id,":")
     data = getHostById(id)
+    print("Daten der ID: ", id, " :", data)
     return render_template('ip/show.html', data=data)
 
 # add new host
@@ -42,4 +48,13 @@ def save():
         
         #print(name, ipv4, ipv6, ports)
         writeJson(name, ipv4, ipv6, ports)
+    return render_template('ip/list.html')
+
+
+
+# delete host
+@bp_atlas.route('/ip/delete/<id>')
+def delete(id):
+    deleteHost(id)
+    print("Host with id: ", id, " deleted")
     return render_template('ip/list.html')
