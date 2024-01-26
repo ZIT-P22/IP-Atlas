@@ -2,7 +2,8 @@
 <div class="flex items-center">
     <h1 class="text-lg font-semibold md:text-2xl">IP Addresses</h1>
     <div class="flex gap-2 ml-auto">
-        <a href="/ip/add" class="inline-flex items-center justify-center px-3 text-sm font-medium transition-colors bg-gray-700 rounded-md whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 -foreground hover:/90 h-9">
+        <a href="/ip/add"
+            class="inline-flex items-center justify-center px-3 text-sm font-medium transition-colors bg-gray-700 rounded-md whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 -foreground hover:/90 h-9">
             Add IP
         </a>
         <button
@@ -43,24 +44,19 @@
         <table class="w-full text-sm caption-bottom">
             <thead>
                 <tr class="border-b ">
-                    <th
-                        class="h-12 px-4 text-left align-middle font-medium text-muted-foreground  w-[100px]">
+                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground  w-[100px]">
                         IP Address
                     </th>
-                    <th
-                        class="h-12 px-4 text-left align-middle font-medium text-muted-foreground  max-w-[150px]">
+                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground  max-w-[150px]">
                         Status
                     </th>
-                    <th
-                        class="hidden h-12 px-4 font-medium text-left align-middle text-muted-foreground md:table-cell">
+                    <th class="hidden h-12 px-4 font-medium text-left align-middle text-muted-foreground md:table-cell">
                         Name
                     </th>
-                    <th
-                        class="h-12 px-4 font-medium text-left align-middle text-muted-foreground ">
+                    <th class="h-12 px-4 font-medium text-left align-middle text-muted-foreground ">
                         Ports
                     </th>
-                    <th
-                        class="h-12 px-4 font-medium text-left align-middle text-muted-foreground ">
+                    <th class="h-12 px-4 font-medium text-left align-middle text-muted-foreground ">
                         Actions
                     </th>
                 </tr>
@@ -70,12 +66,12 @@
                 <tr class="border-b ">
                     <td class="p-4 font-medium align-middle">
                         {{ host.ip }}</td>
-                    <td class="p-4 align-middle ">
-                        {% if pingable %}
+                        <td class="p-4 align-middle ip-ping-status" data-ip="{{ host.ip }}">
+                        <!-- {% if host.pingable %}
                         <i class="text-green-500 material-symbols-outlined" style="font-size:24px;">check_circle</i>
                         {% else %}
                         <i class="text-red-500 material-symbols-outlined" style="font-size:24px;">cancel</i>
-                        {% endif %}
+                        {% endif %} -->
                     </td>
                     <td class="hidden p-4 align-middle md:table-cell">
                         {{ host.name }}</td>
@@ -100,6 +96,25 @@
         </table>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ipElements = document.querySelectorAll('.ip-ping-status');
+
+        ipElements.forEach(function(el) {
+            const ip = el.dataset.ip;
+            fetch(`/ip/ping/${ip}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.pingable) {
+                        el.innerHTML = '<i class="text-green-500 material-symbols-outlined" style="font-size:24px;">check_circle</i>';
+                    } else {
+                        el.innerHTML = '<i class="text-red-500 material-symbols-outlined" style="font-size:24px;">cancel</i>';
+                    }
+                });
+        });
+    });
+</script>
 {% else %}
 <p class="text-center text-gray-500">No data available.</p>
 {% endif %}

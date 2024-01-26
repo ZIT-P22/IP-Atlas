@@ -1,6 +1,7 @@
 import json
 import os
 import platform
+import subprocess
 
 
 # checks if the json document is there
@@ -200,3 +201,10 @@ gPath = getRootDirectory() + getOS() + "data" + getOS() + "host.json"
 # test the functions
 # writeJson("Host1", "192.168.0.1", "2001:0db8:85a3:0000:0000:8a2e:0370:7334", [80, 443])
 # writeJson("Host2", "192.168.0.2", "2001:0db8:85a3:0000:0000:8a2e:0370:7335", [22, 8080])
+
+
+# Function to check if an IP address is pingable
+def is_ip_pingable(ip_address):
+    param = '-n' if platform.system().lower()=='windows' else '-c'
+    command = ['ping', param, '1', '-W', '1', ip_address]
+    return subprocess.call(command, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT) == 0

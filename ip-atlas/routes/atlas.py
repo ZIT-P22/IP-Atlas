@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, abort
 from jinja2 import TemplateNotFound
 from helper import *
+from flask import jsonify
 
 bp_atlas = Blueprint('atlas', __name__)
 
@@ -16,6 +17,11 @@ def list():
     # printJson()
     data = loadJson()
     return render_template('ip/list.html', data=data)
+
+@bp_atlas.route('/ip/ping/<ip_address>')
+def ping_ip(ip_address):
+    pingable = is_ip_pingable(ip_address)
+    return jsonify({'pingable': pingable})
 
 @bp_atlas.route('/ip/<id>')
 def show(id):
@@ -63,13 +69,9 @@ def delete(id):
 
 @bp_atlas.route('/port/list')
 def port():
+    
     return render_template('port/list.html')
 
 @bp_atlas.route('/statistic')
 def statistic():
     return render_template('statistic.html')
-
-@bp_atlas.route('/scan')
-def scan():
-    scanIPs()
-    print("Scan finished")

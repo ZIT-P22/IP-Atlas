@@ -1,0 +1,36 @@
+{% extends "layout.html" %} {% block content %}
+
+{% if data and data.hosts %}
+<div class="flex justify-center">
+    <table class="w-full text-white bg-gray-700">
+        <thead>
+            <tr>
+                <th class="px-4 py-2 text-left border-b border-gray-600">ID</th>
+                <th class="px-4 py-2 text-left border-b border-gray-600">Name</th>
+                <th class="px-4 py-2 text-left border-b border-gray-600">IPv4</th>
+                <th class="px-4 py-2 text-left border-b border-gray-600">IPv6</th>
+                <th class="px-4 py-2 text-left border-b border-gray-600">Ports</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for host in data.hosts %}
+                <tr class="hover:bg-gray-800 hover:text-white">
+                    <td class="px-4 py-2 border-b border-gray-600">
+                        <a href="/ip/{{host.id}}" class="inline-block px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
+                            {{ host.id }}
+                        </a>
+                    </td>
+                    <td class="px-4 py-2 border-b border-gray-600">{{ host.name }}</td>
+                    <td class="px-4 py-2 border-b border-gray-600">{{ host.ip }}</td>
+                    <td class="px-4 py-2 border-b border-gray-600">{{ host.ipv6 }}</td>
+                    <td class="px-4 py-2 border-b border-gray-600">{{ host.ports[0]|join(", ") }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p class="text-center text-gray-500">No data to this Host available.</p>
+{% endif %}
+
+{% endblock %}
