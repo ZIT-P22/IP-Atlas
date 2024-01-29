@@ -1,7 +1,6 @@
-from flask import Blueprint, render_template, request, abort
+from flask import Blueprint, render_template, request, abort, jsonify
 from jinja2 import TemplateNotFound
 from helper import *
-from flask import jsonify
 
 bp_atlas = Blueprint('atlas', __name__)
 
@@ -20,7 +19,7 @@ def list():
 
 @bp_atlas.route('/ip/ping/<ip_address>')
 def ping_ip(ip_address):
-    pingable = is_ip_pingable(ip_address)
+    pingable = isIpPingable(ip_address)
     return jsonify({'pingable': pingable})
 
 @bp_atlas.route('/ip/<id>')
@@ -44,6 +43,7 @@ def save():
     if request.method == 'POST':
         # get form data
         name = request.form.get('name')
+        tags = request.form.get('tags')
         ipv4 = request.form.get('ipv4')
         ipv6 = request.form.get('ipv6')
         ports = request.form.get('ports')
@@ -57,8 +57,9 @@ def save():
             tags = tags.split(',')
         
         #print(name, ipv4, ipv6, ports)
-        writeJson(name, ipv4, ipv6, ports, tags)
-    return render_template('ip/list.html')
+        writeJson(name, tags, ipv4, ipv6, ports)
+        data = loadJson()
+    return render_template('ip/list.html', data=data)
 
 
 
@@ -66,9 +67,22 @@ def save():
 @bp_atlas.route('/ip/delete/<id>')
 def delete(id):
     id = int(id)
-    deleteHost(id)
-    print("Host with id: ", id, " deleted")
-    return render_template('ip/list.html')
+    confirmed = request.args.get('confirmed')
+    data = loadJson()
+    
+    if confirmed == 'true':
+        deleteHost(id)
+        # print("Host with id: ", id, " deleted")
+        return render_template('ip/list.html', data=data)
+    else:
+        return render_template('ip/list.html', data=data)
+
+# confirm delete host
+@bp_atlas.route('/ip/confirmdel/<id>')
+def confirmdel(id):
+    id = int(id)
+    data = getHostById(id)
+    return render_template('ip/confirmdel.html', data=data)
 
 
 @bp_atlas.route('/port/list')
