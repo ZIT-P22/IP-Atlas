@@ -158,7 +158,6 @@ def getHostByPort(port):
     else:
         print("Json document is empty")
 
-
 #! test functions
 
 # prints the json document
@@ -191,6 +190,20 @@ def getRootDirectory():
     rootPath = os.path.abspath(os.path.join(path, os.pardir))
     return rootPath
     
+    
+#! small helper functions
+
+def devideIp(ip):
+    ip = ip.split(".")
+    ip = [int(x) for x in ip]
+    return ip
+
+def checkIfInputIsNone(input):
+    if input == None or input == "":
+        return True
+    else:
+        return False
+
 #! variable Section
 global gpath
 gPath = getRootDirectory() + getOS() + "data" + getOS() + "host.json"
