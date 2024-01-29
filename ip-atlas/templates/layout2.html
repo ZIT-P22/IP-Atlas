@@ -46,7 +46,7 @@
                             <span class="text-base leading-none material-symbols-outlined">language</span>
                             <span class="ml-1 text-sm align-middle">IP Addresses</span>
                         </a>
-                        <a class="flex items-center gap-2 px-3 py-2 transition-all rounded-lg hover:text-gray-100 {% if current_page == url_for('atlas.port') %}bg-gray-700{% endif %}"
+                        <a class="flex items-center gap-2 px-3 py-2 transition-all rounded-lg hover:text-gray-100 {% if current_page == url_for('atlas.show', id=1) %}bg-gray-700{% endif %}"
                             href="{{ url_for('atlas.port') }}">
                             <span class="text-base leading-none material-symbols-outlined">power</span>
                             <span class="ml-1 text-sm align-middle">Ports</span>
@@ -63,15 +63,27 @@
         <div class="flex flex-col">
             <header class="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-gray-800/40 px-6">
                 <a class="lg:hidden" href="#">
-                    <span class="material-symbols-outlined">bring_your_own_ip</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="w-6 h-6" style="--darkreader-inline-stroke: currentColor;"
+                        data-darkreader-inline-stroke="">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" x2="22" y1="12" y2="12"></line>
+                        <path
+                            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                        </path>
+                    </svg>
                     <span class="sr-only">Home</span>
                 </a>
                 <div class="flex-1 w-full">
                     <form>
                         <div class="relative">
-                            <span class="material-symbols-outlined absolute left-2.5 top-2.5 h-4 w-4 dark:text-gray-400">
-                                search
-                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="absolute left-2.5 top-2.5 h-4 w-4 dark:text-gray-400">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.3-4.3"></path>
+                            </svg>
                             <input
                                 class="flex w-full h-10 px-3 py-2 pl-8 text-sm border rounded-md shadow-none appearance-none border-input ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:w-2/3 lg:w-1/3 bg-gray-950"
                                 placeholder="Search IPs..." type="search" />
@@ -81,7 +93,7 @@
                 <button
                     class="inline-flex items-center justify-center w-8 h-8 text-sm font-medium transition-colors border-gray-800 borderrounded-full whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
                     type="button" id="radix-:r1c:" aria-haspopup="menu" aria-expanded="false" data-state="closed">
-                    <img src="{{ url_for('static', filename='images/placeholder.png') }}" width="32" height="32" class="rounded-full" alt="Avatar"
+                    <img src="/placeholder.svg" width="32" height="32" class="rounded-full" alt="Avatar"
                         style="aspect-ratio: 32 / 32; object-fit: cover;" />
                     <span class="sr-only">Toggle user menu</span>
                 </button>

@@ -3,7 +3,11 @@ module.exports = {
   mode: 'jit',
   content: ["./templates/**/*.{html,htm}"],
   theme: {
-    extend: {},
+    extend: {
+      borderColor: theme => ({
+        DEFAULT: theme('colors.gray.700'),
+      }),
+    },
   },
   plugins: [],
 }

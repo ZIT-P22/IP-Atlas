@@ -2,8 +2,7 @@
 <div class="flex items-center">
     <h1 class="text-lg font-semibold md:text-2xl">IP Addresses</h1>
     <div class="flex gap-2 ml-auto">
-        <a href="/ip/add"
-            class="inline-flex items-center justify-center px-3 text-sm font-medium transition-colors bg-gray-700 rounded-md whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 -foreground hover:/90 h-9">
+        <a href="/ip/add" class="inline-flex items-center justify-center px-3 text-sm font-medium transition-colors bg-gray-700 rounded-md whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 -foreground hover:/90 h-9">
             Add IP
         </a>
         <button
@@ -18,7 +17,9 @@
 </div>
 <div class="flex items-center justify-between mb-4">
     <div class="flex gap-2">
-        <label for="filter" class="mr-2 font-medium"> Filter by: </label>
+        <label for="filter" class="mr-2 font-medium">
+            Filter by:
+        </label>
         <select id="filter" class="p-2 border rounded-md">
             <option value="">All</option>
             <option value="active">Active</option>
@@ -26,7 +27,9 @@
         </select>
     </div>
     <div class="flex gap-2">
-        <label for="sort" class="mr-2 font-medium"> Sort by: </label>
+        <label for="sort" class="mr-2 font-medium">
+            Sort by:
+        </label>
         <select id="sort" class="p-2 border rounded-md">
             <option value="">None</option>
             <option value="asc">IP Ascending</option>
@@ -39,45 +42,45 @@
     <div class="relative w-full overflow-auto">
         <table class="w-full text-sm caption-bottom">
             <thead>
-                <tr class="border-b">
-                    <th class="hidden h-12 px-4 font-medium text-left align-middle text-muted-foreground md:table-cell">
-                        Name
-                    </th>
-                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-[100px]">
+                <tr class="border-b ">
+                    <th
+                        class="h-12 px-4 text-left align-middle font-medium text-muted-foreground  w-[100px]">
                         IP Address
                     </th>
-                    <th class="h-12 px-4 font-medium text-left align-middle text-muted-foregro>und">
-                        Ports in der FBox
-                    </th>
-                    <th class="h-12 px-4 font-medium text-left align-middle text-muted-foreground">
-                        Tags
-                    </th>
-                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground max-w-[150px]">
+                    <th
+                        class="h-12 px-4 text-left align-middle font-medium text-muted-foreground  max-w-[150px]">
                         Status
                     </th>
-                    <th class="h-12 px-4 font-medium text-left align-middle text-muted-foreground">
+                    <th
+                        class="hidden h-12 px-4 font-medium text-left align-middle text-muted-foreground md:table-cell">
+                        Name
+                    </th>
+                    <th
+                        class="h-12 px-4 font-medium text-left align-middle text-muted-foreground ">
+                        Ports
+                    </th>
+                    <th
+                        class="h-12 px-4 font-medium text-left align-middle text-muted-foreground ">
                         Actions
                     </th>
                 </tr>
             </thead>
             <tbody>
                 {% for host in data.hosts %}
-                <tr class="border-b">
-                    <td class="hidden p-4 align-middle md:table-cell">{{ host.name }}</td>
-                    <td class="p-4 font-medium align-middle">{{ host.ip }}</td>
-                    <td class="p-4 align-middle">{{ host.ports[0]|join(", ") }}</td>
-                    <td class="p-4 align-middle">
-                        {% if host.tags %} {{ host.tags[0]|join(", ") }} {% else %} No tags
+                <tr class="border-b ">
+                    <td class="p-4 font-medium align-middle">
+                        {{ host.ip }}</td>
+                    <td class="p-4 align-middle ">
+                        {% if pingable %}
+                        <i class="text-green-500 material-symbols-outlined" style="font-size:24px;">check_circle</i>
+                        {% else %}
+                        <i class="text-red-500 material-symbols-outlined" style="font-size:24px;">cancel</i>
                         {% endif %}
                     </td>
-                    <td class="p-4 align-middle ip-ping-status" data-ip="{{ host.ip }}">
-                        <!-- {% if host.pingable %}
-                          <i class="text-green-500 material-symbols-outlined" style="font-size:24px;">check_circle</i>
-                          {% else %}
-                          <i class="text-red-500 material-symbols-outlined" style="font-size:24px;">cancel</i>
-                          {% endif %} -->
-                    </td>
-                    <td class="p-4 align-middle">
+                    <td class="hidden p-4 align-middle md:table-cell">
+                        {{ host.name }}</td>
+                    <td class="p-4 align-middle ">{{ host.ports[0]|join(", ") }}</td>
+                    <td class="p-4 align-middle ">
                         <button
                             class="inline-flex items-center justify-center px-3 text-sm font-medium transition-colors bg-gray-700 rounded-md whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 -foreground hover:/90 h-9">
                             Edit
@@ -86,7 +89,7 @@
                             class="inline-flex items-center justify-center px-3 ml-2 text-sm font-medium transition-colors bg-gray-700 rounded-md whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 -foreground hover:/90 h-9">
                             Reassign
                         </button>
-                        <a href="/ip/delete/{{ host.id }}?confirmed=true"
+                        <a href="/ip/delete/{{ host.id }}"
                             class="inline-flex items-center justify-center px-3 ml-2 text-sm font-medium transition-colors bg-gray-700 rounded-md whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 -foreground hover:/90 h-9">
                             Delete
                         </a>
@@ -97,27 +100,7 @@
         </table>
     </div>
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const ipElements = document.querySelectorAll(".ip-ping-status");
-
-        ipElements.forEach(function (el) {
-            const ip = el.dataset.ip;
-            fetch(`/ip/ping/${ip}`)
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.pingable) {
-                        el.innerHTML =
-                            '<i class="text-green-500 material-symbols-outlined" style="font-size:24px;">check_circle</i>';
-                    } else {
-                        el.innerHTML =
-                            '<i class="text-red-500 material-symbols-outlined" style="font-size:24px;">cancel</i>';
-                    }
-                });
-        });
-    });
-</script>
 {% else %}
 <p class="text-center text-gray-500">No data available.</p>
-{% endif %} {% endblock %}
+{% endif %}
+{% endblock %}
