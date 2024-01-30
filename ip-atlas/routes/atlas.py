@@ -58,7 +58,7 @@ def save():
             tags = tags.split(',')
         
         #print(name, ipv4, ipv6, ports)
-        writeJson(name, tags, ipv4, ipv6, ports)
+        writeJson(name, ipv4, tags, ipv6, ports)
         data = loadJson()
     return render_template('ip/list.html', data=data)
 
