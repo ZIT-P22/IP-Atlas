@@ -36,14 +36,14 @@ def filterByName(search, data):
 def filterByPort(search, data):
     result = []
     for host in data["hosts"]:
-        dataPorts = host.get("ports")  # Use get() to handle missing "ports" key
+        dataPorts = host.get("ports")
         for port in dataPorts:
-            print(port)
-            print(search)
-            print(dataPorts)
-            for p in port:
-                if search in p:
-                    result.append(host)
+            # print(port)
+            # print(search)
+            # print(dataPorts)
+            if search in port:
+                result.append(host)
+                break
     return result
 
 
@@ -57,4 +57,6 @@ def filterByPort(search, data):
 #! tests
 # print(filterByIp("*", "*", "*", 12, loadJson()))
 # print(filterByName("40", loadJson()))
-print(filterByPort(80, loadJson()))
+# data = filterByPort(99, loadJson())
+# print(data)
+# print(len(data))
