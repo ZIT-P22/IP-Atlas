@@ -195,7 +195,7 @@ def getRootDirectory():
 
 def devideIp(ip):
     ip = ip.split(".")
-    ip = [int(x) for x in ip]
+    ip = [str(x) for x in ip]
     return ip
 
 def checkIfInputIsNone(input):
