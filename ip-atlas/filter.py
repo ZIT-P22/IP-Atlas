@@ -48,6 +48,15 @@ def filterByPort(search, data):
 
 
 # filter by tags
+def filterByTags(search, data):
+    result = []
+    for host in data["hosts"]:
+        dataTags = host.get("tags")
+        for tag in dataTags:
+            if search in tag:
+                result.append(host)
+                break
+    return result
 
 # filter by ipv6
 
@@ -60,3 +69,6 @@ def filterByPort(search, data):
 # data = filterByPort(99, loadJson())
 # print(data)
 # print(len(data))
+# tags = filterByTags("tea", loadJson())
+# print(tags)
+# print(len(tags))
