@@ -61,6 +61,18 @@ def filterByTags(search, data):
 # filter by ipv6
 
 # applies all filters
+def filterAll(ip, name, port, tag):
+    result = loadJson()
+    if ip != "":
+        ip = devideIp(ip)
+        result = filterByIp(ip[0], ip[1], ip[2], ip[3], result)
+    if name != "":
+        result = filterByName(name, result)
+    if port != "":
+        result = filterByPort(port, result)
+    if tag != "":
+        result = filterByTags(tag, result)
+    return result
 
 
 #! tests
@@ -72,3 +84,4 @@ def filterByTags(search, data):
 # tags = filterByTags("tea", loadJson())
 # print(tags)
 # print(len(tags))
+print(filterAll("192.168.178.*", "40", "99", "tea"))

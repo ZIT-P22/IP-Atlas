@@ -19,7 +19,8 @@ def list():
 
 @bp_atlas.route('/ip/ping/<ip_address>')
 def ping_ip(ip_address):
-    pingable = isIpPingable(ip_address)
+    pingable = isIpPingable("127.0.0.1")
+    # pingable = isIpPingable(ip_address)
     return jsonify({'pingable': pingable})
 
 @bp_atlas.route('/ip/<id>')
