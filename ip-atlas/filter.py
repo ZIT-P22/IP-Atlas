@@ -84,7 +84,7 @@ def filterAll(ip, name, port, tag):
 # tags = filterByTags("tea", loadJson())
 # print(tags)
 # print(len(tags))
-print(filterAll("*.*.*.*", "", 80, ""))
+# print(filterAll("*.*.*.*", "", 80, ""))
 # print(filterByIp("*", "*", "*", "*", filterByName("40", loadJson())))
 # print(filterByIp("*", "*", "*", "*", filterByPort("99", loadJson())))
 # printJson()
