@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, abort, jsonify
 from jinja2 import TemplateNotFound
 from helper import *
+from filter import *
 
 bp_atlas = Blueprint('atlas', __name__)
 
