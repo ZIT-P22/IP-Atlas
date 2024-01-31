@@ -61,8 +61,8 @@ def filterByTags(search, data):
 # filter by ipv6
 
 # applies all filters
-def filterAll(ip, name, port, tag):
-    result = loadJson()
+def filterAll(ip, name, port, tag, data):
+    result = data
     if ip != "":
         ip = devideIp(ip)
         result = filterByIp(ip[0], ip[1], ip[2], ip[3], result)
