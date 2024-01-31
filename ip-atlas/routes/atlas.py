@@ -13,7 +13,7 @@ def index():
     return render_template('ip/list.html', data=data)
 
 
-@bp_atlas.route('/ip/list')
+@bp_atlas.route('/ip/list', methods=['GET', 'POST'])
 def list():
     # Extract query parameters if there are any
     
