@@ -15,28 +15,29 @@ def index():
 
 @bp_atlas.route('/ip/list', methods=['GET', 'POST'])
 def list():
-    
-        ipocted1 = request.form.get('ipocted1', '*')
-        ipocted2 = request.form.get('ipocted2', '*')
-        ipocted3 = request.form.get('ipocted3', '*')
-        ipocted4 = request.form.get('ipocted4', '*')
-        name = request.form.get('name', '')
-        port = request.form.get('port', '')
-        tag = request.form.get('tag', '')
 
-        createJson()
-        # printJson()
-        data = loadJson()
+    ipocted1 = request.form.get('ipocted1', '*')
+    ipocted2 = request.form.get('ipocted2', '*')
+    ipocted3 = request.form.get('ipocted3', '*')
+    ipocted4 = request.form.get('ipocted4', '*')
+    name = request.form.get('name', '')
+    port = request.form.get('port', '')
+    tag = request.form.get('tag', '')
 
-        # Apply filters if any filter is provided
-        if any([ip, name, port, tag]):
-            filtered_data = filterAll(ip, name, port, tag)
-        else:
-            filtered_data = data
-        if any([ipocted1, ipocted2, ipocted3, ipocted4,nameFilter,portFilter,tagFilter]):
-            filtered_data = filterAll(ipocted1, ipocted2, ipocted3, ipocted4,nameFilter,portFilter,tagFilter)
+    createJson()
+    # printJson()
+    data = loadJson()
 
-        return render_template('ip/list.html', data=filtered_data)
+    # Apply filters if any filter is provided
+    if any([ip, name, port, tag]):
+        filtered_data = filterAll(ip, name, port, tag)
+    else:
+        filtered_data = data
+    if any([ipocted1, ipocted2, ipocted3, ipocted4, nameFilter, portFilter, tagFilter]):
+        filtered_data = filterAll(
+            ipocted1, ipocted2, ipocted3, ipocted4, nameFilter, portFilter, tagFilter)
+
+    return render_template('ip/list.html', data=filtered_data)
 
 
 @bp_atlas.route('/ip/ping/<ip_address>')
@@ -138,6 +139,31 @@ def search():
     else:
         # If the search type is not recognized, return the unfiltered data
         filtered_data = data['hosts']
+
+    # Render the template with the filtered data
+    return render_template('ip/list.html', data={'hosts': filtered_data})
+
+
+@bp_atlas.route('/filter', methods=['GET'])
+def filter():
+    data = loadJson()
+    # Retrieve query parameters
+    name = request.args.get('name', '')
+    ipocted1 = request.args.get('ipocted1', '')
+    ipocted2 = request.args.get('ipocted2', '')
+    ipocted3 = request.args.get('ipocted3', '')
+    ipocted4 = request.args.get('ipocted4', '')
+    tags = request.args.get('tags', '')
+    ports = request.args.get('ports', '')
+    print("Filter: ", name, ipocted1, ipocted2,
+          ipocted3, ipocted4, tags, ports)
+    # Combine IP octets into a single string
+    ip = f"{ipocted1}.{ipocted2}.{ipocted3}.{ipocted4}"
+    print("IP: ", ip)
+
+    # Call the filterAll function with the collected parameters
+    filtered_data = filterAll(ip, name, ports, tags, data)
+    print("Filtered data: ", filtered_data)
 
     # Render the template with the filtered data
     return render_template('ip/list.html', data={'hosts': filtered_data})

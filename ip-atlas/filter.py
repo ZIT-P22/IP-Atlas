@@ -45,10 +45,9 @@ def filter_data(search, key, data):
     return filtered_data
 
 
-
 # this function filter the json document for any ip address which maches the pattern
 # example filter could be *.168.*.2 (* means it can be any number)
-#? inputs have to be strings
+# ? inputs have to be strings
 def filterByIp(octed1, octed2, octed3, octed4, data):
     # convert all octeds to int
     result = {"hosts": []}
@@ -64,8 +63,10 @@ def filterByIp(octed1, octed2, octed3, octed4, data):
     return result
 
 # filter by name/name section
+
+
 def filterByName(search, data):
-    result = {"hosts" : []}
+    result = {"hosts": []}
     # for name in data["hosts"]:
     for i in range(len(data["hosts"])):
         dataName = data["hosts"][i]["name"]
@@ -74,20 +75,16 @@ def filterByName(search, data):
     return result
 
 # filter by ports
+
+
 def filterByPort(search, data):
-    result = {"hosts" : []}
+    result = {"hosts": []}
     # for host in data:
     if not search == "":
         for i in range(len(data["hosts"])):
-            # dataPorts = host.get("ports")
             dataPorts = data["hosts"][i]["ports"]
             for port in dataPorts:
-            # for port in dataPorts[0]:
-                # print(port)
-                # print(search)
-                # print(dataPorts)
                 if search in port:
-                    # result.append(host)
                     result["hosts"].append(data["hosts"][i])
                     break
         return result
@@ -97,7 +94,7 @@ def filterByPort(search, data):
 
 # filter by tags
 def filterByTags(search, data):
-    result = {"hosts" : []}
+    result = {"hosts": []}
     # for host in data:
     for i in range(len(data["hosts"])):
         # dataTags = host.get("tags")
@@ -110,6 +107,8 @@ def filterByTags(search, data):
     return result
 
 # applies all filters
+
+
 def filterAll(ip, name, port, tag, data):
     result = data
     if ip != "":
@@ -124,6 +123,7 @@ def filterAll(ip, name, port, tag, data):
     return result
 
 
+# print(filterAll("*.*.*.*", "", "", "", loadJson()))
 #! tests
 # print(filterByIp("*", "*", "*", "47", loadJson()))
 # print(filterByName("40", loadJson()))
@@ -133,8 +133,7 @@ def filterAll(ip, name, port, tag, data):
 # tags = filterByTags("tea", loadJson())
 # print(tags)
 # print(len(tags))
-# print(filterAll("*.*.*.*", "", "", ""))
-print(filterByIp("*", "*", "*", "*", filterByName("", filterByPort("", filterByTags("tea", loadJson())))))
+# print(filterByIp("*", "*", "*", "*", filterByName("", filterByPort("", filterByTags("tea", loadJson())))))
 # print(filterByIp("*", "*", "*", "*", filterByPort("99", loadJson())))
 # printJson()
 # print(filterByTags("test", filterByIp("*", "*", "*", "49", loadJson())))

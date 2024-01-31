@@ -15,7 +15,7 @@
             <span>Filter</span>
         </button>
         <div id="filterDropdown" class="absolute z-50 hidden w-64 p-4 mt-2 space-y-3 text-white bg-gray-800 divide-y divide-gray-600 rounded-lg shadow-lg top-full sm:w-80">
-            <form action="{{ url_for('atlas.list') }}" method="POST" class="space-y-3">
+            <form action="{{ url_for('atlas.filter') }}" method="GET" class="space-y-3">
                 <div class="space-y-1">
                     <label for="nameInput" class="block text-sm font-semibold">Name</label>
                     <input type="text" id="nameInput" name="name" value="{{ request.args.get('name', '') }}"
@@ -24,13 +24,13 @@
                 <div class="space-y-1">
                     <label for="ipInput1" class="block text-sm font-semibold">IP Address</label>
                     <div class="flex items-center gap-2">
-                        <input type="text" id="ipInput1" name="ipocted1" maxlength="3" class="w-1/4 p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ip-input">
+                        <input type="number" id="ipInput1" name="ipocted1" maxlength="3" class="w-1/4 p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ip-input">
                         <span>.</span>
-                        <input type="text" id="ipInput2" name="ipocted2" maxlength="3" class="w-1/4 p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ip-input">
+                        <input type="number" id="ipInput2" name="ipocted2" maxlength="3" class="w-1/4 p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ip-input">
                         <span>.</span>
-                        <input type="text" id="ipInput3" name="ipocted3" maxlength="3" class="w-1/4 p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ip-input">
+                        <input type="number" id="ipInput3" name="ipocted3" maxlength="3" class="w-1/4 p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ip-input">
                         <span>.</span>
-                        <input type="text" id="ipInput4" name="ipocted4" maxlength="3" class="w-1/4 p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ip-input">
+                        <input type="number" id="ipInput4" name="ipocted4" maxlength="3" class="w-1/4 p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ip-input">
                     </div>
                 </div>
                 <div class="flex gap-2">
@@ -44,7 +44,7 @@
                     <div class="w-1/2">
                         <div class="space-y-1">
                             <label for="portsInput" class="block text-sm font-semibold">Ports</label>
-                            <input type="text" id="portsInput" name="ports" value="{{ request.args.get('ports', '') }}"
+                            <input type="number" id="portsInput" name="ports" value="{{ request.args.get('ports', '') }}"
                                 class="w-full p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         </div>
                     </div>
