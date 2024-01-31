@@ -47,56 +47,65 @@ def filter_data(search, key, data):
 
 
 # this function filter the json document for any ip address which maches the pattern
-# example filter could be *.168.*.2 (* menas it can be any number)
+# example filter could be *.168.*.2 (* means it can be any number)
 #? inputs have to be strings
 def filterByIp(octed1, octed2, octed3, octed4, data):
     # convert all octeds to int
-    result = []
+    result = {"hosts": []}
     for i in range(len(data["hosts"])):
         ip = devideIp(data["hosts"][i]["ip"])
-        # print(ip[0], ip[1], ip[2], ip[3])
-        # print("Oktet 1:",octed1,"Oktet 2:",octed2,"Oktet 3:",octed3,"Oktet 4:",octed4)
         if (
             (octed1 == "*" or ip[0] == octed1)
             and (octed2 == "*" or ip[1] == octed2)
             and (octed3 == "*" or ip[2] == octed3)
             and (octed4 == "*" or ip[3] == octed4)
         ):
-            result.append(data["hosts"][i])
+            result["hosts"].append(data["hosts"][i])
     return result
 
 # filter by name/name section
 def filterByName(search, data):
-    result = []
-    for name in data:
-        dataName = name.get("name")
+    result = {"hosts" : []}
+    # for name in data["hosts"]:
+    for i in range(len(data["hosts"])):
+        dataName = data["hosts"][i]["name"]
         if search in dataName:
-            result.append(name)
+            result["hosts"].append(data["hosts"][i])
     return result
 
 # filter by ports
 def filterByPort(search, data):
-    result = []
-    for host in data:
-        dataPorts = host.get("ports")
-        for port in dataPorts:
-            # print(port)
-            # print(search)
-            # print(dataPorts)
-            if search in port:
-                result.append(host)
-                break
-    return result
+    result = {"hosts" : []}
+    # for host in data:
+    if not search == "":
+        for i in range(len(data["hosts"])):
+            # dataPorts = host.get("ports")
+            dataPorts = data["hosts"][i]["ports"]
+            for port in dataPorts:
+            # for port in dataPorts[0]:
+                # print(port)
+                # print(search)
+                # print(dataPorts)
+                if search in port:
+                    # result.append(host)
+                    result["hosts"].append(data["hosts"][i])
+                    break
+        return result
+    else:
+        return data
 
 
 # filter by tags
 def filterByTags(search, data):
-    result = []
-    for host in data:
-        dataTags = host.get("tags")
+    result = {"hosts" : []}
+    # for host in data:
+    for i in range(len(data["hosts"])):
+        # dataTags = host.get("tags")
+        dataTags = data["hosts"][i]["tags"]
         for tag in dataTags:
             if search in tag:
-                result.append(host)
+                # result.append(host)
+                result["hosts"].append(data["hosts"][i])
                 break
     return result
 
@@ -125,7 +134,7 @@ def filterAll(ip, name, port, tag):
 # print(tags)
 # print(len(tags))
 # print(filterAll("*.*.*.*", "", "", ""))
-# print(filterByIp("*", "*", "*", "*", filterByName("40", loadJson())))
+print(filterByIp("*", "*", "*", "*", filterByName("", filterByPort("", filterByTags("tea", loadJson())))))
 # print(filterByIp("*", "*", "*", "*", filterByPort("99", loadJson())))
 # printJson()
 # print(filterByTags("test", filterByIp("*", "*", "*", "49", loadJson())))

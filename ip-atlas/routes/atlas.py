@@ -15,23 +15,32 @@ def index():
 
 @bp_atlas.route('/ip/list')
 def list():
-    # Extract query parameters
-    ip = request.args.get('ip', '')
-    name = request.args.get('name', '')
-    port = request.args.get('port', '')
-    tag = request.args.get('tag', '')
+    # Extract query parameters if there are any
+    
+        ip = request.args.get('ip', '')
+        name = request.args.get('name', '')
+        port = request.args.get('port', '')
+        tag = request.args.get('tag', '')
+    
+        ipocted1 = request.form.get('ipocted1', '*')
+        ipocted2 = request.form.get('ipocted2', '*')
+        ipocted3 = request.form.get('ipocted3', '*')
+        ipocted4 = request.form.get('ipocted4', '*')
+        name = request.form.get('name', '')
+        port = request.form.get('port', '')
+        tag = request.form.get('tag', '')
 
-    createJson()
-    # printJson()
-    data = loadJson()
+        createJson()
+        # printJson()
+        data = loadJson()
 
-    # Apply filters if any filter is provided
-    if any([ip, name, port, tag]):
-        filtered_data = filterAll(ip, name, port, tag)
-    else:
-        filtered_data = data
+        # Apply filters if any filter is provided
+        if any([ip, name, port, tag]):
+            filtered_data = filterAll(ip, name, port, tag)
+        else:
+            filtered_data = data
 
-    return render_template('ip/list.html', data=filtered_data)
+        return render_template('ip/list.html', data=filtered_data)
 
 
 @bp_atlas.route('/ip/ping/<ip_address>')
