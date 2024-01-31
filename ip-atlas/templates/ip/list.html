@@ -9,14 +9,90 @@
     </div>
 </div>
 <div class="flex items-center justify-between mb-4">
-    <div class="flex gap-2">
-        <label for="filter" class="mr-2 font-medium"> Filter by: </label>
-        <select id="filter" class="p-2 border rounded-md">
-            <option value="">All</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-        </select>
+    <div class="relative flex items-center gap-2">
+        <button id="filterBtn" class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white transition-colors bg-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white hover:bg-gray-600">
+            <span class="material-symbols-outlined">filter_alt</span>
+            <span>Filter</span>
+        </button>
+        <div id="filterDropdown" class="absolute z-50 hidden w-64 p-4 mt-2 space-y-3 text-white bg-gray-800 divide-y divide-gray-600 rounded-lg shadow-lg top-full sm:w-80">
+            <form action="#" method="GET" class="space-y-3">
+                <div class="space-y-1">
+                    <label for="nameInput" class="block text-sm font-semibold">Name</label>
+                    <input type="text" id="nameInput" name="name" value="{{ request.args.get('name', '') }}"
+                        class="w-full p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <div class="space-y-1">
+                    <label for="ipInput1" class="block text-sm font-semibold">IP Address</label>
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="ipInput1" name="ip1" maxlength="3" class="w-1/4 p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ip-input">
+                        <span>.</span>
+                        <input type="text" id="ipInput2" name="ip2" maxlength="3" class="w-1/4 p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ip-input">
+                        <span>.</span>
+                        <input type="text" id="ipInput3" name="ip3" maxlength="3" class="w-1/4 p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ip-input">
+                        <span>.</span>
+                        <input type="text" id="ipInput4" name="ip4" maxlength="3" class="w-1/4 p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ip-input">
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <div class="w-1/2">
+                        <div class="space-y-1">
+                            <label for="tagsInput" class="block text-sm font-semibold">Tags</label>
+                            <input type="text" id="tagsInput" name="tags" value="{{ request.args.get('tags', '') }}"
+                                class="w-full p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                    </div>
+                    <div class="w-1/2">
+                        <div class="space-y-1">
+                            <label for="portsInput" class="block text-sm font-semibold">Ports</label>
+                            <input type="text" id="portsInput" name="ports" value="{{ request.args.get('ports', '') }}"
+                                class="w-full p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between mt-4 space-x-4">
+                    <button id="clearFilters" type="button"
+                        class="flex items-center justify-center w-24 px-2 py-1 text-sm text-gray-300 border border-gray-600 rounded-md shadow-sm hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:border-transparent">
+                        Clear
+                    </button>
+                    <button type="submit"
+                        class="w-1/2 px-4 py-2 text-gray-300 bg-gray-900 rounded-md shadow-sm hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:border-transparent">
+                        Apply
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
+    <script>
+        $(document).ready(function() {
+            $('#filterBtn').click(function() {
+                $('#filterDropdown').stop().slideToggle(300);
+            });
+    
+            $(document).click(function(event) {
+                if (!$(event.target).closest('#filterBtn, #filterDropdown').length) {
+                    $('#filterDropdown').stop().slideUp(300);
+                }
+            });
+    
+            $('#clearFilters').click(function() {
+                $('#nameInput, #ipInput1, #ipInput2, #ipInput3, #ipInput4, #tagsInput, #portsInput').val('');
+            });
+    
+            $('.ip-input').on('input', function() {
+                var ipValue = $(this).val();
+                if (ipValue.length === 3) {
+                    $(this).nextAll('.ip-input:first').focus();
+                }
+            });
+    
+            $('.ip-input').on('keydown', function(e) {
+                if (e.which === 8 && $(this).val().length === 0) {
+                    $(this).prevAll('.ip-input:first').focus();
+                }
+            });
+        });
+    </script>
+    
     <div class="flex gap-2">
         <label for="sort" class="mr-2 font-medium"> Sort by: </label>
         <select id="sort" class="p-2 border rounded-md">
@@ -83,24 +159,24 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const ipElements = document.querySelectorAll(".ip-ping-status");
-
-        ipElements.forEach(function (el) {
-            const ip = el.dataset.ip;
-            fetch(`/ip/ping/${ip}`)
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.pingable) {
-                        el.innerHTML =
-                            '<i class="text-green-500 material-symbols-outlined" style="font-size:24px;">check_circle</i>';
-                    } else {
-                        el.innerHTML =
-                            '<i class="text-red-500 material-symbols-outlined" style="font-size:24px;">cancel</i>';
-                    }
-                });
-        });
-    });
+//    document.addEventListener("DOMContentLoaded", function () {
+//    const ipElements = document.querySelectorAll(".ip-ping-status");
+//    
+//        ipElements.forEach(function (el) {
+//            const ip = el.dataset.ip;
+//            fetch(`/ip/ping/${ip}`)
+//                .then((response) => response.json())
+//                .then((data) => {
+//                    if (data.pingable) {
+//                        el.innerHTML =
+//                            '<i class="text-green-500 material-symbols-outlined" style="font-size:24px;">check_circle</i>';
+//                    } else {
+//                        el.innerHTML =
+//                            '<i class="text-red-500 material-symbols-outlined" style="font-size:24px;">cancel</i>';
+//                        }
+//                    });
+//                });
+//            });
 </script>
 {% else %}
 <p class="text-center text-gray-500">No data available.</p>
