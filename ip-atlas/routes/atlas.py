@@ -15,12 +15,6 @@ def index():
 
 @bp_atlas.route('/ip/list', methods=['GET', 'POST'])
 def list():
-    # Extract query parameters if there are any
-    
-        ip = request.args.get('ip', '')
-        name = request.args.get('name', '')
-        port = request.args.get('port', '')
-        tag = request.args.get('tag', '')
     
         ipocted1 = request.form.get('ipocted1', '*')
         ipocted2 = request.form.get('ipocted2', '*')
@@ -39,6 +33,8 @@ def list():
             filtered_data = filterAll(ip, name, port, tag)
         else:
             filtered_data = data
+        if any([ipocted1, ipocted2, ipocted3, ipocted4,nameFilter,portFilter,tagFilter]):
+            filtered_data = filterAll(ipocted1, ipocted2, ipocted3, ipocted4,nameFilter,portFilter,tagFilter)
 
         return render_template('ip/list.html', data=filtered_data)
 
