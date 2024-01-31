@@ -6,7 +6,8 @@ __pycache__/
 main.css
 # C extensions
 *.so
-
+\static\css\main.css
+pi-atlas\static\css\main.css
 # Distribution / packaging
 .Python
 build/
@@ -163,3 +164,4 @@ cython_debug/
 
 **/node_modules
 **/data
+ip-atlas/static/css/main.css
