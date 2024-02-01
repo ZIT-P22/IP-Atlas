@@ -146,3 +146,51 @@ def filter():
 
     # Render the template with the filtered data
     return render_template('ip/list.html', data=filtered_data)
+
+
+
+
+#! Trashcan
+@bp_atlas.route('/ip/trashcan/list')
+def listTrashcan():
+    createJson()
+    data = loadTrashJson()
+    return render_template('ip/trashcan/list.html', data=data)
+
+@bp_atlas.route('/ip/delete/revert/<id>')
+def revertTrashcan(id):
+    id = int(id)
+    confirmed = request.args.get('confirmed')
+    data = loadTrashJson()
+
+    if confirmed == 'true':
+        deleteTrashHost(id)
+        # print("Host with id: ", id, " deleted")
+        return render_template('ip/trashcan/list.html', data=data)
+    else:
+        return render_template('ip/trashcan/list.html', data=data)
+
+
+
+@bp_atlas.route('/filter/trashcan', methods=['GET'])
+def filterTrashcan():
+    data = loadTrashJson()
+    # Retrieve query parameters
+    name = request.args.get('name', '')
+    ipocted1 = request.args.get('ipocted1', '')
+    ipocted2 = request.args.get('ipocted2', '')
+    ipocted3 = request.args.get('ipocted3', '')
+    ipocted4 = request.args.get('ipocted4', '')
+    tags = request.args.get('tags', '')
+    ports = request.args.get('ports', '')
+    print("Filter: ", name, ipocted1, ipocted2, ipocted3, ipocted4, tags, ports)
+    # Combine IP octets into a single string
+    ip = f"{ipocted1}.{ipocted2}.{ipocted3}.{ipocted4}"
+    print("IP: ", ip)
+
+    # Call the filterAll function with the collected parameters
+    filtered_data = filterAll(ip, name, ports, tags, data)
+    print("Filtered data: ", filtered_data)
+
+    # Render the template with the filtered data
+    return render_template('ip/trashcan/list.html', data=filtered_data)

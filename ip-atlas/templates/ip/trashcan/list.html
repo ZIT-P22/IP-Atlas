@@ -1,46 +1,30 @@
 {% extends "layout.html" %} {% block content %}
 <div class="flex items-center">
-    <h1 class="text-lg font-semibold md:text-2xl">IP Addresses</h1>
-    <div class="flex gap-2 ml-auto">
-        <a href="/ip/add"
-            class="inline-flex items-center justify-center px-3 text-sm font-medium transition-colors bg-gray-700 rounded-md whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 -foreground hover:/90 h-9">
-            IP Hinzufügen
-        </a>
-        <a href="/ip/trashcan/list"
-            class="inline-flex items-center justify-center px-3 text-sm font-medium transition-colors bg-gray-700 rounded-md whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 -foreground hover:/90 h-9">
-            Papierkorb
-        </a>
-    </div>
+    <h1 class="text-lg font-semibold md:text-2xl">Mülleimer Ip-Addressen</h1>
 </div>
 <div class="flex items-center justify-between mb-4">
     <div class="relative flex items-center gap-2">
-        <button id="filterBtn"
-            class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white transition-colors bg-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white hover:bg-gray-600">
+        <button id="filterBtn" class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white transition-colors bg-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white hover:bg-gray-600">
             <span class="material-symbols-outlined">filter_alt</span>
             <span>Filter</span>
         </button>
-        <div id="filterDropdown"
-            class="absolute z-50 hidden w-64 p-4 mt-2 space-y-3 text-white bg-gray-800 divide-y divide-gray-600 rounded-lg shadow-lg top-full sm:w-80">
+        <div id="filterDropdown" class="absolute z-50 hidden w-64 p-4 mt-2 space-y-3 text-white bg-gray-800 divide-y divide-gray-600 rounded-lg shadow-lg top-full sm:w-80">
             <form action="{{ url_for('atlas.filter') }}" method="GET" class="space-y-3">
                 <div class="space-y-1">
                     <label for="nameInput" class="block text-sm font-semibold">Name</label>
                     <input type="text" id="nameInput" name="name" value="{{ request.args.get('name', '') }}"
-                        class="w-full p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                        class="w-full p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
                 <div class="space-y-1">
                     <label for="ipInput1" class="block text-sm font-semibold">IP Address</label>
                     <div class="flex items-center gap-2">
-                        <input type="text" id="ipInput1" name="ipocted1" maxlength="3"
-                            class="w-1/4 p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ip-input" />
+                        <input type="text" id="ipInput1" name="ipocted1" maxlength="3" class="w-1/4 p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ip-input">
                         <span>.</span>
-                        <input type="text" id="ipInput2" name="ipocted2" maxlength="3"
-                            class="w-1/4 p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ip-input" />
+                        <input type="text" id="ipInput2" name="ipocted2" maxlength="3" class="w-1/4 p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ip-input">
                         <span>.</span>
-                        <input type="text" id="ipInput3" name="ipocted3" maxlength="3"
-                            class="w-1/4 p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ip-input" />
+                        <input type="text" id="ipInput3" name="ipocted3" maxlength="3" class="w-1/4 p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ip-input">
                         <span>.</span>
-                        <input type="text" id="ipInput4" name="ipocted4" maxlength="3"
-                            class="w-1/4 p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ip-input" />
+                        <input type="text" id="ipInput4" name="ipocted4" maxlength="3" class="w-1/4 p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ip-input">
                     </div>
                 </div>
                 <div class="flex gap-2">
@@ -48,14 +32,14 @@
                         <div class="space-y-1">
                             <label for="tagsInput" class="block text-sm font-semibold">Tags</label>
                             <input type="text" id="tagsInput" name="tags" value="{{ request.args.get('tags', '') }}"
-                                class="w-full p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                                class="w-full p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         </div>
                     </div>
                     <div class="w-1/2">
                         <div class="space-y-1">
                             <label for="portsInput" class="block text-sm font-semibold">Ports</label>
                             <input type="text" id="portsInput" name="ports" value="{{ request.args.get('ports', '') }}"
-                                class="w-full p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                                class="w-full p-2 text-sm text-white bg-gray-700 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         </div>
                     </div>
                 </div>
@@ -73,45 +57,38 @@
         </div>
     </div>
     <script>
-        $(document).ready(function () {
-            $("#filterBtn").click(function () {
-                $("#filterDropdown").stop().slideToggle(300);
+        $(document).ready(function() {
+            $('#filterBtn').click(function() {
+                $('#filterDropdown').stop().slideToggle(300);
             });
-
-            $(document).click(function (event) {
-                if (!$(event.target).closest("#filterBtn, #filterDropdown").length) {
-                    $("#filterDropdown").stop().slideUp(300);
+    
+            $(document).click(function(event) {
+                if (!$(event.target).closest('#filterBtn, #filterDropdown').length) {
+                    $('#filterDropdown').stop().slideUp(300);
                 }
             });
-
-            $("#clearFilters").click(function () {
-                $(
-                    "#nameInput, #ipInput1, #ipInput2, #ipInput3, #ipInput4, #tagsInput, #portsInput"
-                ).val("");
+    
+            $('#clearFilters').click(function() {
+                $('#nameInput, #ipInput1, #ipInput2, #ipInput3, #ipInput4, #tagsInput, #portsInput').val('');
             });
-
-            $(".ip-input").on("input", function () {
+    
+            $('.ip-input').on('input', function() {
                 var ipValue = $(this).val();
                 if (ipValue.length === 3) {
-                    $(this).nextAll(".ip-input:first").focus();
+                    $(this).nextAll('.ip-input:first').focus();
                 }
             });
-
-            $(".ip-input").on("keydown", function (e) {
+    
+            $('.ip-input').on('keydown', function(e) {
                 if (e.which === 8 && $(this).val().length === 0) {
-                    $(this).prevAll(".ip-input:first").focus();
+                    $(this).prevAll('.ip-input:first').focus();
                 }
             });
         });
     </script>
-
+    
     <div class="flex gap-2">
-        <label for="sort" class="mr-2 font-medium"> Sort by: </label>
-        <select id="sort" class="p-2 border rounded-md">
-            <option value="">None</option>
-            <option value="asc">IP Ascending</option>
-            <option value="desc">IP Descending</option>
-        </select>
+        
     </div>
 </div>
 {% if data and data.hosts %}
@@ -158,9 +135,9 @@
                           {% endif %} -->
                     </td>
                     <td class="p-4 align-middle">
-                        <a href="/ip/delete/{{ host.id }}?confirmed=true"
+                        <a href="/ip/delete/revert/{{ host.id }}?confirmed=true"
                             class="inline-flex items-center justify-center px-3 ml-2 text-sm font-medium transition-colors bg-gray-700 rounded-md whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 -foreground hover:/90 h-9">
-                            Delete
+                            Wiederherstellen
                         </a>
                     </td>
                 </tr>
@@ -171,24 +148,24 @@
 </div>
 
 <script>
-    //    document.addEventListener("DOMContentLoaded", function () {
-    //    const ipElements = document.querySelectorAll(".ip-ping-status");
-    //
-    //        ipElements.forEach(function (el) {
-    //            const ip = el.dataset.ip;
-    //            fetch(`/ip/ping/${ip}`)
-    //                .then((response) => response.json())
-    //                .then((data) => {
-    //                    if (data.pingable) {
-    //                        el.innerHTML =
-    //                            '<i class="text-green-500 material-symbols-outlined" style="font-size:24px;">check_circle</i>';
-    //                    } else {
-    //                        el.innerHTML =
-    //                            '<i class="text-red-500 material-symbols-outlined" style="font-size:24px;">cancel</i>';
-    //                        }
-    //                    });
-    //                });
-    //            });
+//    document.addEventListener("DOMContentLoaded", function () {
+//    const ipElements = document.querySelectorAll(".ip-ping-status");
+//    
+//        ipElements.forEach(function (el) {
+//            const ip = el.dataset.ip;
+//            fetch(`/ip/ping/${ip}`)
+//                .then((response) => response.json())
+//                .then((data) => {
+//                    if (data.pingable) {
+//                        el.innerHTML =
+//                            '<i class="text-green-500 material-symbols-outlined" style="font-size:24px;">check_circle</i>';
+//                    } else {
+//                        el.innerHTML =
+//                            '<i class="text-red-500 material-symbols-outlined" style="font-size:24px;">cancel</i>';
+//                        }
+//                    });
+//                });
+//            });
 </script>
 {% else %}
 <p class="text-center text-gray-500">No data available.</p>

@@ -198,6 +198,14 @@ def deleteTrashHost(id):
     if not checkTrashJsonEmpty():
         for i in range(len(data["hosts"])):
             if data["hosts"][i]["id"] == id:
+                # write it back to the json document
+                writeJson(
+                    data["hosts"][i]["name"],
+                    data["hosts"][i]["ip"],
+                    data["hosts"][i]["tags"],
+                    data["hosts"][i]["ipv6"],
+                    data["hosts"][i]["ports"]
+                )
                 del data["hosts"][i]
                 saveTrashJson(data)
                 break
