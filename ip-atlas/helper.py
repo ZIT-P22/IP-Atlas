@@ -56,25 +56,26 @@ def writeJson(name, ip, tags, ipv6, ports):
         data["hosts"].append({
             "id": 1,
             "name": name,
-            "tags": [tags],
+            "tags": tags,
             "ip": ip,
             "ipv6": ipv6,
-            "ports": [ports]  
+            "ports": ports  
         })
         saveJson(data)
     else:
         data["hosts"].append({
             "id": len(data["hosts"]) + 1,
             "name": name,
-            "tags": [tags],
+            "tags": tags,
             "ip": ip,
             "ipv6": ipv6,
-            "ports": [ports]  
+            "ports": ports
         })
         saveJson(data)
 
 # this function will be used to delete a host from the json document
 def deleteHost(id):
+    ports = []
     data = loadJson()     
     if not checkJsonEmpty():
         for i in range(len(data["hosts"])):
@@ -85,7 +86,7 @@ def deleteHost(id):
                     data["hosts"][i]["ip"],
                     data["hosts"][i]["tags"],
                     data["hosts"][i]["ipv6"],
-                    data["hosts"][i]["ports"]
+                    data["hosts"][i]["ports"]                 
                 )
                 del data["hosts"][i]
                 saveJson(data)
@@ -175,20 +176,20 @@ def writeTrashJson(name, ip, tags, ipv6, ports):
         data["hosts"].append({
             "id": 1,
             "name": name,
-            "tags": [tags],
+            "tags": tags,
             "ip": ip,
             "ipv6": ipv6,
-            "ports": [ports]  
+            "ports": ports  
         })
         saveTrashJson(data)
     else:
         data["hosts"].append({
             "id": len(data["hosts"]) + 1,
             "name": name,
-            "tags": [tags],
+            "tags": tags,
             "ip": ip,
             "ipv6": ipv6,
-            "ports": [ports]  
+            "ports": ports  
         })
         saveTrashJson(data)
         

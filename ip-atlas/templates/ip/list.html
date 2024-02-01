@@ -145,9 +145,12 @@
                 <tr class="border-b">
                     <td class="hidden p-4 align-middle md:table-cell">{{ host.name }}</td>
                     <td class="p-4 font-medium align-middle">{{ host.ip }}</td>
-                    <td class="p-4 align-middle">{{ host.ports[0]|join(", ") }}</td>
+                    <td class="p-4 align-middle">{{ host.ports|join(", ") }}</td>
                     <td class="p-4 align-middle">
-                        {% if host.tags %} {{ host.tags[0]|join(", ") }} {% else %} No tags
+                        {% if host.tags %}
+                        {{ host.tags|join(", ") }}
+                        {% else %}
+                        No tags
                         {% endif %}
                     </td>
                     <td class="p-4 align-middle ip-ping-status" data-ip="{{ host.ip }}">
