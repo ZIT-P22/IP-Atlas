@@ -158,6 +158,31 @@ def getHostByPort(port):
     else:
         print("Json document is empty")
 
+
+#! logging functions
+
+# create a log file
+def createLogFile():
+    if not checkLogFile():
+        with open(gLogPath, "w") as f:
+            f.write("")
+            f.close()
+
+# check if there is a log file
+def checkLogFile():
+    if os.path.exists(gLogPath):
+        return True
+    else:
+        return False
+
+
+# write to the log file
+
+
+# read the log file
+
+
+
 #! test functions
 
 # prints the json document
@@ -215,10 +240,13 @@ def isIpPingable(ip_address):
 #! variable Section
 global gpath
 gPath = getRootDirectory() + getOS() + "data" + getOS() + "host.json"
+gLogPath = getRootDirectory() + getOS() + "log" + getOS() + "log.txt"
 
 
 
 # data = getHostById(1)
 # print(data)
 # deleteHost(3)
+
+createLogFile()
 
