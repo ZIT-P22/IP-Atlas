@@ -114,29 +114,30 @@
         <table class="w-full text-sm caption-bottom">
             <thead>
                 <tr class="border-b">
-                    <th class="hidden h-12 px-4 font-medium text-left align-middle text-muted-foreground md:table-cell">
+                    <th class="hidden h-12 px-4 font-medium text-left align-middle md:table-cell">
                         Name
                     </th>
-                    <th class="h-12 px-4 font-medium text-left align-middle text-muted-foreground">
+                    <th class="h-12 px-4 font-medium text-left align-middle ">
                         IP Address
                     </th>
-                    <th class="h-12 px-4 font-medium text-left align-middle text-muted-foreground">
+                    <th class="h-12 px-4 font-medium text-left align-middle ">
                         Ports in der FBox
                     </th>
-                    <th class="h-12 px-4 font-medium text-left align-middle text-muted-foreground">
+                    <th class="h-12 px-4 font-medium text-left align-middle ">
                         Tags
                     </th>
-                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground max-w-[150px]">
+                    <th class="h-12 px-4 text-left align-middle font-medium  max-w-[150px]">
                         Status
                     </th>
-                    <th class="h-12 px-4 font-medium text-left align-middle text-muted-foreground">
+                    <th class="h-12 px-4 font-medium text-center align-middle ">
                         Actions
                     </th>
                 </tr>
             </thead>
             <tbody>
                 {% for host in data.hosts %}
-                <tr data-id="{{ host.id }}" class="transition duration-150 ease-in-out border-b hover:bg-gray-700 hover:bg-opacity-25">
+                <tr data-id="{{ host.id }}"
+                    class="transition duration-150 ease-in-out border-b hover:bg-gray-700 hover:bg-opacity-25">
                     <td class="hidden p-4 align-middle edit-field md:table-cell">{{ host.name }}</td>
                     <td class="p-4 font-medium align-middle edit-field">{{ host.ip }}</td>
                     <td class="p-4 align-middle edit-field">{{ host.ports|join(", ") }}</td>
@@ -155,17 +156,17 @@
                           <i class="text-red-500 material-symbols-outlined" style="font-size:24px;">cancel</i>
                           {% endif %} -->
                     </td>
-                    <td class="p-4 align-middle">
+                    <td class="p-4 text-center align-middle">
                         <button
-                            class="inline-flex items-center justify-center px-3 ml-2 text-sm font-medium transition-colors bg-gray-700 rounded-md edit edit-btn whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-gray-800 h-9"
+                            class="inline-flex items-center justify-center px-3 text-sm font-medium transition-colors bg-gray-700 rounded-md edit edit-btn whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-gray-800 h-9"
                             onclick="makeEditable(this)">
                             <span class="material-symbols-outlined">edit</span>
                         </button>
                         <button
-                        class="inline-flex items-center justify-center px-3 ml-2 text-sm font-medium transition-colors bg-red-600 rounded-md delete whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-red-700 h-9"
-                        data-id="{{ host.id }}" onclick="deleteItem(this)">
-                        <span class="material-symbols-outlined">delete</span>
-                    </button>
+                            class="inline-flex items-center justify-center px-3 ml-2 text-sm font-medium transition-colors bg-red-600 rounded-md delete whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-red-700 h-9"
+                            data-id="{{ host.id }}" onclick="deleteItem(this)">
+                            <span class="material-symbols-outlined">delete</span>
+                        </button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -176,31 +177,33 @@
 
 <style>
     .edit-field {
-        max-width: 120px !important; /* Example max-width, adjust based on your layout */
+        max-width: 120px !important;
+        /* Example max-width, adjust based on your layout */
         overflow: hidden !important;
         white-space: nowrap !important;
         text-overflow: ellipsis !important;
     }
-    
+
     .input-field {
-        max-width: 100% !important; /* Ensure input fields do not exceed cell width */
+        max-width: 100% !important;
+        /* Ensure input fields do not exceed cell width */
     }
 </style>
 
 <script>
     $(document).ready(function () {
-        window.makeEditable = function(button) {
+        window.makeEditable = function (button) {
             var $row = $(button).closest('tr');
             // Store current data for possible revert
-            $row.find('.edit-field').each(function() {
+            $row.find('.edit-field').each(function () {
                 var content = $(this).text().trim();
                 $(this).data('original-content', content); // Store original content
                 $(this).html(`<input type="text" class="input-field form-control" value="${content}" />`);
             });
-    
+
             // Update edit button to submit
             updateButtonToSubmit(button);
-    
+
             // Change delete button to discard
             var $deleteButton = $row.find('.delete');
             $deleteButton
@@ -210,30 +213,30 @@
                 .attr('onclick', 'discardChanges(this)')
                 .addClass('discard').removeClass('delete'); // Update class to differentiate
         };
-    
-        window.discardChanges = function(button) {
+
+        window.discardChanges = function (button) {
             var $row = $(button).closest('tr');
             // Revert data in inputs to original content
-            $row.find('.edit-field').each(function() {
+            $row.find('.edit-field').each(function () {
                 var originalContent = $(this).data('original-content');
                 $(this).html(originalContent);
             });
-    
+
             // Change discard button back to delete
             revertButtonToDelete(button);
-    
+
             // Revert submit button back to edit
             var $submitButton = $row.find('.bg-green-500');
             revertButtonToEdit($submitButton[0]);
         };
-    
+
         function updateButtonToSubmit(button) {
             $(button).html('<span class="material-symbols-outlined">check_circle</span>')
-                     .removeClass('bg-gray-700 hover:bg-gray-800')
-                     .addClass('bg-green-500')
-                     .attr('onclick', 'submitChanges(this)');
+                .removeClass('bg-gray-700 hover:bg-gray-800')
+                .addClass('bg-green-500')
+                .attr('onclick', 'submitChanges(this)');
         }
-    
+
         function revertButtonToDelete(button) {
             $(button)
                 .removeClass('bg-blue-600 hover:bg-blue-700')
@@ -242,36 +245,36 @@
                 .attr('onclick', 'deleteItem(this)')
                 .addClass('delete').removeClass('discard'); // Revert class back to delete
         }
-    
+
         function revertButtonToEdit(button) {
             $(button).html('<span class="material-symbols-outlined">edit</span>')
-                     .removeClass('bg-green-500')
-                     .addClass('bg-gray-700 hover:bg-gray-800')
-                     .attr('onclick', 'makeEditable(this)');
+                .removeClass('bg-green-500')
+                .addClass('bg-gray-700 hover:bg-gray-800')
+                .attr('onclick', 'makeEditable(this)');
         }
-    
+
         // Simplify AJAX submission logic
-        window.submitChanges = function(button) {
+        window.submitChanges = function (button) {
             var $row = $(button).closest('tr');
             var id = $row.data('id');
             var updatedData = gatherUpdatedData($row);
-    
+
             // AJAX request simplified
             $.ajax({
                 url: `/ip/update/${id}`,
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(updatedData),
-                success: function(response) {
+                success: function (response) {
                     console.log('Update successful', response);
                     location.reload(); // Reload to see the updated values
                 },
-                error: function(error) {
+                error: function (error) {
                     console.log('Update failed', error);
                 }
             });
         };
-    
+
         function gatherUpdatedData($row) {
             return {
                 name: $row.find('td:eq(0) input').val(),
@@ -281,19 +284,19 @@
             };
         }
 
-        window.deleteItem = function(button) {
+        window.deleteItem = function (button) {
             var itemId = $(button).data('id');
             if (confirm('Are you sure you want to delete this item?')) {
                 $.ajax({
                     url: `/ip/delete/${itemId}?confirmed=true`,
                     type: 'GET',
-                    success: function(response) {
-                        $(button).closest('tr').fadeOut(600, function() {
+                    success: function (response) {
+                        $(button).closest('tr').fadeOut(600, function () {
                             $(this).remove(); // Removethe item row from the table
                             // Optional: Re-fetch the list or adjust UI accordingly
                         });
                     },
-                    error: function(error) {
+                    error: function (error) {
                         alert('Error deleting item. Please try again.');
                         console.error('Deletion error:', error);
                     }
@@ -301,7 +304,7 @@
             }
         };
     });
-    </script>
+</script>
 {% else %}
 <p class="text-center text-gray-500">No data available.</p>
 {% endif %} {% endblock %}
