@@ -5,14 +5,16 @@ import subprocess
 
 
 # checks if the json document is there
-def checkJson(): 
+def checkJson():
     if checkDokument(gPath):
         return True
     else:
         return False
-    
+
 # checks if the json is empty
 # open the file and if the content is {} then it is empty
+
+
 def checkJsonEmpty():
     if os.path.exists(gPath):
         with open(gPath) as f:
@@ -24,9 +26,12 @@ def checkJsonEmpty():
                 return False
 
 # simply creates the json document
+
+
 def createJson():
     if not checkJson():
-        os.makedirs(os.path.dirname(gPath), exist_ok=True)  # Create the directory if it doesn't exist
+        # Create the directory if it doesn't exist
+        os.makedirs(os.path.dirname(gPath), exist_ok=True)
         with open(gPath, "w") as f:
             f.write("{}")
             f.close()
@@ -36,6 +41,8 @@ def createJson():
 #! json use functions
 
 # this function will be used to load the json document
+
+
 def loadJson():
     with open(gPath) as f:
         data = json.load(f)
@@ -43,12 +50,16 @@ def loadJson():
         return data
 
 # this function will be used to save the json document
+
+
 def saveJson(data):
     with open(gPath, "w") as f:
         json.dump(data, f)
         f.close()
 
 # this function will be used to add a new host inclusive an running id, his name, the ip, the openend ports to the json document
+
+
 def writeJson(name, ip, tags, ipv6, ports):
     data = loadJson()
     if checkJsonEmpty():
@@ -59,7 +70,7 @@ def writeJson(name, ip, tags, ipv6, ports):
             "tags": tags,
             "ip": ip,
             "ipv6": ipv6,
-            "ports": ports  
+            "ports": ports
         })
         saveJson(data)
     else:
@@ -74,9 +85,11 @@ def writeJson(name, ip, tags, ipv6, ports):
         saveJson(data)
 
 # this function will be used to delete a host from the json document
+
+
 def deleteHost(id):
     ports = []
-    data = loadJson()     
+    data = loadJson()
     if not checkJsonEmpty():
         for i in range(len(data["hosts"])):
             if data["hosts"][i]["id"] == id:
@@ -86,7 +99,7 @@ def deleteHost(id):
                     data["hosts"][i]["ip"],
                     data["hosts"][i]["tags"],
                     data["hosts"][i]["ipv6"],
-                    data["hosts"][i]["ports"]                 
+                    data["hosts"][i]["ports"]
                 )
                 del data["hosts"][i]
                 saveJson(data)
@@ -95,13 +108,15 @@ def deleteHost(id):
         print("Json document is empty")
 
 # this function will be used to update a host in the json document
+
+
 def updateJson(id, name, tags, ip, ipv6, ports):
     data = loadJson()
     if not checkJsonEmpty():
         for i in range(len(data["hosts"])):
             if data["hosts"][i]["id"] == id:
                 data["hosts"][i]["name"] = name
-                data["hosts"][i]["tags"]= tags
+                data["hosts"][i]["tags"] = tags
                 data["hosts"][i]["ip"] = ip
                 data["hosts"][i]["ipv6"] = ipv6
                 data["hosts"][i]["ports"] = ports
@@ -111,6 +126,8 @@ def updateJson(id, name, tags, ip, ipv6, ports):
         print("Json document is empty")
 
 # this function will be used to get the host by id
+
+
 def getHostById(id):
     data = loadJson()
     # cut spaces from the front and from the back of the id
@@ -125,16 +142,47 @@ def getHostById(id):
     else:
         print("Json document is empty")
 
+
+def updateIpAddressById(id, data):
+    jsonData = loadJson()
+    if not checkJsonEmpty():
+        for i, host in enumerate(jsonData["hosts"]):
+            if host["id"] == id:
+                # Convert ports to integers if they are not already
+                if 'ports' in data:
+                    data['ports'] = [int(port) if isinstance(
+                        port, str) and port.isdigit() else port for port in data['ports']]
+
+                # Ensure tags are a list if not already
+                if 'tags' in data and isinstance(data['tags'], str):
+                    data['tags'] = [tag.strip()
+                                    for tag in data['tags'].split(',')]
+
+                jsonData["hosts"][i].update(data)
+                saveJson(jsonData)
+                print(f"Host with id: {id} updated successfully.")
+                return True
+        print(f"Host with id: {id} not found.")
+        return False
+    else:
+        print("JSON document is empty.")
+        return False
+
+
 #! trash json
 
 # will check if the trash json document exists
+
+
 def checkTrashJson():
     if checkDokument(gTrashPath):
         return True
     else:
         return False
-    
+
 # will check if the trash json document is empty
+
+
 def checkTrashJsonEmpty():
     if os.path.exists(gTrashPath):
         with open(gTrashPath) as f:
@@ -144,8 +192,10 @@ def checkTrashJsonEmpty():
                 return True
             else:
                 return False
-            
+
 # will create the trash json document
+
+
 def createTrashJson():
     if not checkTrashJson():
         os.makedirs(os.path.dirname(gTrashPath), exist_ok=True)
@@ -156,19 +206,25 @@ def createTrashJson():
         print("Trash Json document already exists")
 
 # will load the trash json document
+
+
 def loadTrashJson():
     with open(gTrashPath) as f:
         data = json.load(f)
         f.close()
         return data
-    
+
 # will save the trash json document
+
+
 def saveTrashJson(data):
     with open(gTrashPath, "w") as f:
         json.dump(data, f)
         f.close()
 
 # will write the host to the trash json document
+
+
 def writeTrashJson(name, ip, tags, ipv6, ports):
     data = loadTrashJson()
     if checkTrashJsonEmpty():
@@ -179,7 +235,7 @@ def writeTrashJson(name, ip, tags, ipv6, ports):
             "tags": tags,
             "ip": ip,
             "ipv6": ipv6,
-            "ports": ports  
+            "ports": ports
         })
         saveTrashJson(data)
     else:
@@ -189,13 +245,15 @@ def writeTrashJson(name, ip, tags, ipv6, ports):
             "tags": tags,
             "ip": ip,
             "ipv6": ipv6,
-            "ports": ports  
+            "ports": ports
         })
         saveTrashJson(data)
-        
+
 # will delete the host from the trash json document
+
+
 def deleteTrashHost(id):
-    data = loadTrashJson()     
+    data = loadTrashJson()
     if not checkTrashJsonEmpty():
         for i in range(len(data["hosts"])):
             if data["hosts"][i]["id"] == id:
@@ -212,15 +270,17 @@ def deleteTrashHost(id):
                 break
     else:
         print("Trash Json document is empty")
-        
+
 # will update the host in the trash json document
+
+
 def updateTrashJson(id, name, tags, ip, ipv6, ports):
     data = loadTrashJson()
     if not checkTrashJsonEmpty():
         for i in range(len(data["hosts"])):
             if data["hosts"][i]["id"] == id:
                 data["hosts"][i]["name"] = name
-                data["hosts"][i]["tags"]= tags
+                data["hosts"][i]["tags"] = tags
                 data["hosts"][i]["ip"] = ip
                 data["hosts"][i]["ipv6"] = ipv6
                 data["hosts"][i]["ports"] = ports
@@ -228,8 +288,10 @@ def updateTrashJson(id, name, tags, ip, ipv6, ports):
                 break
     else:
         print("Trash Json document is empty")
-        
+
 # will get the host by id from the trash json document
+
+
 def getTrashHostById(id):
     data = loadTrashJson()
     if not checkTrashJsonEmpty():
@@ -241,7 +303,6 @@ def getTrashHostById(id):
                 print("Host with id: ", id, " not found")
     else:
         print("Trash Json document is empty")
-        
 
 
 #! logging functions
@@ -254,6 +315,8 @@ def createLogFile():
             f.close()
 
 # check if there is a log file
+
+
 def checkLogFile():
     if os.path.exists(gLogPath):
         return True
@@ -265,7 +328,6 @@ def checkLogFile():
 
 
 # read the log file
-
 
 
 #! test functions
@@ -286,7 +348,7 @@ def checkDokument(path):
     else:
         return False
 
-    
+
 # this function will be used to get the operating system
 def getOS():
     if platform.system() == "Windows":
@@ -295,18 +357,21 @@ def getOS():
         return "/"
 
 # this function will be used to get the root directory of the project
+
+
 def getRootDirectory():
     path = os.path.abspath(__file__)
     rootPath = os.path.abspath(os.path.join(path, os.pardir))
     return rootPath
-    
-    
+
+
 #! small helper functions
 
 def devideIp(ip):
     ip = ip.split(".")
     ip = [str(x) for x in ip]
     return ip
+
 
 def checkIfInputIsNone(input):
     if input == None or input == "":
@@ -316,8 +381,10 @@ def checkIfInputIsNone(input):
 
 #! Leons mist
 # Function to check if an IP address is pingable
+
+
 def isIpPingable(ip_address):
-    param = '-n' if platform.system().lower()=='windows' else '-c'
+    param = '-n' if platform.system().lower() == 'windows' else '-c'
     command = ['ping', param, '1', '-W', '1', ip_address]
     return subprocess.call(command, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT) == 0
 
@@ -329,8 +396,6 @@ gLogPath = getRootDirectory() + getOS() + "log" + getOS() + "log.txt"
 gTrashPath = getRootDirectory() + getOS() + "data" + getOS() + "trash.json"
 
 
-
 # data = getHostById(1)
 # print(data)
 # deleteHost(3)
-

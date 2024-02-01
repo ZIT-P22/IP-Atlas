@@ -69,6 +69,18 @@ def save():
     return render_template('ip/list.html', data=data)
 
 
+@bp_atlas.route('/ip/update/<int:id>', methods=['POST'])
+def update_ip(id):
+    if request.method == 'POST':
+        data = request.json
+        # Assuming you have a function to update the IP address by ID
+        success = updateIpAddressById(id, data)
+        if success:
+            return jsonify({'message': 'IP address updated successfully'}), 200
+        else:
+            return jsonify({'error': 'Failed to update IP address'}), 500
+
+
 # delete host
 @bp_atlas.route('/ip/delete/<id>')
 def delete(id):
@@ -78,10 +90,9 @@ def delete(id):
 
     if confirmed == 'true':
         deleteHost(id)
-        # print("Host with id: ", id, " deleted")
-        return render_template('ip/list.html', data=data)
+        return jsonify(success=True)  # For AJAX success handling
     else:
-        return render_template('ip/list.html', data=data)
+        return jsonify(success=False, message="Deletion not confirmed")
 
 # confirm delete host
 
@@ -135,7 +146,8 @@ def filter():
     ipocted4 = request.args.get('ipocted4', '')
     tags = request.args.get('tags', '')
     ports = request.args.get('ports', '')
-    print("Filter: ", name, ipocted1, ipocted2, ipocted3, ipocted4, tags, ports)
+    print("Filter: ", name, ipocted1, ipocted2,
+          ipocted3, ipocted4, tags, ports)
     # Combine IP octets into a single string
     ip = f"{ipocted1}.{ipocted2}.{ipocted3}.{ipocted4}"
     print("IP: ", ip)
@@ -148,14 +160,13 @@ def filter():
     return render_template('ip/list.html', data=filtered_data)
 
 
-
-
 #! Trashcan
 @bp_atlas.route('/ip/trashcan/list')
 def listTrashcan():
     createJson()
     data = loadTrashJson()
     return render_template('ip/trashcan/list.html', data=data)
+
 
 @bp_atlas.route('/ip/delete/revert/<id>')
 def revertTrashcan(id):
@@ -171,7 +182,6 @@ def revertTrashcan(id):
         return render_template('ip/trashcan/list.html', data=data)
 
 
-
 @bp_atlas.route('/filter/trashcan', methods=['GET'])
 def filterTrashcan():
     data = loadTrashJson()
@@ -183,7 +193,8 @@ def filterTrashcan():
     ipocted4 = request.args.get('ipocted4', '')
     tags = request.args.get('tags', '')
     ports = request.args.get('ports', '')
-    print("Filter: ", name, ipocted1, ipocted2, ipocted3, ipocted4, tags, ports)
+    print("Filter: ", name, ipocted1, ipocted2,
+          ipocted3, ipocted4, tags, ports)
     # Combine IP octets into a single string
     ip = f"{ipocted1}.{ipocted2}.{ipocted3}.{ipocted4}"
     print("IP: ", ip)
