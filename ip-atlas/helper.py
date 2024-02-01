@@ -79,6 +79,14 @@ def deleteHost(id):
     if not checkJsonEmpty():
         for i in range(len(data["hosts"])):
             if data["hosts"][i]["id"] == id:
+                # write the host to the trash json document
+                writeTrashJson(
+                    data["hosts"][i]["name"],
+                    data["hosts"][i]["ip"],
+                    data["hosts"][i]["tags"],
+                    data["hosts"][i]["ipv6"],
+                    data["hosts"][i]["ports"]
+                )
                 del data["hosts"][i]
                 saveJson(data)
                 break
@@ -116,47 +124,115 @@ def getHostById(id):
     else:
         print("Json document is empty")
 
+#! trash json
 
-
-# this function will be used to get the host by name
-def getHostByName(name):
-    data = loadJson()
-    if not checkJsonEmpty():
-        for i in range(len(data["hosts"])):
-            if data["hosts"][i]["name"] == name:
-                return data["hosts"][i]
+# will check if the trash json document exists
+def checkTrashJson():
+    if checkDokument(gTrashPath):
+        return True
     else:
-        print("Json document is empty")
-
-# this function will be used to get the host by ip
-def getHostByIp(ip):
-    data = loadJson()
-    if not checkJsonEmpty():
-        for i in range(len(data["hosts"])):
-            if data["hosts"][i]["ip"] == ip:
-                return data["hosts"][i]
+        return False
+    
+# will check if the trash json document is empty
+def checkTrashJsonEmpty():
+    if os.path.exists(gTrashPath):
+        with open(gTrashPath) as f:
+            data = json.load(f)
+            f.close()
+            if data == {}:
+                return True
+            else:
+                return False
+            
+# will create the trash json document
+def createTrashJson():
+    if not checkTrashJson():
+        os.makedirs(os.path.dirname(gTrashPath), exist_ok=True)
+        with open(gTrashPath, "w") as f:
+            f.write("{}")
+            f.close()
     else:
-        print("Json document is empty")
+        print("Trash Json document already exists")
 
-# this function will be used to get the host by ipv6
-def getHostByIpv6(ipv6):
-    data = loadJson()
-    if not checkJsonEmpty():
-        for i in range(len(data["hosts"])):
-            if data["hosts"][i]["ipv6"] == ipv6:
-                return data["hosts"][i]
-    else:
-        print("Json document is empty")
+# will load the trash json document
+def loadTrashJson():
+    with open(gTrashPath) as f:
+        data = json.load(f)
+        f.close()
+        return data
+    
+# will save the trash json document
+def saveTrashJson(data):
+    with open(gTrashPath, "w") as f:
+        json.dump(data, f)
+        f.close()
 
-# this function will be used to get the host by port
-def getHostByPort(port):
-    data = loadJson()
-    if not checkJsonEmpty():
-        for i in range(len(data["hosts"])):
-            if port in data["hosts"][i]["ports"]:
-                return data["hosts"][i]
+# will write the host to the trash json document
+def writeTrashJson(name, ip, tags, ipv6, ports):
+    data = loadTrashJson()
+    if checkTrashJsonEmpty():
+        data["hosts"] = []
+        data["hosts"].append({
+            "id": 1,
+            "name": name,
+            "tags": [tags],
+            "ip": ip,
+            "ipv6": ipv6,
+            "ports": [ports]  
+        })
+        saveTrashJson(data)
     else:
-        print("Json document is empty")
+        data["hosts"].append({
+            "id": len(data["hosts"]) + 1,
+            "name": name,
+            "tags": [tags],
+            "ip": ip,
+            "ipv6": ipv6,
+            "ports": [ports]  
+        })
+        saveTrashJson(data)
+        
+# will delete the host from the trash json document
+def deleteTrashHost(id):
+    data = loadTrashJson()     
+    if not checkTrashJsonEmpty():
+        for i in range(len(data["hosts"])):
+            if data["hosts"][i]["id"] == id:
+                del data["hosts"][i]
+                saveTrashJson(data)
+                break
+    else:
+        print("Trash Json document is empty")
+        
+# will update the host in the trash json document
+def updateTrashJson(id, name, tags, ip, ipv6, ports):
+    data = loadTrashJson()
+    if not checkTrashJsonEmpty():
+        for i in range(len(data["hosts"])):
+            if data["hosts"][i]["id"] == id:
+                data["hosts"][i]["name"] = name
+                data["hosts"][i]["tags"]= tags
+                data["hosts"][i]["ip"] = ip
+                data["hosts"][i]["ipv6"] = ipv6
+                data["hosts"][i]["ports"] = ports
+                saveTrashJson(data)
+                break
+    else:
+        print("Trash Json document is empty")
+        
+# will get the host by id from the trash json document
+def getTrashHostById(id):
+    data = loadTrashJson()
+    if not checkTrashJsonEmpty():
+        for i in range(len(data["hosts"])):
+            if data["hosts"][i]["id"] == id:
+                print("Daten der ID: ", id, " :", data["hosts"][i])
+                return data["hosts"][i]
+            else:
+                print("Host with id: ", id, " not found")
+    else:
+        print("Trash Json document is empty")
+        
 
 
 #! logging functions
@@ -241,12 +317,11 @@ def isIpPingable(ip_address):
 global gpath
 gPath = getRootDirectory() + getOS() + "data" + getOS() + "host.json"
 gLogPath = getRootDirectory() + getOS() + "log" + getOS() + "log.txt"
+gTrashPath = getRootDirectory() + getOS() + "data" + getOS() + "trash.json"
 
 
 
 # data = getHostById(1)
 # print(data)
 # deleteHost(3)
-
-createLogFile()
 
