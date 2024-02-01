@@ -85,12 +85,12 @@
                             </button>
                             <input type="text" id="searchInput" name="q" placeholder="Search IPs..."
                                 value="{{ request.args.get('q', '') }}" maxlength="50"
-                                class="w-full h-full py-2 pl-10 pr-4 text-white transition-shadow duration-300 bg-transparent border-transparent rounded-lg placeholder:text-gray-400">
+                                class="w-full h-full py-2 pl-10 pr-4 bg-gray-800 text-white transition-shadow duration-300 bg-transparent border-transparent rounded-lg placeholder:text-gray-400">
                         </div>
                         <!-- Dropdown for search type -->
                         <div class="relative ml-[-20px]">
                             <select id="searchType" name="search_type"
-                                class="block h-full px-4 py-2 leading-tight text-white bg-transparent rounded-lg order-transparent">
+                                class="block h-full px-4 py-2 leading-tight text-white bg-gray-800 rounded-lg order-transparent">
                                 <option value="ip" {% if request.args.get('search_type', '')=='ip' %}selected{% endif %}>
                                     IP Address</option>
                                 <option value="name" {% if request.args.get('search_type', '')=='name' %}selected{% endif %}>Name</option>
