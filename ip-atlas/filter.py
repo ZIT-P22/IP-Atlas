@@ -50,14 +50,15 @@ def filter_data(search, key, data):
 # ? inputs have to be strings
 def filterByIp(octed1, octed2, octed3, octed4, data):
     # convert all octeds to int
+    goThrough = ["*",""]
     result = {"hosts": []}
     for i in range(len(data["hosts"])):
         ip = devideIp(data["hosts"][i]["ip"])
         if (
-            (octed1 == "*" or ip[0] == octed1)
-            and (octed2 == "*" or ip[1] == octed2)
-            and (octed3 == "*" or ip[2] == octed3)
-            and (octed4 == "*" or ip[3] == octed4)
+            (octed1 in goThrough or ip[0] == octed1)
+            and (octed2 in goThrough or ip[1] == octed2)
+            and (octed3 in goThrough or ip[2] == octed3)
+            and (octed4 in goThrough or ip[3] == octed4)
         ):
             result["hosts"].append(data["hosts"][i])
     return result
@@ -78,9 +79,10 @@ def filterByName(search, data):
 
 
 def filterByPort(search, data):
+    goThrough = ["*",""]
     result = {"hosts": []}
     # for host in data:
-    if not search == "":
+    if not search in goThrough:
         for i in range(len(data["hosts"])):
             dataPorts = data["hosts"][i]["ports"]
             for port in dataPorts:
@@ -125,7 +127,7 @@ def filterAll(ip, name, port, tag, data):
 
 # print(filterAll("*.*.*.*", "", "", "", loadJson()))
 #! tests
-# print(filterByIp("*", "*", "*", "47", loadJson()))
+# print(filterByIp("*", "", "", "4", loadJson()))
 # print(filterByName("40", loadJson()))
 # data = filterByPort(99, loadJson())
 # print(data)
