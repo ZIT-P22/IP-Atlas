@@ -10,7 +10,7 @@ bp_atlas = Blueprint('atlas', __name__)
 def index():
     createJson()
     data = loadJson()
-    return render_template('ip/list.html', data=data)
+    return render_template('dashboard.html', data=data)
 
 
 @bp_atlas.route('/ip/list')
@@ -90,7 +90,7 @@ def delete(id):
 
     if confirmed == 'true':
         deleteHost(id)
-        return jsonify(success=True)  # For AJAX success handling
+        return jsonify(success=True)
     else:
         return jsonify(success=False, message="Deletion not confirmed")
 

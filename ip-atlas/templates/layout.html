@@ -46,12 +46,12 @@
                         <a class="flex items-center gap-2 px-3 py-2 transition-all rounded-lg hover:text-gray-100 {% if current_page == url_for('atlas.index') %}bg-gray-700{% endif %}"
                             href="{{ url_for('atlas.index') }}">
                             <span class="text-base leading-none material-symbols-outlined">home</span>
-                            <span class="ml-1 text-sm align-middle">Home</span>
+                            <span class="ml-1 text-sm align-middle">Dashboard</span>
                         </a>
                         <a class="flex items-center gap-2 px-3 py-2 transition-all rounded-lg hover:text-gray-100 {% if current_page == url_for('atlas.list') %}bg-gray-700{% endif %}"
                             href="{{ url_for('atlas.list') }}">
                             <span class="text-base leading-none material-symbols-outlined">language</span>
-                            <span class="ml-1 text-sm align-middle">IP Addresses</span>
+                            <span class="ml-1 text-sm align-middle">IP Adressen</span>
                         </a>
                         <a class="flex items-center gap-2 px-3 py-2 transition-all rounded-lg hover:text-gray-100 {% if current_page == url_for('atlas.port') %}bg-gray-700{% endif %}"
                             href="{{ url_for('atlas.port') }}">
@@ -61,7 +61,7 @@
                         <a class="flex items-center gap-2 px-3 py-2 transition-all rounded-lg hover:text-gray-100 {% if current_page == url_for('atlas.statistic') %}bg-gray-700{% endif %}"
                             href="{{ url_for('atlas.statistic') }}">
                             <span class="text-base leading-none material-symbols-outlined">signal_cellular_alt</span>
-                            <span class="ml-1 text-sm align-middle">Network Statistics</span>
+                            <span class="ml-1 text-sm align-middle">Statistiken</span>
                         </a>
                     </nav>
                 </div>
@@ -92,7 +92,7 @@
                             <select id="searchType" name="search_type"
                                 class="block h-full px-4 py-2 leading-tight text-white bg-gray-800 rounded-lg order-transparent">
                                 <option value="ip" {% if request.args.get('search_type', '')=='ip' %}selected{% endif %}>
-                                    IP Address</option>
+                                    IP Adresse</option>
                                 <option value="name" {% if request.args.get('search_type', '')=='name' %}selected{% endif %}>Name</option>
                                 <option value="port" {% if request.args.get('search_type', '')=='port' %}selected{% endif %}>Port</option>
                                 <option value="tag" {% if request.args.get('search_type', '')=='tag' %}selected{% endif %}>Tag</option>
@@ -118,7 +118,7 @@
     </div>
     <footer class="py-4 text-white bg-gray-800">
         <div class="container mx-auto text-center">
-            &copy; 2024 Zitau. All rights reserved. An P22 Project.
+            &copy; 2024 Zitau. All rights reserved. A P22 Project.
         </div>
     </footer>
 </body>
