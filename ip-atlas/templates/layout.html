@@ -48,6 +48,11 @@
                             <span class="text-base leading-none material-symbols-outlined">home</span>
                             <span class="ml-1 text-sm align-middle">Dashboard</span>
                         </a>
+                        <a class="flex items-center gap-2 px-3 py-2 transition-all rounded-lg hover:text-gray-100 {% if current_page == url_for('atlas.discovered') %}bg-gray-700{% endif %}"
+                        href="{{ url_for('atlas.discovered') }}">
+                        <span class="text-base leading-none material-symbols-outlined">travel_explore</span>
+                        <span class="ml-1 text-sm align-middle">Devices</span>
+                         </a>
                         <a class="flex items-center gap-2 px-3 py-2 transition-all rounded-lg hover:text-gray-100 {% if current_page == url_for('atlas.list') %}bg-gray-700{% endif %}"
                             href="{{ url_for('atlas.list') }}">
                             <span class="text-base leading-none material-symbols-outlined">language</span>
@@ -85,7 +90,7 @@
                             </button>
                             <input type="text" id="searchInput" name="q" placeholder="Search IPs..."
                                 value="{{ request.args.get('q', '') }}" maxlength="50"
-                                class="w-full h-full py-2 pl-10 pr-4 bg-gray-800 text-white transition-shadow duration-300 bg-transparent border-transparent rounded-lg placeholder:text-gray-400">
+                                class="w-full h-full py-2 pl-10 pr-4 text-white transition-shadow duration-300 bg-transparent bg-gray-800 border-transparent rounded-lg placeholder:text-gray-400">
                         </div>
                         <!-- Dropdown for search type -->
                         <div class="relative ml-[-20px]">
@@ -111,7 +116,7 @@
                     </button>
                 </div>
             </header>
-            <main class="flex flex-col flex-1 gap-4 p-4 md:gap-8 md:p-6">
+            <main class="gap-4 p-4 md:gap-8 md:p-6">
                 {% block content %}{% endblock %}
             </main>
         </div>
