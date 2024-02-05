@@ -171,11 +171,42 @@
                     </h3>
                 </div>
                 <div class="p-6">
-                    <div class="aspect-[9/4]">
-                        <div style="width: 100%; height: 100%;"></div>
-                    </div>
+                    <canvas id="networkHealthChart" class="aspect-[9/4]"></canvas>
                 </div>
             </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var ctx = document.getElementById('networkHealthChart').getContext('2d');
+                    var networkHealthChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                            datasets: [{
+                                label: 'Active IPs',
+                                backgroundColor: 'rgb(75, 192, 192)',
+                                borderColor: 'rgb(75, 192, 192)',
+                                data: [0, 10, 5, 2, 20, 30, 45],
+                                fill: false,
+                            }, {
+                                label: 'Inactive IPs',
+                                fill: false,
+                                backgroundColor: 'rgb(255, 99, 132)',
+                                borderColor: 'rgb(255, 99, 132)',
+                                data: [45, 30, 20, 12, 5, 2, 0],
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                });
+            </script>
         </div>
         <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
             <div class="border rounded-lg shadow-sm bg-card text-card-foreground" data-v0-t="card">
@@ -185,9 +216,7 @@
                     </h3>
                 </div>
                 <div class="p-6">
-                    <div class="aspect-[9/4]">
-                        <div style="width: 100%; height: 100%;"></div>
-                    </div>
+                    <canvas id="latestNetworkActivityChart" class="aspect-[9/4]"></canvas>
                 </div>
             </div>
             <div class="border rounded-lg shadow-sm bg-card text-card-foreground" data-v0-t="card">
@@ -197,12 +226,54 @@
                     </h3>
                 </div>
                 <div class="p-6">
-                    <div class="aspect-[9/4]">
-                        <div style="width: 100%; height: 100%;"></div>
-                    </div>
+                    <canvas id="ipAddressDistributionChart" class="aspect-[9/4]"></canvas>
                 </div>
             </div>
         </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var ctx1 = document.getElementById('latestNetworkActivityChart').getContext('2d');
+                var latestNetworkActivityChart = new Chart(ctx1, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [{
+                            label: 'Activity',
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1,
+                            data: [10, 20, 30, 40, 50, 60, 70],
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+                var ctx2 = document.getElementById('ipAddressDistributionChart').getContext('2d');
+                var ipAddressDistributionChart = new Chart(ctx2, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Active', 'Inactive', 'Dynamic', 'Static'],
+                        datasets: [{
+                            label: 'IP Distribution',
+                            backgroundColor: ['rgb(255, 99, 132)', 'rgb(54, 162, 235)', 'rgb(255, 205, 86)', 'rgb(75, 192, 192)'],
+                            data: [300, 50, 100, 150],
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                    }
+                });
+            });
+        </script>
     </main>
 </div>
 {% endblock %}
