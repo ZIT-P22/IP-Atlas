@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         html {
             scroll-behavior: smooth !important;
@@ -85,7 +86,7 @@
                             </button>
                             <input type="text" id="searchInput" name="q" placeholder="Search IPs..."
                                 value="{{ request.args.get('q', '') }}" maxlength="50"
-                                class="w-full h-full py-2 pl-10 pr-4 bg-gray-800 text-white transition-shadow duration-300 bg-transparent border-transparent rounded-lg placeholder:text-gray-400">
+                                class="w-full h-full py-2 pl-10 pr-4 text-white transition-shadow duration-300 bg-transparent bg-gray-800 border-transparent rounded-lg placeholder:text-gray-400">
                         </div>
                         <!-- Dropdown for search type -->
                         <div class="relative ml-[-20px]">
