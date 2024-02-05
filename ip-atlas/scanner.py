@@ -1,7 +1,6 @@
 import sys
 import datetime as dt
 import requests
-from prettytable import PrettyTable, HEADER, NONE
 from argparse import ArgumentParser
 import scapy.all as scapy
 from pythonping import ping
