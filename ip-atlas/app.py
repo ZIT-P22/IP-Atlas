@@ -1,15 +1,32 @@
 from flask import Flask
-import secrets
-from routes import atlas, settings
-
+import os
+from database import db
 
 atlasapp = Flask(__name__, static_folder="static", template_folder="templates")
-atlasapp.secret_key = secrets.token_hex(16)
 
-# ? Blueprints
-atlasapp.register_blueprint(atlas.bp_atlas)
-atlasapp.register_blueprint(settings.bp_settings)
+# Configure the database URI
+database_dir = os.path.join(os.getcwd(), "database")
+if not os.path.exists(database_dir):
+    os.makedirs(database_dir)
+atlasapp.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(
+    database_dir, "ip_atlas.db"
+)
+atlasapp.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+
+# Register the blueprints
+from routes.atlas import bp_atlas
+from routes.settings import bp_settings
+
+atlasapp.register_blueprint(bp_atlas)
+atlasapp.register_blueprint(bp_settings)
+
+# Initialize SQLAlchemy with the Flask app
+db.init_app(atlasapp)
 
 if __name__ == "__main__":
+    with atlasapp.app_context():
+        from models import *
+
+        db.create_all()
     atlasapp.run(debug=True, host="0.0.0.0", port=5000)
