@@ -12,35 +12,48 @@ def filter_data(search, key, data):
     Tries to match exactly first, then falls back to partial matches.
     Now performs case-insensitive matching.
     """
-    search = search.lower()  # Convert search term to lowercase for case-insensitive comparison
+    search = (
+        search.lower()
+    )  # Convert search term to lowercase for case-insensitive comparison
     filtered_data = []
     if key == "ip":
-        filtered_data = [host for host in data["hosts"]
-                         if host["ip"].lower() == search]
+        filtered_data = [host for host in data["hosts"] if host["ip"].lower() == search]
     elif key == "name":
-        filtered_data = [host for host in data["hosts"]
-                         if host.get("name", "").lower() == search]
+        filtered_data = [
+            host for host in data["hosts"] if host.get("name", "").lower() == search
+        ]
     elif key == "port":
-        filtered_data = [host for host in data["hosts"] if search.isdigit() and int(
-            search) in host.get("ports", [[]])[0]]
+        filtered_data = [
+            host
+            for host in data["hosts"]
+            if search.isdigit() and int(search) in host.get("ports", [[]])[0]
+        ]
     elif key == "tag":
-        filtered_data = [host for host in data["hosts"]
-                         if search in [tag.lower() for tag in host.get("tags", [[]])[0]]]
+        filtered_data = [
+            host
+            for host in data["hosts"]
+            if search in [tag.lower() for tag in host.get("tags", [[]])[0]]
+        ]
 
     # If no exact matches found, revert to partial matches
     if not filtered_data:
         if key == "ip":
-            filtered_data = [host for host in data["hosts"]
-                             if search in host["ip"].lower()]
+            filtered_data = [
+                host for host in data["hosts"] if search in host["ip"].lower()
+            ]
         elif key == "name":
-            filtered_data = [host for host in data["hosts"]
-                             if search in host.get("name", "").lower()]
+            filtered_data = [
+                host for host in data["hosts"] if search in host.get("name", "").lower()
+            ]
         elif key == "port":
             # Assuming 'port' search needs to be exact; partial match fallback might not make sense here
             pass  # Already handled above with exact match logic
         elif key == "tag":
-            filtered_data = [host for host in data["hosts"] if any(
-                search in tag.lower() for tag in host.get("tags", [[]])[0])]
+            filtered_data = [
+                host
+                for host in data["hosts"]
+                if any(search in tag.lower() for tag in host.get("tags", [[]])[0])
+            ]
 
     return filtered_data
 
@@ -50,7 +63,7 @@ def filter_data(search, key, data):
 # ? inputs have to be strings
 def filterByIp(octed1, octed2, octed3, octed4, data):
     # convert all octeds to int
-    goThrough = ["*",""]
+    goThrough = ["*", ""]
     result = {"hosts": []}
     for i in range(len(data["hosts"])):
         ip = devideIp(data["hosts"][i]["ip"])
@@ -62,6 +75,7 @@ def filterByIp(octed1, octed2, octed3, octed4, data):
         ):
             result["hosts"].append(data["hosts"][i])
     return result
+
 
 # filter by name/name section
 
@@ -75,11 +89,12 @@ def filterByName(search, data):
             result["hosts"].append(data["hosts"][i])
     return result
 
+
 # filter by ports
 
 
 def filterByPort(search, data):
-    goThrough = ["*",""]
+    goThrough = ["*", ""]
     result = {"hosts": []}
     # for host in data:
     if not search in goThrough:
@@ -107,6 +122,7 @@ def filterByTags(search, data):
                 result["hosts"].append(data["hosts"][i])
                 break
     return result
+
 
 # applies all filters
 
