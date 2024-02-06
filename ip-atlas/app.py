@@ -1,6 +1,6 @@
 from flask import Flask
 import secrets
-from routes import atlas
+from routes import atlas, settings
 
 
 
@@ -9,6 +9,7 @@ atlasapp.secret_key = secrets.token_hex(16)
 
 #? Blueprints
 atlasapp.register_blueprint(atlas.bp_atlas)
+atlasapp.register_blueprint(settings.bp_settings)
 
 
 if __name__ == '__main__':

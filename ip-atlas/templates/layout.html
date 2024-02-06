@@ -8,7 +8,8 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='src/input.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         html {
@@ -16,7 +17,21 @@
             color-scheme: dark !important;
         }
 
-        [type='text']:focus, [type='email']:focus, [type='url']:focus, [type='password']:focus, [type='number']:focus, [type='date']:focus, [type='datetime-local']:focus, [type='month']:focus, [type='search']:focus, [type='tel']:focus, [type='time']:focus, [type='week']:focus, [multiple]:focus, textarea:focus, select:focus {
+        [type='text']:focus,
+        [type='email']:focus,
+        [type='url']:focus,
+        [type='password']:focus,
+        [type='number']:focus,
+        [type='date']:focus,
+        [type='datetime-local']:focus,
+        [type='month']:focus,
+        [type='search']:focus,
+        [type='tel']:focus,
+        [type='time']:focus,
+        [type='week']:focus,
+        [multiple]:focus,
+        textarea:focus,
+        select:focus {
             outline: 0px !important;
             outline-offset: 0px !important;
             box-shadow: none !important;
@@ -66,6 +81,13 @@
                         </a>
                     </nav>
                 </div>
+                <div class="py-2 px-3">
+                    <a class="flex items-center gap-2 px-3 py-2 transition-all rounded-lg hover:text-gray-100 {% if current_page == url_for('settings.config') %}bg-gray-700{% endif %}"
+                        href="{{ url_for('settings.config') }}">
+                        <span class="text-base leading-none material-symbols-outlined">settings</span>
+                        <span class="ml-1 text-sm align-middle">Einstellungen</span>
+                    </a>
+                </div>
             </div>
         </div>
         <div class="flex flex-col">
@@ -92,11 +114,15 @@
                         <div class="relative ml-[-20px]">
                             <select id="searchType" name="search_type"
                                 class="block h-full px-4 py-2 leading-tight text-white bg-gray-800 rounded-lg order-transparent">
-                                <option value="ip" {% if request.args.get('search_type', '')=='ip' %}selected{% endif %}>
+                                <option value="ip" {% if request.args.get('search_type', '' )=='ip' %}selected{% endif
+                                    %}>
                                     IP Adresse</option>
-                                <option value="name" {% if request.args.get('search_type', '')=='name' %}selected{% endif %}>Name</option>
-                                <option value="port" {% if request.args.get('search_type', '')=='port' %}selected{% endif %}>Port</option>
-                                <option value="tag" {% if request.args.get('search_type', '')=='tag' %}selected{% endif %}>Tag</option>
+                                <option value="name" {% if request.args.get('search_type', '' )=='name' %}selected{%
+                                    endif %}>Name</option>
+                                <option value="port" {% if request.args.get('search_type', '' )=='port' %}selected{%
+                                    endif %}>Port</option>
+                                <option value="tag" {% if request.args.get('search_type', '' )=='tag' %}selected{% endif
+                                    %}>Tag</option>
                             </select>
                         </div>
                         <button type="submit" class="hidden">Search</button>
@@ -106,8 +132,8 @@
                     <button
                         class="inline-flex items-center justify-center w-8 h-8 text-sm font-medium transition-colors border-gray-800 borderrounded-full whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
                         type="button" id="radix-:r1c:" aria-haspopup="menu" aria-expanded="false" data-state="closed">
-                        <img src="{{ url_for('static', filename='images/placeholder.png') }}" width="32" height="32" class="rounded-full" alt="Avatar"
-                            style="aspect-ratio: 32 / 32; object-fit: cover;" />
+                        <img src="{{ url_for('static', filename='images/placeholder.png') }}" width="32" height="32"
+                            class="rounded-full" alt="Avatar" style="aspect-ratio: 32 / 32; object-fit: cover;" />
                         <span class="sr-only">Toggle user menu</span>
                     </button>
                 </div>
