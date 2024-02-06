@@ -1,80 +1,68 @@
-import sys
 import datetime as dt
 import requests
-from argparse import ArgumentParser
 import scapy.all as scapy
 from pythonping import ping
 import ipaddress
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, as_completed, Future
 import socket
 import time
 import json
 from functools import lru_cache
-
-# Function Definitions
-
-
-def args():
-    parser = ArgumentParser(
-        description="Python Script to Perform Network Scans")
-    parser.add_argument("-r", "--range", dest="ip_range",
-                        help="Specify an IP address range, e.g., --range 192.168.1.1/24")
-    parser.add_argument("-s", "--scan", dest="scan_type",
-                        help="Scan type: arp, icmp, sniff, meta", default="meta")
-    options = parser.parse_args()
-    if not options.ip_range:
-        parser.error("[-] Please specify a valid IP address range.")
-    return options
+import numpy as np
+from ipaddress import IPv4Address
 
 
-def icmp_ping_scan(ip_range):
-    print("[*] Starting ICMP Ping Scan")
-    live_hosts = []
-    network = ipaddress.ip_network(ip_range, strict=False)
-    for ip in network.hosts():
-        response = ping(str(ip), count=1, timeout=1)
-        if response.success():
-            live_hosts.append(str(ip))
-    return live_hosts
+def chunk_subnets(network, chunk_size=24):
+    return list(network.subnets(new_prefix=chunk_size))
 
 
-def icmp_ping_individual(ip):
-    response = ping(ip, count=1, timeout=1)
+def filter_subnets(all_subnets, selected_subnets):
+    selected_networks = [ipaddress.ip_network(subnet) for subnet in selected_subnets]
+    return [
+        subnet
+        for subnet in all_subnets
+        if any(subnet.overlaps(selected) for selected in selected_networks)
+    ]
+
+
+def icmp_ping_scan(ip, fast=True):
+    response = ping(str(ip), count=1, timeout=1 if fast else 2)
     if response.success():
-        return (ip, "Unknown MAC", 'ICMP')
+        return str(ip)
     return None
 
 
-def arp_ping_scan(ip_range):
-    print("[*] Starting ARP Ping Scan")
-    arp_request = scapy.ARP(pdst=ip_range)
+def arp_ping_scan(ip):
+    arp_request = scapy.ARP(pdst=str(ip))
     broadcast = scapy.Ether(dst="ff:ff:ff:ff:ff:ff")
     arp_request_broadcast = broadcast / arp_request
-    answered = scapy.srp(arp_request_broadcast, timeout=1, verbose=False)[0]
-    return [(received.psrc, received.hwsrc, 'ARP') for sent, received in answered]
-
-
-def sniff_packets(timeout=5):
-    print("[*] Starting Sniffing in Promiscuous Mode")
-    packets = scapy.sniff(timeout=timeout)
-    return [(packet[scapy.IP].src, packet[scapy.Ether].src, 'Sniff') for packet in packets if scapy.IP in packet and scapy.Ether in packet]
+    answered, _ = scapy.srp(arp_request_broadcast, timeout=1, verbose=False)
+    return [(received.psrc, received.hwsrc) for _, received in answered]
 
 
 @lru_cache(maxsize=None)
 def get_hostname(ip):
+    # Ensure ip is a string before passing it to gethostbyaddr
+    if isinstance(ip, IPv4Address):
+        ip = str(ip)
     try:
-        return socket.gethostbyaddr(ip)[0]
+        hostname = socket.gethostbyaddr(ip)[0]
+        return hostname
     except socket.herror:
-        return 'Unknown'
+        # Handle the case where the host name could not be resolved
+        return None
 
 
 @lru_cache(maxsize=None)
 def vendor_lookup(mac):
     time.sleep(1)
-    headers = {"Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImp0aSI6IjMzMTZjODI4LWEwODAtNDQ4NS1hMmEwLWE2ZTNkNmJmZjY2MCJ9.eyJpc3MiOiJtYWN2ZW5kb3JzIiwiYXVkIjoibWFjdmVuZG9ycyIsImp0aSI6IjMzMTZjODI4LWEwODAtNDQ4NS1hMmEwLWE2ZTNkNmJmZjY2MCIsImlhdCI6MTcwNjk5ODMwMiwiZXhwIjoyMDIxNDk0MzAyLCJzdWIiOiIxNDE4MyIsInR5cCI6ImFjY2VzcyJ9.8IbatiRNBLYLh5m4S28RCnAOQ1YRhJcC7Ha_RFiDEwjyJ7a2Ts1HUC7Pp9eN_warWBAD9Ch89-KAwyIo0aGVEA"}
+    headers = {
+        "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImp0aSI6IjMzMTZjODI4LWEwODAtNDQ4NS1hMmEwLWE2ZTNkNmJmZjY2MCJ9.eyJpc3MiOiJtYWN2ZW5kb3JzIiwiYXVkIjoibWFjdmVuZG9ycyIsImp0aSI6IjMzMTZjODI4LWEwODAtNDQ4NS1hMmEwLWE2ZTNkNmJmZjY2MCIsImlhdCI6MTcwNjk5ODMwMiwiZXhwIjoyMDIxNDk0MzAyLCJzdWIiOiIxNDE4MyIsInR5cCI6ImFjY2VzcyJ9.8IbatiRNBLYLh5m4S28RCnAOQ1YRhJcC7Ha_RFiDEwjyJ7a2Ts1HUC7Pp9eN_warWBAD9Ch89-KAwyIo0aGVEA"
+    }
     try:
         response = requests.get(
-            f"https://api.macvendors.com/v1/lookup/{mac}", headers=headers, timeout=5)
+            f"https://api.macvendors.com/v1/lookup/{mac}", headers=headers, timeout=5
+        )
         if response.status_code == 200:
             return response.json()["data"]["organization_name"]
     except Exception as e:
@@ -82,82 +70,86 @@ def vendor_lookup(mac):
     return "Unknown"
 
 
-def run_scan(option):
+def process_device(ip, fast_scan=True):
+    # Convert IPv4Address to string if necessary
+    ip_str = str(ip) if isinstance(ip, IPv4Address) else ip
+    device_info = {"ip": ip_str, "hostname": get_hostname(ip_str), "macs": []}
+    if not fast_scan:
+        arp_results = arp_ping_scan(ip_str)
+        for psrc, hwsrc in arp_results:
+            device_info["macs"].append({"mac": hwsrc, "vendor": vendor_lookup(hwsrc)})
+    return device_info
+
+
+def initialize_results_file(filename="scan_results.json"):
+    try:
+        with open(filename, "r") as file:
+            # Check if file is empty or contains valid JSON
+            try:
+                data = json.load(file)
+                if not isinstance(data, list):  # Ensure data is a list
+                    raise ValueError("File content is not a list")
+            except json.JSONDecodeError:
+                # File is empty or not valid JSON, start with an empty list
+                with open(filename, "w") as file:
+                    json.dump([], file, indent=4)
+    except FileNotFoundError:
+        # File does not exist, create it with an empty list
+        with open(filename, "w") as file:
+            json.dump([], file, indent=4)
+
+
+def save_results_to_file(results, filename="scan_results.json"):
+    with open(filename, "w") as file:
+        json.dump(results, file, indent=4)
+
+
+def run_scan(scan_type, ip_range, selected_subnets):
+    network = ipaddress.ip_network(ip_range, strict=False)
+    all_subnets = chunk_subnets(network)
+    subnets_to_scan = (
+        filter_subnets(all_subnets, selected_subnets)
+        if selected_subnets
+        else all_subnets
+    )
+
     results = []
-    max_threads = 50
-    with ThreadPoolExecutor(max_workers=max_threads) as executor:
+    with ThreadPoolExecutor(max_workers=20) as executor:
         futures = []
-        if option.scan_type in ["arp", "icmp", "meta"]:
-            network = ipaddress.ip_network(option.ip_range, strict=False)
-            if option.scan_type == "arp":
-                futures.append(executor.submit(arp_ping_scan, option.ip_range))
-            elif option.scan_type == "icmp":
-                for ip in network.hosts():
-                    futures.append(executor.submit(
-                        icmp_ping_individual, str(ip)))
-            elif option.scan_type == "meta":
-                futures.append(executor.submit(arp_ping_scan, option.ip_range))
-                for ip in network.hosts():
-                    futures.append(executor.submit(
-                        icmp_ping_individual, str(ip)))
-                futures.append(executor.submit(sniff_packets))
-        elif option.scan_type == "sniff":
-            futures.append(executor.submit(sniff_packets))
-
-        for future in as_completed(futures):
-            result = future.result()
-            if result:
-                if isinstance(result, list):
-                    results.extend(result)
+        for subnet in subnets_to_scan:
+            for ip in subnet.hosts():
+                if scan_type == "fast":
+                    future = executor.submit(icmp_ping_scan, ip, True)
                 else:
-                    results.append(result)
+                    future = executor.submit(icmp_ping_scan, ip, False)
+                future.add_done_callback(
+                    lambda fut, ip=ip: (
+                        results.append(process_device(ip, scan_type == "fast"))
+                        if fut.result()
+                        else None
+                    )
+                )
 
-    return results
+    # Wait for all futures to complete
+    as_completed(futures)
 
-
-def main():
-    option = args()
-    print("\n---------------------")
-    print("Start time: " + dt.datetime.now().strftime("%d/%m/%Y %H:%M:%S %p"))
-    print("Target subnet: " + option.ip_range)
-    print("Scan type: " + option.scan_type)
-    print("---------------------\n")
-
-    all_results = run_scan(option)
-    subnet = ipaddress.ip_network(option.ip_range, strict=False)
-
-    merged_results = {}
-
-    for ip, mac, scan_type in all_results:
-        if ipaddress.ip_address(ip) in subnet:
-            if ip not in merged_results:
-                merged_results[ip] = {'macs': set(), 'scan_types': set(), 'vendors': [
-                ], 'hostname': 'Unknown'}
-
-            entry = merged_results[ip]
-            entry['scan_types'].add(scan_type)
-
-            if mac != "Unknown MAC":
-                entry['macs'].add(mac)
-
-            current_hostname = get_hostname(ip)
-            if current_hostname != 'Unknown' and (entry['hostname'] == 'Unknown' or len(current_hostname) > len(entry['hostname'])):
-                entry['hostname'] = current_hostname
-
-    for ip, details in merged_results.items():
-        for mac in details['macs']:
-            vendor = vendor_lookup(mac)
-            if vendor != "Unknown":
-                details['vendors'].append(vendor)
-
-    for ip, details in merged_results.items():
-        details['macs'] = list(details['macs'])
-        details['scan_types'] = list(details['scan_types'])
-
-    results_json = json.dumps(merged_results, indent=4)
-    print(results_json)
-    print("---------------------\nFinished!")
+    # Save results to file
+    save_results_to_file(results)
 
 
-if __name__ == "__main__":
-    main()
+# @app.route("/scan", methods=["POST"])
+# def scan_network():
+#     data = request.get_json()
+#     scan_type = data.get("scan_type", "fast")
+#     ip_range = data.get("ip_range")
+#     selected_subnets = data.get("selected_subnets", [])
+
+#     if not ip_range:
+#         return jsonify({"error": "IP range is required"}), 400
+
+#     run_scan(scan_type, ip_range, selected_subnets)
+#     return jsonify({"message": "Scan initiated"}), 202
+
+
+# if __name__ == "__main__":
+#     app.run(debug=True)
