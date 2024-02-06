@@ -57,7 +57,7 @@
                     </button>
                 </div>
                 <div class="flex-1 py-2 overflow-auto">
-                    <nav class="grid items-start px-4 text-sm font-medium">
+                    <nav class="grid items-start px-4 text-sm font-medium gap-y-2">
                         {% set current_page = request.path %}
                         <a class="flex items-center gap-2 px-3 py-2 transition-all rounded-lg hover:text-gray-100 {% if current_page == url_for('atlas.index') %}bg-gray-700{% endif %}"
                             href="{{ url_for('atlas.index') }}">
@@ -81,7 +81,7 @@
                         </a>
                     </nav>
                 </div>
-                <div class="py-2 px-3">
+                <div class="mt-auto">
                     <a class="flex items-center gap-2 px-3 py-2 transition-all rounded-lg hover:text-gray-100 {% if current_page == url_for('settings.config') %}bg-gray-700{% endif %}"
                         href="{{ url_for('settings.config') }}">
                         <span class="text-base leading-none material-symbols-outlined">settings</span>

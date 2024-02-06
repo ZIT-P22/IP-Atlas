@@ -103,41 +103,55 @@
                 }
             });
         });
-    </script>
-
-    <div class="flex gap-2">
-    </div>
+</script>
 </div>
 {% if data and data.hosts %}
+<style>
+    .scrollable-table-container {
+        max-height: 90vh;
+        overflow: auto;
+    }
+
+    .sticky-table-header th {
+        position: sticky;
+        top: 0;
+        background-color: #1f2937;
+        z-index: 1;
+    }
+
+    .scrollable-table-container::-webkit-scrollbar {
+        display: none;
+    }
+</style>
+
 <div class="border rounded-lg shadow-sm">
-    <div class="relative w-full overflow-auto">
-        <table class="w-full text-sm caption-bottom">
-            <thead>
+    <div class="relative w-full scrollable-table-container">
+        <table class="w-full text-sm table-fixed caption-bottom">
+            <thead class="sticky-table-header">
                 <tr class="border-b">
                     <th class="hidden h-12 px-4 font-medium text-left align-middle md:table-cell">
                         Name
                     </th>
-                    <th class="h-12 px-4 font-medium text-left align-middle ">
+                    <th class="h-12 px-4 font-medium text-left align-middle">
                         IP Adresse
                     </th>
-                    <th class="h-12 px-4 font-medium text-left align-middle ">
+                    <th class="h-12 px-4 font-medium text-left align-middle">
                         Ports in der FBox
                     </th>
-                    <th class="h-12 px-4 font-medium text-left align-middle ">
+                    <th class="h-12 px-4 font-medium text-left align-middle">
                         Tags
                     </th>
-                    <th class="h-12 px-4 text-left align-middle font-medium  max-w-[150px]">
+                    <th class="h-12 px-4 text-left align-middle font-medium max-w-[150px]">
                         Status
                     </th>
-                    <th class="h-12 px-4 font-medium text-center align-middle ">
+                    <th class="h-12 px-4 font-medium text-center align-middle">
                         Aktionen
                     </th>
                 </tr>
             </thead>
             <tbody>
                 {% for host in data.hosts %}
-                <tr data-id="{{ host.id }}"
-                    class="transition duration-150 ease-in-out border-b hover:bg-gray-700 hover:bg-opacity-25">
+                <tr data-id="{{ host.id }}" class="transition duration-150 ease-in-out border-b hover:bg-gray-700 hover:bg-opacity-25">
                     <td class="hidden p-4 align-middle edit-field md:table-cell">{{ host.name }}</td>
                     <td class="p-4 font-medium align-middle edit-field">{{ host.ip }}</td>
                     <td class="p-4 align-middle edit-field">{{ host.ports|join(", ") }}</td>
@@ -150,11 +164,6 @@
                     </td>
                     <td class="p-4 align-middle ip-ping-status" data-ip="{{ host.ip }}">
                         <i class="text-green-500 material-symbols-outlined" style="font-size:24px;">check_circle</i>
-                        <!-- {% if host.pingable %}
-                          <i class="text-green-500 material-symbols-outlined" style="font-size:24px;">check_circle</i>
-                          {% else %}
-                          <i class="text-red-500 material-symbols-outlined" style="font-size:24px;">cancel</i>
-                          {% endif %} -->
                     </td>
                     <td class="p-4 text-center align-middle">
                         <button
@@ -174,6 +183,23 @@
         </table>
     </div>
 </div>
+
+<script>
+    function adjustTableHeight() {
+        const tableContainer = document.querySelector('.scrollable-table-container');
+        if (!tableContainer) return;
+
+        const viewportHeight = window.innerHeight;
+        const offsetTop = tableContainer.getBoundingClientRect().top;
+        const margin = 20; // Adjust this margin as needed
+
+        const desiredHeight = viewportHeight - offsetTop - margin;
+        tableContainer.style.maxHeight = `${desiredHeight}px`;
+    }
+
+    window.addEventListener('resize', adjustTableHeight);
+    window.addEventListener('DOMContentLoaded', adjustTableHeight);
+</script>
 
 <style>
     .edit-field {
