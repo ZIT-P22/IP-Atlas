@@ -1,7 +1,7 @@
 from faker import Faker
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models import db, Host, Tag, Port, HostTag
+from models import db, Host, Tag, Port, HostTag, PortFB
 import random
 from app import atlasapp
 
@@ -20,6 +20,7 @@ def generate_test_data(num_hosts=50):
         ipv4 = fake.ipv4_private(network=False, address_class=None)
         ipv6 = fake.ipv6(network=False)
         ports_numbers = [fake.random_int(min=1, max=65535) for _ in range(2)]
+        portsFB_numbers = [fake.random_int(min=1, max=65535) for _ in range(2)]
 
         # Create Host instance
         host = Host(hostname=hostname, ipv4=ipv4, ipv6=ipv6)
@@ -30,6 +31,11 @@ def generate_test_data(num_hosts=50):
         for port_number in ports_numbers:
             port = Port(host_id=host.id, port_number=port_number)
             session.add(port)
+            
+        # Create Port instances for FB
+        for portFB_number in portsFB_numbers:
+            portFB = PortFB(host_id=host.id, portFB_number=portFB_number)
+            session.add(portFB)
 
         # Create and associate Tags
         tags = [fake.word(), fake.word(), "test"]

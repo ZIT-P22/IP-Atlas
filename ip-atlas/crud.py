@@ -2,7 +2,7 @@
 # this Script contains the CRUD operations for the ip-atlas database
 # Author: Janneck Lehmann
 # Date: 2024-02-07
-from models import db, Host, Tag, Port, HostTag
+from models import db, Host, Tag, Port, HostTag, PortFB
 from helper import *
 
 
@@ -14,7 +14,7 @@ def convert_to_json_format(host):
         "name": host.hostname,
         "ip": host.ipv4,
         "ipv6": host.ipv6,  
-        "ports": [port.port_number for port in host.ports],
+        "portsFB": [port.port_number for port in host.ports],
         "tags": [host_tag.tag.tag_name for host_tag in host.tags],
     }
     return host_data
