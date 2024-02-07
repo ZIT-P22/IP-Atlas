@@ -14,7 +14,7 @@ def convert_to_json_format(host):
         "name": host.hostname,
         "ip": host.ipv4,
         "ipv6": host.ipv6,  
-        "portsFB": [port.port_number for port in host.ports],
+        "portsFB": [portFB.portFB_number for portFB in host.portsFB],
         "tags": [host_tag.tag.tag_name for host_tag in host.tags],
     }
     return host_data
