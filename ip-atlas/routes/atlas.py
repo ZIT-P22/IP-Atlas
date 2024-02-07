@@ -16,7 +16,10 @@ def index():
 
 @bp_atlas.route("/ip/list")
 def list():
-    data = convert_to_json_format(read_all_hosts())
+    data = {"hosts": []}
+    hosts = read_all_hosts()
+    for host in hosts:
+        data["hosts"].append(convert_to_json_format(host))
     return render_template("ip/list.html", data=data)
 
 
