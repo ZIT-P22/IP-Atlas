@@ -8,5 +8,14 @@
     ],
     "python.testing.pytestEnabled": false,
     "python.testing.unittestEnabled": true,
-    "sqltools.useNodeRuntime": true
+    "sqltools.useNodeRuntime": true,
+    "sqltools.connections": [
+        {
+            "previewLimit": 100,
+            "driver": "SQLite",
+            "name": "IP-Atlas",
+            "group": "IP-Atlas",
+            "database": "${workspaceFolder:IP-Atlas}/database/ip_atlas.db"
+        }
+    ]
 }

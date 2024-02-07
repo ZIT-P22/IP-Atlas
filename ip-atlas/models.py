@@ -12,7 +12,6 @@ class Host(db.Model):
     hostname = Column(String, unique=True, nullable=False, index=True)
     ipv4 = Column(String, nullable=False, index=True)
     ipv6 = Column(String, index=True)
-    cidr = Column(Integer)
     deleted = Column(Boolean, default=False)
     ports = relationship("Port", back_populates="host")
     tags = relationship("HostTag", back_populates="host")
@@ -53,7 +52,6 @@ class Port(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     host_id = Column(Integer, ForeignKey("hosts.id"))
     port_number = Column(Integer, nullable=False)
-    deleted = Column(Boolean, default=False)
     host = relationship("Host", back_populates="ports")
 
 
