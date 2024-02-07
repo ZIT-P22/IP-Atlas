@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, abort, jsonify
 from jinja2 import TemplateNotFound
 from helper import *
 from filter import *
+from crud import *
 
 bp_atlas = Blueprint("atlas", __name__)
 
@@ -15,6 +16,7 @@ def index():
 
 @bp_atlas.route("/ip/list")
 def list():
+    data = convert_to_json_format(read_all_hosts())
     return render_template("ip/list.html", data=data)
 
 

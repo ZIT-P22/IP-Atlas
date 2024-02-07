@@ -2,6 +2,29 @@ import json
 import os
 import platform
 import subprocess
+from models import Host, Port, Tag
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from app import atlasapp
+
+DATABASE_URI = atlasapp.config["SQLALCHEMY_DATABASE_URI"]
+engine = create_engine(DATABASE_URI)
+Session = sessionmaker(bind=engine)
+
+#! db functions
+
+# function which checks if the given tag exists in the database and returns the id if it exists
+def tag_exists(tag_name, method="bool"):
+    session = Session()
+    tag = session.query(Tag).filter_by(tag_name=tag_name).first()
+    session.close()
+    if method == "id":
+        if tag:
+            return tag.id
+        else:
+            return None
+    else:
+        return tag is not None
 
 
 # checks if the json document is there

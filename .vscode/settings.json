@@ -11,11 +11,10 @@
     "sqltools.useNodeRuntime": true,
     "sqltools.connections": [
         {
-            "previewLimit": 100,
+            "previewLimit": 50,
             "driver": "SQLite",
-            "name": "IP-Atlas",
-            "group": "IP-Atlas",
-            "database": "${workspaceFolder:IP-Atlas}/database/ip_atlas.db"
+            "database": "${workspaceFolder:IP-Atlas}/database/ip_atlas.db",
+            "name": "ip-atlas"
         }
     ]
 }
