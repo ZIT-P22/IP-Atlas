@@ -50,50 +50,13 @@ def add():
 def save():
     if request.method == "POST":
         # get form data
-        name = request.form.get("name")
-        tags = request.form.get("tags")
-        ipv4 = request.form.get("ipv4")
-        ipv6 = request.form.get("ipv6")
-        portsFB = request.form.get("portsFB")
-        tags = request.form.get("tags")
-
-        # if not ipv4:
-        #     ipv4 = None
-        # if not ipv6:
-        #     ipv6 = None
-        
-        if portsFB:
-            # convert ports from comma separated to list
-            portsFB = portsFB.split(",")
-        if tags:
-            # convert tags from comma separated to list
-            tags = tags.split(",")
-
-        print("Das sind die Inputs:", name, ipv4, ipv6, portsFB, tags)
-        # check if ipv4 exists        
-        if not check_ipv4_exists(ipv4):
-            print("Before writing to database")
-            # write to database
-            write_to_db("host", {"name": name, "ipv4": ipv4, "ipv6": ipv6})
-            print("After writing to database")
-            # get the last host id
-            host_id = check_ipv4_exists(ipv4, method="id")
-            print("Host ID:", host_id)
-            # write ports to database
-            for portFB in portsFB:
-                print("Writing port:", portFB)
-                write_to_db("portFB", {"host_id": host_id, "portFB_number": portFB})
-            # write tags to database
-            for tag in tags:
-                print("Writing tag:", tag)
-                write_to_db("tag", {"tag_name": tag})
-                tag_id = check_tag_exists(tag, method="id")
-                write_to_db("host_tag", {"host_id": host_id, "tag_id": tag_id})
-            db.session.commit()
+        formData = request.form
+        if not check_ipv4_exists(formData.get("ipv4")):
+            write_host_to_db(formData)
             data = return_json_format()
-            print("Before rendering template")
             return render_template("ip/list.html", data=data)
-        return "IP address already exists"
+        else:
+            return "IP address already exists"
 
 
 @bp_atlas.route("/ip/update/<int:id>", methods=["POST"])

@@ -59,6 +59,36 @@ def write_to_db(table, data):
         db.session.add(portFB)
     else:
         print("Error: table not found")
+
+# function which writes an host to the db
+def write_host_to_db(formData):
+    name = formData.get("name")
+    tags = formData.get("tags")
+    ipv4 = formData.get("ipv4")
+    ipv6 = formData.get("ipv6")
+    portsFB = formData.get("portsFB")
+    tags = formData.get("tags")
+    
+    if portsFB:
+        portsFB = portsFB.split(",")
+    if tags:
+        tags = tags.split(",")
+
+    # check if ipv4 exists        
+    if not check_ipv4_exists(ipv4):
+        # write to database
+        write_to_db("host", {"name": name, "ipv4": ipv4, "ipv6": ipv6})
+        # get the last host id
+        host_id = check_ipv4_exists(ipv4, method="id")
+        # write ports to database
+        for portFB in portsFB:
+            write_to_db("portFB", {"host_id": host_id, "portFB_number": portFB})
+        # write tags to database
+        for tag in tags:
+            write_to_db("tag", {"tag_name": tag})
+            tag_id = check_tag_exists(tag, method="id")
+            write_to_db("host_tag", {"host_id": host_id, "tag_id": tag_id})
+        db.session.commit()
     
 
 # function which deletes the given data from the table
