@@ -73,14 +73,37 @@ def delete_from_db(table, id):
         tag = Tag.query.filter_by(id=id).first()
         tag.deleted = True
     elif table == "host_tag":
-        host_tag = HostTag.query.filter_by(id=id).first()
+        host_id, tag_id = id.split("_")
+        host_tag = HostTag.query.filter_by(host_id=host_id, tag_id=tag_id).first()
         db.session.delete(host_tag)
     elif table == "portFB":
         portFB = PortFB.query.filter_by(id=id).first()
         db.session.delete(portFB)
     else:
         print("Error: table not found")
-
+        
+# function which deletes an host from the table by the given id
+def delete_host_by_id(id):
+    host = get_host_by_id(id)
+    portsFB = host["portsFB"]
+    tags = host["tags"]
+    
+    print("Deleting host with ID:", id)
+    delete_from_db("host", id)    
+    for portFB in portsFB:
+        portFBID = check_portFB_exists(portFB, method="id")
+        print("Deleting portFB with ID:", portFBID)
+        delete_from_db("portFB", portFBID)
+    for tag in tags:
+        tagID = check_tag_exists(tag, method="id")
+        print("Deleting host_tag with ID:", tagID)
+    # delete host_tag
+    for tag in tags:
+        tagID = check_tag_exists(tag, method="id")
+        print("Deleting host_tag with ID:", id, tagID)
+        delete_from_db("host_tag", f"{id}_{tagID}")
+    print("Host with id: ", id, " deleted")
+    db.session.commit()
 
 # function which updates the given data in the table
 def edit_db(table, data):

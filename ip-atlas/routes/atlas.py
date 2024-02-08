@@ -113,10 +113,8 @@ def update_ip(id):
 def delete(id):
     id = int(id)
     confirmed = request.args.get("confirmed")
-    data = loadJson()
-
     if confirmed == "true":
-        deleteHost(id)
+        delete_host_by_id(id)    
         return jsonify(success=True)
     else:
         return jsonify(success=False, message="Deletion not confirmed")
