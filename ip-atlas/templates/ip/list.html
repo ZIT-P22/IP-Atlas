@@ -154,7 +154,7 @@
                 <tr data-id="{{ host.id }}" class="transition duration-150 ease-in-out border-b hover:bg-gray-700 hover:bg-opacity-25">
                     <td class="hidden p-4 align-middle edit-field md:table-cell">{{ host.name }}</td>
                     <td class="p-4 font-medium align-middle edit-field">{{ host.ip }}</td>
-                    <td class="p-4 align-middle edit-field">{{ host.ports|join(", ") }}</td>
+                    <td class="p-4 align-middle edit-field">{{ host.portsFB|join(", ") }}</td>
                     <td class="p-4 align-middle edit-field">
                         {% if host.tags %}
                         {{ host.tags|join(", ") }}

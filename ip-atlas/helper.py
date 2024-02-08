@@ -2,6 +2,20 @@ import json
 import os
 import platform
 import subprocess
+from models import Host, Port, Tag
+
+#! db functions
+
+# function which checks if the given tag exists in the database and returns the id if it exists
+def tag_exists(tag_name, method="bool"):
+    tag = Tag.query.filter_by(tag_name=tag_name).first()
+    if method == "id":
+        if tag:
+            return tag.id
+        else:
+            return None
+    else:
+        return tag is not None
 
 
 # checks if the json document is there

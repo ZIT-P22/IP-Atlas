@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, abort, jsonify
 from jinja2 import TemplateNotFound
 from helper import *
 from filter import *
-from models import Host, Port, Tag
+from crud import *
 
 bp_atlas = Blueprint("atlas", __name__)
 
@@ -16,17 +16,10 @@ def index():
 
 @bp_atlas.route("/ip/list")
 def list():
-    hosts = Host.query.all()
     data = {"hosts": []}
+    hosts = read_all_hosts()
     for host in hosts:
-        host_data = {
-            "id": host.id,
-            "name": host.hostname,
-            "ip": host.ipv4,  # Assuming ipv4 is the primary IP to display
-            "ports": [port.port_number for port in host.ports],
-            "tags": [host_tag.tag.tag_name for host_tag in host.tags],  # Adjusted line
-        }
-        data["hosts"].append(host_data)
+        data["hosts"].append(convert_to_json_format(host))
     return render_template("ip/list.html", data=data)
 
 
