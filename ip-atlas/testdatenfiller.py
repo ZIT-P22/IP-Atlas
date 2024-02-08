@@ -6,7 +6,7 @@ import random
 from app import atlasapp
 
 # Assuming your database URI is stored in a variable or directly provided
-DATABASE_URI = atlasapp.config["SQLALCHEMY_DATABASE_URI"]
+DATABASE_URI = "sqlite:////home/leon/Documents/GitHub/IP-Atlas/database/ip_atlas.db"
 engine = create_engine(DATABASE_URI)
 Session = sessionmaker(bind=engine)
 
@@ -31,8 +31,8 @@ def generate_test_data(num_hosts=50):
         for port_number in ports_numbers:
             port = Port(host_id=host.id, port_number=port_number)
             session.add(port)
-            
-        # Create Port instances for FB
+
+        # Create PortFB instances
         for portFB_number in portsFB_numbers:
             portFB = PortFB(host_id=host.id, portFB_number=portFB_number)
             session.add(portFB)
