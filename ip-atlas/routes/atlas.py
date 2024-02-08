@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, request, abort, jsonify
 from jinja2 import TemplateNotFound
-from helper import *
 from filter import *
 from crud import *
 from colorama import Fore, Style
@@ -70,28 +69,29 @@ def save():
             # convert tags from comma separated to list
             tags = tags.split(",")
 
-        print(Fore.RED + "Das sind die Inputs:", name, ipv4, ipv6, portsFB, tags + Style.RESET_ALL)
+        print("Das sind die Inputs:", name, ipv4, ipv6, portsFB, tags)
         # check if ipv4 exists        
         if not check_ipv4_exists(ipv4):
-            print(Fore.RED + "Before writing to database" + Style.RESET_ALL)
+            print("Before writing to database")
             # write to database
             write_to_db("host", {"name": name, "ipv4": ipv4, "ipv6": ipv6})
-            print(Fore.RED + "After writing to database" + Style.RESET_ALL)
+            print("After writing to database")
             # get the last host id
             host_id = check_ipv4_exists(ipv4, method="id")
-            print(Fore.RED + "Host ID:", host_id + Style.RESET_ALL)
+            print("Host ID:", host_id)
             # write ports to database
             for portFB in portsFB:
-                print(Fore.RED + "Writing port:", portFB + Style.RESET_ALL)
+                print("Writing port:", portFB)
                 write_to_db("portFB", {"host_id": host_id, "portFB_number": portFB})
             # write tags to database
             for tag in tags:
-                print(Fore.RED + "Writing tag:", tag + Style.RESET_ALL)
+                print("Writing tag:", tag)
                 write_to_db("tag", {"tag_name": tag})
                 tag_id = check_tag_exists(tag, method="id")
                 write_to_db("host_tag", {"host_id": host_id, "tag_id": tag_id})
+            db.session.commit()
             data = return_json_format()
-            print(Fore.RED + "Before rendering template" + Style.RESET_ALL)
+            print("Before rendering template")
             return render_template("ip/list.html", data=data)
         return "IP address already exists"
 
