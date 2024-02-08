@@ -5,7 +5,6 @@ import ipaddress
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
 from datetime import datetime
 
-
 class Host(db.Model):
     __tablename__ = "hosts"
     id = Column(Integer, primary_key=True, autoincrement=True)

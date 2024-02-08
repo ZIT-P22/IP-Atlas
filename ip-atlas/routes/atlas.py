@@ -3,6 +3,7 @@ from jinja2 import TemplateNotFound
 from helper import *
 from filter import *
 from crud import *
+from colorama import Fore, Style
 
 bp_atlas = Blueprint("atlas", __name__)
 
@@ -16,10 +17,7 @@ def index():
 
 @bp_atlas.route("/ip/list")
 def list():
-    data = {"hosts": []}
-    hosts = read_all_hosts()
-    for host in hosts:
-        data["hosts"].append(convert_to_json_format(host))
+    data = return_json_format()
     return render_template("ip/list.html", data=data)
 
 
@@ -57,20 +55,45 @@ def save():
         tags = request.form.get("tags")
         ipv4 = request.form.get("ipv4")
         ipv6 = request.form.get("ipv6")
-        ports = request.form.get("ports")
+        portsFB = request.form.get("portsFB")
         tags = request.form.get("tags")
 
-        if ports:
+        # if not ipv4:
+        #     ipv4 = None
+        # if not ipv6:
+        #     ipv6 = None
+        
+        if portsFB:
             # convert ports from comma separated to list
-            ports = ports.split(",")
+            portsFB = portsFB.split(",")
         if tags:
             # convert tags from comma separated to list
             tags = tags.split(",")
 
-        # print(name, ipv4, ipv6, ports)
-        writeJson(name, ipv4, tags, ipv6, ports)
-        data = loadJson()
-    return render_template("ip/list.html", data=data)
+        print(Fore.RED + "Das sind die Inputs:", name, ipv4, ipv6, portsFB, tags + Style.RESET_ALL)
+        # check if ipv4 exists        
+        if not check_ipv4_exists(ipv4):
+            print(Fore.RED + "Before writing to database" + Style.RESET_ALL)
+            # write to database
+            write_to_db("host", {"name": name, "ipv4": ipv4, "ipv6": ipv6})
+            print(Fore.RED + "After writing to database" + Style.RESET_ALL)
+            # get the last host id
+            host_id = check_ipv4_exists(ipv4, method="id")
+            print(Fore.RED + "Host ID:", host_id + Style.RESET_ALL)
+            # write ports to database
+            for portFB in portsFB:
+                print(Fore.RED + "Writing port:", portFB + Style.RESET_ALL)
+                write_to_db("portFB", {"host_id": host_id, "portFB_number": portFB})
+            # write tags to database
+            for tag in tags:
+                print(Fore.RED + "Writing tag:", tag + Style.RESET_ALL)
+                write_to_db("tag", {"tag_name": tag})
+                tag_id = check_tag_exists(tag, method="id")
+                write_to_db("host_tag", {"host_id": host_id, "tag_id": tag_id})
+            data = return_json_format()
+            print(Fore.RED + "Before rendering template" + Style.RESET_ALL)
+            return render_template("ip/list.html", data=data)
+        return "IP address already exists"
 
 
 @bp_atlas.route("/ip/update/<int:id>", methods=["POST"])

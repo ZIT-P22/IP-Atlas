@@ -2,12 +2,13 @@ import json
 import os
 import platform
 import subprocess
-from models import Host, Port, Tag
+from models import Host, Port, Tag, PortFB
+
 
 #! db functions
 
 # function which checks if the given tag exists in the database and returns the id if it exists
-def tag_exists(tag_name, method="bool"):
+def check_tag_exists(tag_name, method="bool"):
     tag = Tag.query.filter_by(tag_name=tag_name).first()
     if method == "id":
         if tag:
@@ -16,6 +17,39 @@ def tag_exists(tag_name, method="bool"):
             return None
     else:
         return tag is not None
+    
+
+# check if the given portFB exists in the database
+def check_portFB_exists(portFB_number, method="bool"):
+    portFB = PortFB.query.filter_by(portFB_number=portFB_number).first()
+    if method == "id":
+        if portFB:
+            return portFB.id
+        else:
+            return None
+    elif method == "bool":
+        return portFB is not None
+    else:
+        print("Error: Method not found")
+
+
+
+# check if the given ipv4 already exists in the database
+def check_ipv4_exists(ipv4 ,method="bool"):
+    host = Host.query.filter_by(ipv4=ipv4).first()
+    if method == "id":
+        if host:
+            return host.id
+        else:
+            return None
+    elif method == "bool":
+        return host is not None
+    else:
+        print("Error: Method not found")
+
+
+
+
 
 
 # checks if the json document is there
@@ -194,6 +228,7 @@ def updateIpAddressById(id, data):
     else:
         print("JSON document is empty.")
         return False
+
 
 
 #! trash json

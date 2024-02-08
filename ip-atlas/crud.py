@@ -7,6 +7,7 @@ from helper import *
 
 
 
+
 # function which converts the given data from db to the json format
 def convert_to_json_format(host):
     host_data = {
@@ -18,6 +19,14 @@ def convert_to_json_format(host):
         "tags": [host_tag.tag.tag_name for host_tag in host.tags],
     }
     return host_data
+
+# creates the json format after the data is loaded from the database
+def return_json_format():
+    data = {"hosts": []}
+    hosts = read_all_hosts()
+    for host in hosts:
+        data["hosts"].append(convert_to_json_format(host))
+    return data
 
 # function which reads the host from the database by the given id
 def get_host_by_id(id):
