@@ -45,9 +45,57 @@ def write_to_db(db, data):
     elif db == "host_tag":
         host_tag = HostTag(host_id=data["host_id"], tag_id=data["tag_id"])
         db.session.add(host_tag)
-    db.session.commit()
+    elif db == "portFB":
+        portFB = PortFB(host_id=data["host_id"], portFB_number=data["portFB_number"])
+        db.session.add(portFB)
+    else:
+        print("Error: Database not found")
+    
+
+# function which deletes the given data from the database
+def delete_from_db(db, id):
+    if db == "host":
+        host = Host.query.filter_by(id=id).first()
+        host.deleted = True
+    elif db == "port":
+        port = Port.query.filter_by(id=id).first()
+        db.session.delete(port)
+    elif db == "tag":
+        tag = Tag.query.filter_by(id=id).first()
+        tag.deleted = True
+    elif db == "host_tag":
+        host_tag = HostTag.query.filter_by(id=id).first()
+        db.session.delete(host_tag)
+    elif db == "portFB":
+        portFB = PortFB.query.filter_by(id=id).first()
+        db.session.delete(portFB)
+    else:
+        print("Error: Database not found")
 
 
 # function which updates the given data in the database
+def edit_db(db, data):
+    if db == "host":
+        host = Host.query.filter_by(id=data["id"]).first()
+        host.hostname = data["name"]
+        host.ipv4 = data["ipv4"]
+        host.ipv6 = data["ipv6"]
+    elif db == "port":
+        port = Port.query.filter_by(id=data["id"]).first()
+        port.port_number = data["port_number"]
+    elif db == "tag":
+        tag = Tag.query.filter_by(id=data["id"]).first()
+        tag.tag_name = data["tag_name"]
+    elif db == "host_tag":
+        host_tag = HostTag.query.filter_by(id=data["id"]).first()
+        host_tag.host_id = data["host_id"]
+        host_tag.tag_id = data["tag_id"]
+    elif db == "portFB":
+        portFB = PortFB.query.filter_by(id=data["id"]).first()
+        portFB.portFB_number = data["portFB_number"]
+    else:
+        print("Error: Database not found")
+        
+
 
 
