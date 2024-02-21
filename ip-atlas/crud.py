@@ -21,9 +21,9 @@ def convert_to_json_format(host):
     return host_data
 
 # creates the json format after the data is loaded from the table
-def return_json_format():
+def return_json_format(type="all"):
     data = {"hosts": []}
-    hosts = read_all_hosts()
+    hosts = read_all_hosts(type)
     for host in hosts:
         data["hosts"].append(convert_to_json_format(host))
     return data
@@ -36,8 +36,13 @@ def get_host_by_id(id):
 #
 
 # function which reads all hosts from the table where the attribute deleted is set to false
-def read_all_hosts():
-    hosts = Host.query.filter_by(deleted=False).all()
+def read_all_hosts(type):
+    if type == "all":
+        hosts = Host.query.filter_by(deleted=False).all()
+    elif type == "deleted":
+        hosts = Host.query.filter_by(deleted=True).all()
+    else:
+        print("Error: type not found")
     return hosts
 
 # function which writes the given data to the table
@@ -113,26 +118,33 @@ def delete_from_db(table, id):
         print("Error: table not found")
         
 # function which deletes an host from the table by the given id
-def delete_host_by_id(id):
+def delete_host_by_id(id, type="trashcan"):
     host = get_host_by_id(id)
     portsFB = host["portsFB"]
     tags = host["tags"]
     
     print("Deleting host with ID:", id)
-    delete_from_db("host", id)    
-    for portFB in portsFB:
-        portFBID = check_portFB_exists(portFB, method="id")
-        print("Deleting portFB with ID:", portFBID)
-        delete_from_db("portFB", portFBID)
-    for tag in tags:
-        tagID = check_tag_exists(tag, method="id")
-        print("Deleting host_tag with ID:", tagID)
-    # delete host_tag
-    for tag in tags:
-        tagID = check_tag_exists(tag, method="id")
-        print("Deleting host_tag with ID:", id, tagID)
-        delete_from_db("host_tag", f"{id}_{tagID}")
+    delete_from_db("host", id)
+    if type == "complete":
+        for portFB in portsFB:
+            portFBID = check_portFB_exists(portFB, method="id")
+            print("Deleting portFB with ID:", portFBID)
+            delete_from_db("portFB", portFBID)
+        for tag in tags:
+            tagID = check_tag_exists(tag, method="id")
+            print("Deleting host_tag with ID:", tagID)
+        # delete host_tag
+        for tag in tags:
+            tagID = check_tag_exists(tag, method="id")
+            print("Deleting host_tag with ID:", id, tagID)
+            delete_from_db("host_tag", f"{id}_{tagID}")
     print("Host with id: ", id, " deleted")
+    db.session.commit()
+    
+# function which reverts the deletion of an host from the table by the given id
+def revert_host_by_id(id):
+    host = Host.query.filter_by(id=id).first()
+    host.deleted = False
     db.session.commit()
     
 #deletes the portsFB from one host

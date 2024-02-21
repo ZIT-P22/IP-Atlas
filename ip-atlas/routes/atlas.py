@@ -155,8 +155,7 @@ def filter():
 #! Trashcan
 @bp_atlas.route("/ip/trashcan/list")
 def listTrashcan():
-    createJson()
-    data = loadTrashJson()
+    data = return_json_format("deleted")
     return render_template("ip/trashcan/list.html", data=data)
 
 
@@ -164,13 +163,13 @@ def listTrashcan():
 def revertTrashcan(id):
     id = int(id)
     confirmed = request.args.get("confirmed")
-    data = loadTrashJson()
-
+    
     if confirmed == "true":
-        deleteTrashHost(id)
-        # print("Host with id: ", id, " deleted")
+        revert_host_by_id(id)
+        data = return_json_format()
         return render_template("ip/trashcan/list.html", data=data)
     else:
+        data = return_json_format()
         return render_template("ip/trashcan/list.html", data=data)
 
 
