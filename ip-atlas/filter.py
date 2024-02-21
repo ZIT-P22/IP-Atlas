@@ -99,9 +99,9 @@ def filterByPort(search, data):
     # for host in data:
     if not search in goThrough:
         for i in range(len(data["hosts"])):
-            dataPorts = data["hosts"][i]["ports"]
-            for port in dataPorts:
-                if search in port:
+            dataPortsFB = data["hosts"][i]["portsFB"]
+            for portFB in dataPortsFB:
+                if search in portFB:
                     result["hosts"].append(data["hosts"][i])
                     break
         return result
@@ -129,6 +129,8 @@ def filterByTags(search, data):
 
 def filterAll(ip, name, port, tag, data):
     result = data
+    print("Filter: ", ip, name, port, tag)
+    print("Data: ", data)
     if ip != "":
         ip = devideIp(ip)
         result = filterByIp(ip[0], ip[1], ip[2], ip[3], result)
