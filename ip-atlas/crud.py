@@ -160,29 +160,35 @@ def edit_db(table, data):
 
 # function which writes the edits to the db
 def write_edit_db(formData):
-    id = formData.get("id")
-    name = formData.get("name")
-    tags = formData.get("tags")
-    ipv4 = formData.get("ipv4")
-    ipv6 = formData.get("ipv6")
-    portsFB = formData.get("portsFB")
-    tags = formData.get("tags")
-    print("ID:", id, "Name:", name, "Tags:", tags, "IPv4:", ipv4, "IPv6:", ipv6, "PortsFB:", portsFB)
+    try:
+        id = formData.get("id")
+        name = formData.get("name")
+        tags = formData.get("tags")
+        ipv4 = formData.get("ipv4")
+        ipv6 = formData.get("ipv6")
+        portsFB = formData.get("portsFB")
+        tags = formData.get("tags")
+        print("ID:", id, "Name:", name, "Tags:", tags, "IPv4:", ipv4, "IPv6:", ipv6, "PortsFB:", portsFB)
+        
+        # if portsFB:
+        #     portsFB = ','.join(portsFB)
+        # if tags:
+        #     tags = ','.join(tags)
+
     
-    # if portsFB:
-    #     portsFB = ','.join(portsFB)
-    # if tags:
-    #     tags = ','.join(tags)
+        edit_db("host", {"id": id, "name": name, "ipv4": ipv4, "ipv6": ipv6})
 
-  
-    edit_db("host", {"id": id, "name": name, "ipv4": ipv4, "ipv6": ipv6})
+        # host_id = id
+        # for portFB in portsFB.split(","):
+        #     edit_db("portFB", {"id": portFB, "portFB_number": portFB})
 
-    # host_id = id
-    # for portFB in portsFB.split(","):
-    #     edit_db("portFB", {"id": portFB, "portFB_number": portFB})
-
-    # for tag in tags.split(","):
-    #     edit_db("tag", {"id": tag, "tag_name": tag})
-    #     tag_id = tag
-    #     edit_db("host_tag", {"id": f"{host_id}_{tag_id}", "host_id": host_id, "tag_id": tag_id})
-    db.session.commit()
+        # for tag in tags.split(","):
+        #     edit_db("tag", {"id": tag, "tag_name": tag})
+        #     tag_id = tag
+        #     edit_db("host_tag", {"id": f"{host_id}_{tag_id}", "host_id": host_id, "tag_id": tag_id})
+        db.session.commit()
+        return True
+    except Exception as e:
+        print("Error:", e)
+        db.session.rollback()
+        return False

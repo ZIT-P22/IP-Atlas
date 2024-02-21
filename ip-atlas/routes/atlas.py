@@ -64,13 +64,11 @@ def update_ip(id):
     print(Fore.RED + "Update IP" + Style.RESET_ALL)
     if request.method == "POST":
         data = request.json
-        # add id to data
         data["id"] = id
-        print(data)
+        # print(data)
         
-        write_edit_db(data)
-        
-        success = False
+        success = write_edit_db(data)
+         
         if success:
             return jsonify({"message": "IP address updated successfully"}), 200
         else:
