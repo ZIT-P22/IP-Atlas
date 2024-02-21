@@ -9,8 +9,7 @@ bp_atlas = Blueprint("atlas", __name__)
 
 @bp_atlas.route("/")
 def index():
-    createJson()
-    data = loadJson()
+    data = return_json_format()
     return render_template("dashboard.html", data=data)
 
 
@@ -130,7 +129,7 @@ def search():
 
 @bp_atlas.route("/filter", methods=["GET"])
 def filter():
-    data = loadJson()
+    data = return_json_format()
     # Retrieve query parameters
     name = request.args.get("name", "")
     ipocted1 = request.args.get("ipocted1", "")
