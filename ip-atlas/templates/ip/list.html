@@ -304,8 +304,8 @@
         function gatherUpdatedData($row) {
             return {
                 name: $row.find('td:eq(0) input').val(),
-                ip: $row.find('td:eq(1) input').val(),
-                ports: $row.find('td:eq(2) input').val().split(',').map(item => parseInt(item.trim(), 10)),
+                ipv4: $row.find('td:eq(1) input').val(),
+                portsFB: $row.find('td:eq(2) input').val().split(',').map(item => parseInt(item.trim(), 10)),
                 tags: $row.find('td:eq(3) input').val().split(',').map(item => item.trim())
             };
         }

@@ -16,5 +16,6 @@
             "database": "${workspaceFolder:IP-Atlas}/database/ip_atlas.db",
             "name": "ip-atlas"
         }
-    ]
+    ],
+    "codeQL.githubDatabase.update": "never"
 }

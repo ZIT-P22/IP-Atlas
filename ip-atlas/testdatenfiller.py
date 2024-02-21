@@ -6,7 +6,7 @@ import random
 from app import atlasapp
 
 # Assuming your database URI is stored in a variable or directly provided
-DATABASE_URI = "sqlite:////home/leon/Documents/GitHub/IP-Atlas/database/ip_atlas.db"
+DATABASE_URI = "sqlite:///C:/home/janneck/repos/IP-Atlas/database/ip_atlas.db"
 engine = create_engine(DATABASE_URI)
 Session = sessionmaker(bind=engine)
 
@@ -54,3 +54,8 @@ def generate_test_data(num_hosts=50):
 
 
 generate_test_data()
+
+host  = Host.query.filter_by(id=1).first()
+print(host.hostname)
+host.hostname = "test"
+db.session.commit()

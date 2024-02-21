@@ -61,10 +61,16 @@ def save():
 
 @bp_atlas.route("/ip/update/<int:id>", methods=["POST"])
 def update_ip(id):
+    print(Fore.RED + "Update IP" + Style.RESET_ALL)
     if request.method == "POST":
         data = request.json
-        # Assuming you have a function to update the IP address by ID
-        success = updateIpAddressById(id, data)
+        # add id to data
+        data["id"] = id
+        print(data)
+        
+        write_edit_db(data)
+        
+        success = False
         if success:
             return jsonify({"message": "IP address updated successfully"}), 200
         else:
