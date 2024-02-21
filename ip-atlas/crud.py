@@ -134,6 +134,26 @@ def delete_host_by_id(id):
         delete_from_db("host_tag", f"{id}_{tagID}")
     print("Host with id: ", id, " deleted")
     db.session.commit()
+    
+#deletes the portsFB from one host
+def delete_portsFB_by_host_id(id):
+    host = get_host_by_id(id)
+    portsFB = host["portsFB"]
+    for portFB in portsFB:
+        portFBID = check_portFB_exists(portFB, method="id")
+        print("Deleting portFB with ID:", portFBID)
+        delete_from_db("portFB", portFBID)
+    db.session.commit() 
+    
+#deletes the tags from one host
+def delete_tags_by_host_id(id):
+    host = get_host_by_id(id)
+    tags = host["tags"]
+    for tag in tags:
+        tagID = check_tag_exists(tag, method="id")
+        print("Deleting host_tag with ID:", id, tagID)
+        delete_from_db("host_tag", f"{id}_{tagID}")
+    db.session.commit()
 
 # function which updates the given data in the table
 def edit_db(table, data):
@@ -170,22 +190,28 @@ def write_edit_db(formData):
         tags = formData.get("tags")
         print("ID:", id, "Name:", name, "Tags:", tags, "IPv4:", ipv4, "IPv6:", ipv6, "PortsFB:", portsFB)
         
-        # if portsFB:
-        #     portsFB = ','.join(portsFB)
-        # if tags:
-        #     tags = ','.join(tags)
-
     
         edit_db("host", {"id": id, "name": name, "ipv4": ipv4, "ipv6": ipv6})
-
-        # host_id = id
-        # for portFB in portsFB.split(","):
-        #     edit_db("portFB", {"id": portFB, "portFB_number": portFB})
-
-        # for tag in tags.split(","):
-        #     edit_db("tag", {"id": tag, "tag_name": tag})
-        #     tag_id = tag
-        #     edit_db("host_tag", {"id": f"{host_id}_{tag_id}", "host_id": host_id, "tag_id": tag_id})
+        # firstly delete all ports which are in the db for the host then add the new ones
+        delete_portsFB_by_host_id(id)
+        for portFB in portsFB:
+            print("PortFB:", portFB)
+            portFBID = check_portFB_exists(portFB, method="id")
+            if portFBID:
+                print("Port ", portFB, " gibt es schon")
+            else:
+                write_to_db("portFB", {"host_id": id, "portFB_number": portFB})
+        # delete all tags which are in the db for the host then add the new ones
+        delete_tags_by_host_id(id)
+        for tag in tags:
+            print("Tag:", tag)
+            tagID = check_tag_exists(tag, method="id")
+            if tagID:
+                write_to_db("host_tag", {"host_id": id, "tag_id": tagID})
+            else:
+                write_to_db("tag", {"tag_name": tag})
+                tagID = check_tag_exists(tag, method="id")
+                write_to_db("host_tag", {"host_id": id, "tag_id": tagID})
         db.session.commit()
         return True
     except Exception as e:

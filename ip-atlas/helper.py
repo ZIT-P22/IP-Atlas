@@ -52,6 +52,9 @@ def check_ipv4_exists(ipv4 ,method="bool"):
 
 
 
+
+
+
 # checks if the json document is there
 def checkJson():
     if checkDokument(gPath):
