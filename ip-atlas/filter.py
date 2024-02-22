@@ -101,6 +101,7 @@ def filterByPort(search, data):
         for i in range(len(data["hosts"])):
             dataPortsFB = data["hosts"][i]["portsFB"]
             for portFB in dataPortsFB:
+                portFB = str(portFB)
                 if search in portFB:
                     result["hosts"].append(data["hosts"][i])
                     break
