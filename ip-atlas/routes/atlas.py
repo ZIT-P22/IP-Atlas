@@ -1,5 +1,4 @@
 from flask import Blueprint, render_template, request, abort, jsonify
-from jinja2 import TemplateNotFound
 from filter import *
 from crud import *
 from colorama import Fore, Style
@@ -26,20 +25,10 @@ def ping_ip(ip_address):
     return jsonify({"pingable": pingable})
 
 
-@bp_atlas.route("/ip/<id>")
-def show(id):
-    createJson()
-    # get type of id
-    id = int(id)
-    # print("ID:",id,":")
-    data = getHostById(id)
-    # print("Daten der ID: ", id, " :", data)
-    return render_template("ip/show.html", data=data)
+
 
 
 # add new host
-
-
 @bp_atlas.route("/ip/add")
 def add():
     return render_template("ip/add.html")
@@ -86,15 +75,6 @@ def delete(id):
         return jsonify(success=False, message="Deletion not confirmed")
 
 
-# confirm delete host
-
-
-@bp_atlas.route("/ip/confirmdel/<id>")
-def confirmdel(id):
-    id = int(id)
-    data = getHostById(id)
-    return render_template("ip/confirmdel.html", data=data)
-
 
 @bp_atlas.route("/port/list")
 def port():
@@ -114,7 +94,7 @@ def search():
     search_type = request.args.get("search_type", default="ip", type=str)
 
     # Load the JSON data
-    data = loadJson()
+    data = return_json_format()
 
     # Filter the data based on the search parameters
     if search_type in ["ip", "name", "port", "tag"]:
@@ -174,7 +154,7 @@ def revertTrashcan(id):
 
 @bp_atlas.route("/filter/trashcan", methods=["GET"])
 def filterTrashcan():
-    data = loadTrashJson()
+    data = return_json_format("deleted")
     # Retrieve query parameters
     name = request.args.get("name", "")
     ipocted1 = request.args.get("ipocted1", "")
