@@ -1,7 +1,44 @@
 {% extends "layout.html" %} {% block content %}
+    <h1>Einstellungen</h1>
+    
+    <h2>IP-Adressbereich</h2>
+    <p>Geben Sie den IP-Adressbereich in CIDR-Notation an, der gescannt werden soll.</p>
+    
+    <h2>Scan-Dauer-Warnung</h2>
+    <p>Je größer der Bereich, desto länger dauert der Scan. Bitte haben Sie Geduld.</p>
+    
+    <h2>Zu scannende Subnetze</h2>
+    <p>Geben Sie die zu scannenden Subnetze an. Sie können Subnetze nach Bedarf hinzufügen oder entfernen.</p>
+    
+    <h2>Scan-Methode</h2>
+    <p>Wählen Sie die zu verwendende Scan-Methode aus.</p>
+    
+    <h2>Scan-Frequenz</h2>
+    <p>Geben Sie an, wie oft der Scan durchgeführt werden soll.</p>
+    
+    <!-- Optional -->
+    <h2>Seitentitel / Organisationsname</h2>
+    <p>Geben Sie den Titel für die Seite oder Organisation an.</p>
+    
+    <form>
+        <label for="ipRange">IP-Adressbereich:</label>
+        <input type="text" id="ipRange" name="ipRange">
 
-<h1>
-    Baustelle
-</h1>
+        <label for="ipSubnets">Zu scannende Subnetze:</label>
+        <input type="text" id="ipSubnets" name="ipSubnets">
+        
+        <label for="scanMethod">Scan-Methode:</label>
+        <select id="scanMethod" name="scanMethod">
+            <option value="ping">Ping</option>
+            <option value="tcp">TCP</option>
+            <option value="udp">UDP</option>
+        </select>
+        
+        
+        <label for="pageTitle">Seitentitel / Organisationsname:</label>
+        <input type="text" id="pageTitle" name="pageTitle">
+        
+        <button type="submit">Einstellungen speichern</button>
+    </form>
 
 {% endblock %}

@@ -102,7 +102,11 @@ def filterByPort(search, data):
             dataPortsFB = data["hosts"][i]["portsFB"]
             for portFB in dataPortsFB:
                 portFB = str(portFB)
-                if search in portFB:
+                if search == portFB:
+                    result = {"hosts": []}
+                    result["hosts"].append(data["hosts"][i])
+                    return result
+                elif search in portFB:
                     result["hosts"].append(data["hosts"][i])
                     break
         return result
