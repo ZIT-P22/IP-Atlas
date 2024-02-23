@@ -17,9 +17,12 @@ atlasapp.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 # Register the blueprints
 from routes.atlas import bp_atlas
 from routes.settings import bp_settings
+from routes.scan import bp_scan
 
 atlasapp.register_blueprint(bp_atlas)
 atlasapp.register_blueprint(bp_settings)
+atlasapp.register_blueprint(bp_scan)
+
 
 # Initialize SQLAlchemy with the Flask app
 db.init_app(atlasapp)
