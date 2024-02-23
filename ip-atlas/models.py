@@ -1,4 +1,4 @@
-from database import db
+from extensions import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import validates
 import ipaddress

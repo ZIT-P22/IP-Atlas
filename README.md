@@ -50,7 +50,7 @@ python ip-atlas/app.py
 ```
 
 ## Routes
-Application routes are defined in the [`bp_atlas`](ip-atlas/routes/atlas.py) module.
+Application routes are defined in the [`atlas`](ip-atlas/routes/atlas.py) module.
 
 
 ## License

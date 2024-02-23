@@ -1,6 +1,10 @@
 from flask import Flask
 import os
-from database import db
+from models import *
+from extensions import db, migrate
+from routes.atlas import atlas
+from routes.settings import settings
+from routes.scan import scan
 
 atlasapp = Flask(__name__, static_folder="static", template_folder="templates")
 
@@ -15,17 +19,15 @@ atlasapp.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 atlasapp.config['SECRET_KEY']='DasWasWer-42'
 
 # Register the blueprints
-from routes.atlas import bp_atlas
-from routes.settings import bp_settings
-from routes.scan import bp_scan
 
-atlasapp.register_blueprint(bp_atlas)
-atlasapp.register_blueprint(bp_settings)
-atlasapp.register_blueprint(bp_scan)
+atlasapp.register_blueprint(atlas)
+atlasapp.register_blueprint(settings)
+atlasapp.register_blueprint(scan)
 
 
 # Initialize SQLAlchemy with the Flask app
 db.init_app(atlasapp)
+migrate.init_app(atlasapp, db)
 
 if __name__ == "__main__":
     with atlasapp.app_context():

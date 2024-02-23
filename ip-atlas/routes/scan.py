@@ -2,9 +2,9 @@ from utils.helper import *
 from utils.scanner import run_scan
 from flask import Blueprint, jsonify, render_template
 
-bp_scan = Blueprint("scan", __name__)
+scan = Blueprint("scan", __name__)
 
-@bp_scan.route("/discovered")
+@scan.route("/discovered")
 def discovered():
     # Instead of loading data from a JSON file, we'll create a sample data dictionary directly in the code.
     # This sample data mimics the structure that would be expected by the 'ip/discovered.html' template.
@@ -19,7 +19,7 @@ def discovered():
     return render_template("ip/discovered.html", data=data)
 
 
-@bp_scan.route("/scan/fast")
+@scan.route("/scan/fast")
 def scan_fast():
     # Define the IP range for the scan
     ip_range = "192.168.178.0/24"
@@ -33,7 +33,7 @@ def scan_fast():
         return jsonify({"error": str(e)}), 500
 
 
-@bp_scan.route("/scan/advanced")
+@scan.route("/scan/advanced")
 def scan_advanced():
     # Define the IP range for the scan
     ip_range = "192.168.178.0/24"
