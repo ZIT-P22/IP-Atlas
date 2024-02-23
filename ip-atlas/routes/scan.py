@@ -4,6 +4,7 @@ from flask import Blueprint, jsonify, render_template
 
 scan = Blueprint("scan", __name__)
 
+
 @scan.route("/discovered")
 def discovered():
     # Instead of loading data from a JSON file, we'll create a sample data dictionary directly in the code.

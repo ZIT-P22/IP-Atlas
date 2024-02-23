@@ -12,11 +12,12 @@ atlasapp = Flask(__name__, static_folder="static", template_folder="templates")
 database_dir = os.path.join(os.getcwd(), "database")
 if not os.path.exists(database_dir):
     os.makedirs(database_dir)
-atlasapp.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(database_dir, "ip_atlas.db")
+atlasapp.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + \
+    os.path.join(database_dir, "ip_atlas.db")
 print(atlasapp.config["SQLALCHEMY_DATABASE_URI"])
 atlasapp.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-atlasapp.config['SECRET_KEY']='DasWasWer-42'
+atlasapp.config['SECRET_KEY'] = 'DasWasWer-42'
 
 # Register the blueprints
 
