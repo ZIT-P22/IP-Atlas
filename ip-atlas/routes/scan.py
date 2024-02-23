@@ -1,5 +1,5 @@
-from helper import *
-from scanner import run_scan
+from utils.helper import *
+from utils.scanner import run_scan
 from flask import Blueprint, jsonify, render_template
 
 bp_scan = Blueprint("scan", __name__)

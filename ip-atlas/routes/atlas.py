@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, abort, jsonify
-from filter import *
-from crud import *
+from utils.filter import *
+from utils.crud import *
 from colorama import Fore, Style
 
 bp_atlas = Blueprint("atlas", __name__)

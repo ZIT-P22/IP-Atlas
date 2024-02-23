@@ -3,7 +3,7 @@
 # Author: Janneck Lehmann
 # Date: 2024-02-07
 from models import db, Host, Tag, Port, HostTag, PortFB
-from helper import *
+from utils.helper import *
 
 
 

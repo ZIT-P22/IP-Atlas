@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, abort, jsonify
-from helper import *
-from filter import *
+from utils.helper import *
+from utils.filter import *
 
 bp_settings = Blueprint("settings", __name__)
 
