@@ -82,15 +82,15 @@ class Statistics(db.Model):
 class DiscoveredDevice(db.Model):
     __tablename__ = "discovered_devices"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    mac_address = Column(String, nullable=False, index=True)
+    mac_address = Column(String, index=True)
     ipv4 = Column(String, nullable=False, index=True)
     ipv6 = Column(String, index=True)
     hostname = Column(String, index=True)
     first_seen = Column(DateTime, default=datetime.utcnow)
     last_seen = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    deleted = Column(Boolean, default=False)
+    blacklist = Column(Boolean, default=False)
+    used = Column(Boolean, default=False)
     vendor = Column(String)
-    ignore = Column(Boolean, default=False)
 
     @validates("ipv4", "ipv6")
     def validate_ip(self, key, address):
