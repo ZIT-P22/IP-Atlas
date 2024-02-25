@@ -3,22 +3,22 @@ from utils.filter import *
 from utils.crud import *
 from colorama import Fore, Style
 
-bp_atlas = Blueprint("atlas", __name__)
+atlas = Blueprint("atlas", __name__)
 
 
-@bp_atlas.route("/")
+@atlas.route("/")
 def index():
     data = return_json_format()
     return render_template("dashboard.html", data=data)
 
 
-@bp_atlas.route("/ip/list")
+@atlas.route("/ip/list")
 def list():
     data = return_json_format()
     return render_template("ip/list.html", data=data)
 
 
-@bp_atlas.route("/ip/ping/<ip_address>")
+@atlas.route("/ip/ping/<ip_address>")
 def ping_ip(ip_address):
     pingable = isIpPingable("127.0.0.1")
     # pingable = isIpPingable(ip_address)
@@ -29,12 +29,12 @@ def ping_ip(ip_address):
 
 
 # add new host
-@bp_atlas.route("/ip/add")
+@atlas.route("/ip/add")
 def add():
     return render_template("ip/add.html")
 
 
-@bp_atlas.route("/ip/save", methods=["POST"])
+@atlas.route("/ip/save", methods=["POST"])
 def save():
     if request.method == "POST":
         # get form data
@@ -47,7 +47,7 @@ def save():
             return "IP address already exists"
 
 
-@bp_atlas.route("/ip/update/<int:id>", methods=["POST"])
+@atlas.route("/ip/update/<int:id>", methods=["POST"])
 def update_ip(id):
     print(Fore.RED + "Update IP" + Style.RESET_ALL)
     if request.method == "POST":
@@ -64,7 +64,7 @@ def update_ip(id):
 
 
 # delete host
-@bp_atlas.route("/ip/delete/<id>")
+@atlas.route("/ip/delete/<id>")
 def delete(id):
     id = int(id)
     confirmed = request.args.get("confirmed")
@@ -76,18 +76,18 @@ def delete(id):
 
 
 
-@bp_atlas.route("/port/list")
+@atlas.route("/port/list")
 def port():
 
     return render_template("port/list.html")
 
 
-@bp_atlas.route("/statistic")
+@atlas.route("/statistic")
 def statistic():
     return render_template("statistic.html")
 
 
-@bp_atlas.route("/search", methods=["GET"])
+@atlas.route("/search", methods=["GET"])
 def search():
     # Retrieve search parameters from the request
     search_query = request.args.get("q", default="", type=str)
@@ -107,7 +107,7 @@ def search():
     return render_template("ip/list.html", data={"hosts": filtered_data})
 
 
-@bp_atlas.route("/filter", methods=["GET"])
+@atlas.route("/filter", methods=["GET"])
 def filter():
     data = return_json_format()
     # Retrieve query parameters
@@ -132,13 +132,13 @@ def filter():
 
 
 #! Trashcan
-@bp_atlas.route("/ip/trashcan/list")
+@atlas.route("/ip/trashcan/list")
 def listTrashcan():
     data = return_json_format("deleted")
     return render_template("ip/trashcan/list.html", data=data)
 
 
-@bp_atlas.route("/ip/delete/revert/<id>")
+@atlas.route("/ip/delete/revert/<id>")
 def revertTrashcan(id):
     id = int(id)
     confirmed = request.args.get("confirmed")
@@ -152,7 +152,7 @@ def revertTrashcan(id):
         return render_template("ip/trashcan/list.html", data=data)
 
 
-@bp_atlas.route("/filter/trashcan", methods=["GET"])
+@atlas.route("/filter/trashcan", methods=["GET"])
 def filterTrashcan():
     data = return_json_format("deleted")
     # Retrieve query parameters

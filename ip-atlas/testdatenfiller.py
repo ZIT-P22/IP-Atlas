@@ -4,9 +4,11 @@ from sqlalchemy.orm import sessionmaker
 from models import db, Host, Tag, Port, HostTag, PortFB
 import random
 from app import atlasapp
+import os
 
 # Assuming your database URI is stored in a variable or directly provided
-DATABASE_URI = "sqlite:///C:/home/janneck/repos/IP-Atlas/database/ip_atlas.db"
+database_dir = os.path.join(os.getcwd(), "database")
+DATABASE_URI = "sqlite:///" + os.path.join(database_dir, "ip_atlas.db")
 engine = create_engine(DATABASE_URI)
 Session = sessionmaker(bind=engine)
 
@@ -19,7 +21,7 @@ def generate_test_data(num_hosts=50):
         hostname = f"Host{i}"
         ipv4 = fake.ipv4_private(network=False, address_class=None)
         ipv6 = fake.ipv6(network=False)
-        ports_numbers = [fake.random_int(min=1, max=65535) for _ in range(2)]
+        # ports_numbers = [fake.random_int(min=1, max=65535) for _ in range(2)]
         portsFB_numbers = [fake.random_int(min=1, max=65535) for _ in range(2)]
 
         # Create Host instance
@@ -28,9 +30,9 @@ def generate_test_data(num_hosts=50):
         session.commit()  # Commit to assign an ID to the host
 
         # Create Port instances
-        for port_number in ports_numbers:
-            port = Port(host_id=host.id, port_number=port_number)
-            session.add(port)
+        # for port_number in ports_numbers:
+        #     port = Port(host_id=host.id, port_number=port_number)
+        #     session.add(port)
 
         # Create PortFB instances
         for portFB_number in portsFB_numbers:
@@ -55,7 +57,7 @@ def generate_test_data(num_hosts=50):
 
 generate_test_data()
 
-host  = Host.query.filter_by(id=1).first()
-print(host.hostname)
-host.hostname = "test"
-db.session.commit()
+# host  = Host.query.filter_by(id=1).first()
+# print(host.hostname)
+# host.hostname = "test"
+# db.session.commit()
