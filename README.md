@@ -14,6 +14,9 @@ IP Navigator is a Flask application designed for the efficient management of IP 
 ## Prerequisites
 - Python 3
 - Node.js and npm
+- Scapy
+    - https://rootinstall.com/tutorial/how-to-install-scapy-on-windows/
+    - https://rootinstall.com/tutorial/how-to-install-scapy-on-ubuntu/
 
 ## Setup
 1. Clone the repository:
