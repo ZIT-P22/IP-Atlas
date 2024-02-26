@@ -55,12 +55,14 @@ def get_devices(search_range):
     result = srp(packet, timeout=3, verbose=0)[0]
     clients = []
     for sent, received in result:
-        clients.append({'ip': received.psrc, 'mac': received.hwsrc, 'vendor': ''}) 
+        clients.append({'ip': received.psrc, 'mac': received.hwsrc, 'vendor': ''})
+    clients = update_vendor(clients)
     
     return clients
 
 
-# get_devices("192.168.42.0/24")
+
+# print(get_devices("192.168.211.226/24"))
 #target_ip = "192.69.69.1/24"
 # target_ip = "192.168.42.0/24"
 
