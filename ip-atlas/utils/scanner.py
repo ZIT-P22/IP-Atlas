@@ -4,7 +4,7 @@ from utils.crud import *
 from models import db, DiscoveredDevice
 import os
 
-password = ""
+password = "Potsdam1"
 
 
 
@@ -29,6 +29,5 @@ def scan_devices(range):
     stdout, stderr = process.communicate(input=f"{password}\n".encode())
     # print('Output:', stdout.decode())
     # print('Error:', stderr.decode())
-    # run the netscan.py script
     add_scanned_hosts()
     print("Scanning complete")
