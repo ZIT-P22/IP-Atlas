@@ -116,12 +116,12 @@ def main():
 
 
 if __name__ == "__main__":
+    # print(get_devices("192.168.211.226/24"))
     main()
 
 
 
 
-# print(get_devices("192.168.211.226/24"))
 
 #target_ip = "192.69.69.1/24"
 # target_ip = "192.168.42.0/24"

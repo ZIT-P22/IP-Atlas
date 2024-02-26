@@ -1,5 +1,5 @@
 from utils.helper import *
-from utils.scanner import run_scan
+from utils.scanner import *
 from flask import Blueprint, jsonify, render_template
 
 scan = Blueprint("scan", __name__)
@@ -9,6 +9,8 @@ scan = Blueprint("scan", __name__)
 def discovered():
     # Instead of loading data from a JSON file, we'll create a sample data dictionary directly in the code.
     # This sample data mimics the structure that would be expected by the 'ip/discovered.html' template.
+    
+    scan_devices("192.168.211.226/24")
     data = {
         "name": "Sample Device",
         "ip": "192.168.1.1",
