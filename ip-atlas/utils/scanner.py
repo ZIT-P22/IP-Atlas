@@ -4,7 +4,7 @@ from utils.crud import *
 from models import db, DiscoveredDevice
 import os
 
-password = "Potsdam1"
+password = os.getenv("PASSWORD")
 
 
 
