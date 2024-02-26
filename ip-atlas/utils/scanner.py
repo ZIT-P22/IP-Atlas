@@ -1,8 +1,10 @@
+import subprocess
 import json
 from utils.crud import *
 from models import db, DiscoveredDevice
 import os
 
+password = ""
 
 
 
@@ -21,7 +23,12 @@ def add_scanned_hosts():
     db.session.commit()
     
 def scan_devices(range):
+    path_to_netscan = os.path.dirname(os.path.abspath(__file__)) + "/netscan.py"
+    command = "sudo -S python3 "+  path_to_netscan + " -r " + range
+    process = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = process.communicate(input=f"{password}\n".encode())
+    # print('Output:', stdout.decode())
+    # print('Error:', stderr.decode())
     # run the netscan.py script
-    os.system("sudo python3 ip-atlas/utils/netscan.py -r " + range)
     add_scanned_hosts()
     print("Scanning complete")

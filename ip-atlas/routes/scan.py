@@ -10,7 +10,7 @@ def discovered():
     # Instead of loading data from a JSON file, we'll create a sample data dictionary directly in the code.
     # This sample data mimics the structure that would be expected by the 'ip/discovered.html' template.
     
-    scan_devices("192.168.211.226/24")
+    scan_devices("192.168.16.226/24")
     data = {
         "name": "Sample Device",
         "ip": "192.168.1.1",

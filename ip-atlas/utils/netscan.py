@@ -87,6 +87,7 @@ def args():
 def main():
     options = args()
     get_devices(options.ip_range)
+    print("Scan Finished")
 
 
 
