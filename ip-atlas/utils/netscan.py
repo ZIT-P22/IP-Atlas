@@ -3,6 +3,7 @@ from mac_vendor_lookup import MacLookup, BaseMacLookup
 from time import time
 import os
 import json
+from argparse import ArgumentParser
 
 # https://thepythoncode.com/article/building-network-scanner-using-scapy
 
@@ -73,7 +74,54 @@ def save_as_json(clients):
 
 
 
-print(get_devices("192.168.211.226/24"))
+def args():
+    parser = ArgumentParser(
+        description="Python Script to Perform Network Scans")
+    parser.add_argument("-r", "--range", dest="ip_range",
+                        help="Specify an IP address range, e.g., --range 192.168.1.1/24")
+    options = parser.parse_args()
+    if not options.ip_range:
+        parser.error("[-] Please specify a valid IP address range.")
+    return options
+
+def main():
+    options = args()
+    get_devices(options.ip_range)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+# print(get_devices("192.168.211.226/24"))
 
 #target_ip = "192.69.69.1/24"
 # target_ip = "192.168.42.0/24"
