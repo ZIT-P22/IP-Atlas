@@ -2,6 +2,7 @@ from scapy.all import ARP, Ether, srp
 from mac_vendor_lookup import MacLookup, BaseMacLookup
 from time import time
 import os
+import json
 
 # https://thepythoncode.com/article/building-network-scanner-using-scapy
 
@@ -57,12 +58,23 @@ def get_devices(search_range):
     for sent, received in result:
         clients.append({'ip': received.psrc, 'mac': received.hwsrc, 'vendor': ''})
     clients = update_vendor(clients)
-    
+    save_as_json(clients)
     return clients
 
 
 
-# print(get_devices("192.168.211.226/24"))
+# function which saves the clients to a json file
+def save_as_json(clients):
+    # delete old file
+    if os.path.exists("ip-atlas/data/scanned_clients.json"):
+        os.remove("ip-atlas/data/scanned_clients.json")
+    with open("ip-atlas/data/scanned_clients.json", "w") as file:
+        json.dump(clients, file, indent=4)
+
+
+
+print(get_devices("192.168.211.226/24"))
+
 #target_ip = "192.69.69.1/24"
 # target_ip = "192.168.42.0/24"
 

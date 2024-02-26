@@ -14,9 +14,6 @@ IP Navigator is a Flask application designed for the efficient management of IP 
 ## Prerequisites
 - Python 3
 - Node.js and npm
-- Scapy
-    - https://rootinstall.com/tutorial/how-to-install-scapy-on-windows/
-    - https://rootinstall.com/tutorial/how-to-install-scapy-on-ubuntu/
 
 ## Setup
 1. Clone the repository:
@@ -45,6 +42,34 @@ IP Navigator is a Flask application designed for the efficient management of IP 
     npm install
     npm run create-css
     ```
+
+## Setup ARP Scanner
+
+- Scapy
+    - https://rootinstall.com/tutorial/how-to-install-scapy-on-windows/
+    - https://rootinstall.com/tutorial/how-to-install-scapy-on-ubuntu/
+
+1. Open a terminal on your Linux system.
+Run the following command to edit the sudoers file using the visudo command:
+
+``` bash
+sudo visudo
+```
+2. Add a sudoers configuration for your Flask project
+Scroll to the end of the sudoers file and add the following line:
+
+```ruby
+username ALL=(ALL) NOPASSWD: /usr/bin/python3 /path/to/ip-atlas/utils/netscan.py
+```
+Replace username with the username under which your Flask project runs.
+Replace /path/to/ip-atlas/utils/netscan.py with the actual path to your script.
+
+For example, if your Flask project runs under the username flaskuser and the script is located at /home/flaskuser/ip-atlas/utils/netscan.py, the line would look like this:
+
+```ruby
+flaskuser ALL=(ALL) NOPASSWD: /usr/bin/python3 /home/flaskuser/ip-atlas/utils/netscan.py
+```
+Save the sudoers file and exit the text editor.
 
 ## Starting the Application
 Run the [`atlasapp`](ip-atlas/app.py) script:
