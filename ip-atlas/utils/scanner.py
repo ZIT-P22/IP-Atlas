@@ -16,11 +16,18 @@ def read_json(path = "ip-atlas/data/scanned_clients.json"):
 
 # function which add the hosts to the database
 def add_scanned_hosts():
-    data = read_json()
-    for host in data:
-        discoveredDevice = DiscoveredDevice(mac_address=host["mac"], ipv4=host["ip"], vendor=host["vendor"])
-        db.session.add(discoveredDevice)
-    db.session.commit()
+    try:
+        data = read_json()
+        for host in data:
+            discoveredDevice = DiscoveredDevice(mac_address=host["mac"], ipv4=host["ip"], vendor=host["vendor"])
+            db.session.add(discoveredDevice)
+        db.session.commit()
+    except FileNotFoundError:
+        print("JSON file not found. No hosts to add.")
+    except json.decoder.JSONDecodeError:
+        print("JSON decoding error. Check if the JSON file is valid.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
     
 def scan_devices(range):
     path_to_netscan = os.path.dirname(os.path.abspath(__file__)) + "/netscan.py"
