@@ -235,7 +235,7 @@ def write_edit_db(formData):
 # function which reads the data from the DiscoveryDevice table and converts it to an json format
 def convert_discovered_devices_to_json_format():
     data = {"discovered_devices": []}
-    discovered_devices = DiscoveredDevice.query.all()
+    discovered_devices = DiscoveredDevice.query.filter_by(blacklist=False, used=False).all()
     for device in discovered_devices:
         device_data = {
             "id": device.id,
