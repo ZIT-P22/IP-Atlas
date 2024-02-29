@@ -83,7 +83,7 @@ class DiscoveredDevice(db.Model):
     __tablename__ = "discovered_devices"
     id = Column(Integer, primary_key=True, autoincrement=True)
     mac_address = Column(String, index=True)
-    ipv4 = Column(String, nullable=False, index=True)
+    ipv4 = Column(String, nullable=False, unique=True, index=True)
     ipv6 = Column(String, index=True)
     hostname = Column(String, index=True)
     first_seen = Column(DateTime, default=datetime.utcnow)
