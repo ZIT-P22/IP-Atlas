@@ -42,8 +42,7 @@ def scan_devices(range):
     command = "sudo -S python3 "+  path_to_netscan + " -r " + range
     process = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate(input=f"{password}\n".encode())
-    # print('Output:', stdout.decode())
-    # print('Error:', stderr.decode())
+    print('Output:', stdout.decode())
+    print('Error:', stderr.decode())
     add_scanned_hosts()
     print("Scanning complete")
-    return read_json()

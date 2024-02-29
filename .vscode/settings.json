@@ -9,13 +9,6 @@
     "python.testing.pytestEnabled": false,
     "python.testing.unittestEnabled": true,
     "sqltools.useNodeRuntime": true,
-    "sqltools.connections": [
-        {
-            "previewLimit": 50,
-            "driver": "SQLite",
-            "database": "${workspaceFolder:IP-Atlas}/database/ip_atlas.db",
-            "name": "ip-atlas"
-        }
-    ],
+    "sqltools.connections": [],
     "codeQL.githubDatabase.update": "never"
 }
