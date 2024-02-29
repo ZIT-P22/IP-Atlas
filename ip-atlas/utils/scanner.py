@@ -3,6 +3,7 @@ import json
 from utils.crud import *
 from models import db, DiscoveredDevice
 import os
+from datetime import datetime
 
 password = os.getenv("PASSWORD")
 
@@ -27,8 +28,14 @@ def add_scanned_hosts():
     try:
         data = read_json()
         for host in data:
-            discoveredDevice = DiscoveredDevice(mac_address=host["mac"], ipv4=host["ip"], vendor=host["vendor"])
-            db.session.add(discoveredDevice)
+            ipv4_address = host["ip"]
+            existing_device = DiscoveredDevice.query.filter_by(ipv4=ipv4_address).first()
+            if existing_device:
+                existing_device.last_seen = datetime.utcnow()
+                print("Diese IP gibt es bereits", ipv4_address)
+            else:
+                discoveredDevice = DiscoveredDevice(mac_address=host["mac"], ipv4=ipv4_address, vendor=host["vendor"])
+                db.session.add(discoveredDevice)
         db.session.commit()
     except FileNotFoundError:
         print("JSON file not found. No hosts to add.")
@@ -36,6 +43,7 @@ def add_scanned_hosts():
         print("JSON decoding error. Check if the JSON file is valid.")
     except Exception as e:
         print(f"An error occurred: {e}")
+
     
 def scan_devices(range):
     path_to_netscan = os.path.dirname(os.path.abspath(__file__)) + "/netscan.py"

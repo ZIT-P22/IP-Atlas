@@ -34,15 +34,17 @@ def wurde_vor_x_tagen_aktualisiert(dateipfad):
         return False
 
 def update_vendor_list():
+    init = False
     # erstelle das die mac_vendor.txt datei wenn sie nicht existiert
     if not os.path.exists("ip-atlas/data/mac_vendors.txt"):
         with open("ip-atlas/data/mac_vendors.txt", "w") as file:
             file.write("")
+            init = True
             
     BaseMacLookup.cache_path = "ip-atlas/data/mac_vendors.txt"
     # wenn die datei das letzte mal vor mehr als 30 tagen geupdated wurde wird der update erneut ausgeführt
     mac = MacLookup()
-    if wurde_vor_x_tagen_aktualisiert("ip-atlas/data/mac_vendors.txt"):
+    if wurde_vor_x_tagen_aktualisiert("ip-atlas/data/mac_vendors.txt") or init == True:
         mac.update_vendors()
         print("Mac lookup updated")
     else:
