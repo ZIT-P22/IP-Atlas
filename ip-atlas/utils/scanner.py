@@ -15,6 +15,9 @@ def read_json(path = "ip-atlas/data/scanned_clients.json"):
         os.makedirs("ip-atlas/data")
         with open(path, "w") as file:
             file.write("[]")
+    if not os.path.exists(path):
+        with open(path, "w") as file:
+            file.write("[]")
     with open(path) as file:
         data = json.load(file)
     return data
@@ -43,3 +46,4 @@ def scan_devices(range):
     # print('Error:', stderr.decode())
     add_scanned_hosts()
     print("Scanning complete")
+    return read_json()
