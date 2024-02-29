@@ -247,3 +247,29 @@ def convert_discovered_devices_to_json_format():
         }
         data["discovered_devices"].append(device_data)
     return data
+
+# sets the Blacklist to true of an DiscoveredDevice
+def blacklist_of_discovered_device(id):
+    device = DiscoveredDevice.query.filter_by(id=id).first()
+    if device:
+        device.blacklist = True
+        db.session.commit()
+        status = "blacklist_set"
+        return status
+    else:
+        print("Error: device not found")
+        status = "device_not_found"
+        return status
+
+# set used to true of an DiscoveredDevice
+def set_used_of_discovered_device(id):
+    device = DiscoveredDevice.query.filter_by(id=id).first()
+    if device:
+        device.used = True
+        db.session.commit()
+        status = "used_set"
+        return status
+    else:
+        print("Error: device not found")
+        status = "device_not_found"
+        return status
