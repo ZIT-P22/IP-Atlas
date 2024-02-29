@@ -10,6 +10,11 @@ password = os.getenv("PASSWORD")
 
 # read the json file and return the data
 def read_json(path = "ip-atlas/data/scanned_clients.json"):
+    # create file and folder if it does not exist
+    if not os.path.exists("ip-atlas/data"):
+        os.makedirs("ip-atlas/data")
+        with open(path, "w") as file:
+            file.write("[]")
     with open(path) as file:
         data = json.load(file)
     return data
