@@ -1,5 +1,4 @@
-from utils.helper import *
-from utils.scanner import *
+from utils.scanner import scan_devices
 from flask import Blueprint, jsonify, render_template
 
 scan = Blueprint("scan", __name__)

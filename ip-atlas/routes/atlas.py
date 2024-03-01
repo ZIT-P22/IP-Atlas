@@ -1,6 +1,13 @@
-from flask import Blueprint, render_template, request, abort, jsonify
-from utils.filter import *
-from utils.crud import *
+from flask import Blueprint, render_template, request, jsonify
+from utils.filter import filterAll, filter_data, isIpPingable
+from utils.crud import (
+    write_host_to_db,
+    write_edit_db,
+    delete_host_by_id,
+    revert_host_by_id,
+    return_json_format,
+    check_ipv4_exists,
+)
 from colorama import Fore, Style
 
 atlas = Blueprint("atlas", __name__)
@@ -23,9 +30,6 @@ def ping_ip(ip_address):
     pingable = isIpPingable("127.0.0.1")
     # pingable = isIpPingable(ip_address)
     return jsonify({"pingable": pingable})
-
-
-
 
 
 # add new host
@@ -54,9 +58,9 @@ def update_ip(id):
         data = request.json
         data["id"] = id
         # print(data)
-        
+
         success = write_edit_db(data)
-         
+
         if success:
             return jsonify({"message": "IP address updated successfully"}), 200
         else:
@@ -69,11 +73,10 @@ def delete(id):
     id = int(id)
     confirmed = request.args.get("confirmed")
     if confirmed == "true":
-        delete_host_by_id(id)    
+        delete_host_by_id(id)
         return jsonify(success=True)
     else:
         return jsonify(success=False, message="Deletion not confirmed")
-
 
 
 @atlas.route("/port/list")
@@ -142,7 +145,7 @@ def listTrashcan():
 def revertTrashcan(id):
     id = int(id)
     confirmed = request.args.get("confirmed")
-    
+
     if confirmed == "true":
         revert_host_by_id(id)
         data = return_json_format()
