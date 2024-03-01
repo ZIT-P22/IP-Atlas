@@ -2,7 +2,7 @@
 # this Script contains the CRUD operations for the ip-atlas table
 # Author: Janneck Lehmann
 # Date: 2024-02-07
-from models import db, Host, Tag, Port, HostTag, PortFB
+from models import db, Host, Tag, Port, HostTag, PortFB, DiscoveredDevice
 from utils.helper import *
 
 
@@ -230,3 +230,46 @@ def write_edit_db(formData):
         print("Error:", e)
         db.session.rollback()
         return False
+    
+    
+# function which reads the data from the DiscoveryDevice table and converts it to an json format
+def convert_discovered_devices_to_json_format():
+    data = {"discovered_devices": []}
+    discovered_devices = DiscoveredDevice.query.filter_by(blacklist=False, used=False).all()
+    for device in discovered_devices:
+        device_data = {
+            "id": device.id,
+            "mac": device.mac_address,
+            "ipv4": device.ipv4,
+            "vendor": device.vendor,
+            "first_seen": device.first_seen, # "2023-04-01 12:34:56
+            "last_seen": device.last_seen,
+        }
+        data["discovered_devices"].append(device_data)
+    return data
+
+# sets the Blacklist to true of an DiscoveredDevice
+def blacklist_of_discovered_device(id):
+    device = DiscoveredDevice.query.filter_by(id=id).first()
+    if device:
+        device.blacklist = True
+        db.session.commit()
+        status = "blacklist_set"
+        return status
+    else:
+        print("Error: device not found")
+        status = "device_not_found"
+        return status
+
+# set used to true of an DiscoveredDevice
+def set_used_of_discovered_device(id):
+    device = DiscoveredDevice.query.filter_by(id=id).first()
+    if device:
+        device.used = True
+        db.session.commit()
+        status = "used_set"
+        return status
+    else:
+        print("Error: device not found")
+        status = "device_not_found"
+        return status

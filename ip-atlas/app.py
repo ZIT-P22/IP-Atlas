@@ -5,6 +5,7 @@ from extensions import db, migrate
 from routes.atlas import atlas
 from routes.settings import settings
 from routes.scan import scan
+from dotenv import load_dotenv
 
 atlasapp = Flask(__name__, static_folder="static", template_folder="templates")
 
@@ -33,7 +34,6 @@ migrate.init_app(atlasapp, db)
 if __name__ == "__main__":
     with atlasapp.app_context():
         from models import *
-
         db.create_all()
-    
+    load_dotenv()    
     atlasapp.run(debug=True, host="0.0.0.0", port=5000)
