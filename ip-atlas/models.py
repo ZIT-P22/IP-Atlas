@@ -8,7 +8,7 @@ from datetime import datetime
 class Host(db.Model):
     __tablename__ = "hosts"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    hostname = Column(String, unique=True, nullable=False, index=True)
+    hostname = Column(String, nullable=False, index=True)
     ipv4 = Column(String, nullable=False, index=True)
     ipv6 = Column(String, index=True)
     deleted = Column(Boolean, default=False)
@@ -53,7 +53,7 @@ class Port(db.Model):
     host_id = Column(Integer, ForeignKey("hosts.id"))
     port_number = Column(Integer, nullable=False)
     host = relationship("Host", back_populates="ports")
-    
+
 class PortFB(db.Model):
     __tablename__ = "portsFB"
     id = Column(Integer, primary_key=True, autoincrement=True)
