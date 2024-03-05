@@ -1,5 +1,6 @@
 from utils.scanner import scan_devices
 from flask import Blueprint, jsonify, render_template
+from utils.crud import convert_discovered_devices_to_json_format
 
 scan = Blueprint("scan", __name__)
 
