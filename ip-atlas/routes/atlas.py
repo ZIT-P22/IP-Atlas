@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for
 from utils.filter import filterAll, filter_data, isIpPingable
 from utils.crud import (
     write_host_to_db,
@@ -7,6 +7,7 @@ from utils.crud import (
     revert_host_by_id,
     return_json_format,
     check_ipv4_exists,
+    get_tags,
 )
 from colorama import Fore, Style
 
@@ -35,7 +36,10 @@ def ping_ip(ip_address):
 # add new host
 @atlas.route("/ip/add")
 def add():
-    return render_template("ip/add.html")
+    # get all tags from the db
+    tags = get_tags()
+    print("Tags: ", tags)
+    return render_template("ip/add.html", tags=tags)
 
 
 @atlas.route("/ip/save", methods=["POST"])
@@ -46,7 +50,8 @@ def save():
         if not check_ipv4_exists(formData.get("ipv4")):
             write_host_to_db(formData)
             data = return_json_format()
-            return render_template("ip/list.html", data=data)
+            # redirect to the list page
+            return redirect(url_for("atlas.list"))
         else:
             return "IP address already exists"
 

@@ -20,6 +20,10 @@ def convert_to_json_format(host):
     }
     return host_data
 
+def get_tags():
+    tags = Tag.query.filter_by(deleted=False).all()
+    return [tag.tag_name for tag in tags]
+
 # creates the json format after the data is loaded from the table
 def return_json_format(type="all"):
     data = {"hosts": []}
@@ -90,8 +94,10 @@ def write_host_to_db(formData):
             write_to_db("portFB", {"host_id": host_id, "portFB_number": portFB})
         # write tags to database
         for tag in tags:
-            write_to_db("tag", {"tag_name": tag})
             tag_id = check_tag_exists(tag, method="id")
+            if tag_id is None:
+                write_to_db("tag", {"tag_name": tag})
+                tag_id = check_tag_exists(tag, method="id")
             write_to_db("host_tag", {"host_id": host_id, "tag_id": tag_id})
         db.session.commit()
     

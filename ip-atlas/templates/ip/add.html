@@ -31,7 +31,12 @@
         <label class="block mb-2 text-sm font-bold text-gray-200" for="tags">Tags</label>
         <input
             class="w-full px-3 py-2 leading-tight text-gray-200 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-            name="tags" id="tags" type="text" placeholder="Geben Sie Tags ein (durch Komma getrennt)">
+            name="tags" id="tags" type="text" placeholder="Geben Sie Tags ein (durch Komma getrennt)" list="tagsList">
+        <datalist id="tagsList">
+            {% for tag in tags %}
+            <option value="{{ tag }}">
+            {% endfor %}
+        </datalist>
     </div>
     <div class="flex items-center justify-center">
         <button
