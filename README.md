@@ -14,6 +14,7 @@ IP Navigator is a Flask application designed for the efficient management of IP 
 ## Prerequisites
 - Python 3
 - Node.js and npm
+    - https://nodejs.org/en/download/package-manager
 
 ## Setup
 1. Clone the repository:
