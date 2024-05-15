@@ -1,11 +1,10 @@
-from scapy.all import ARP, Ether, srp
+from scapy.all import ARP, Ether, srp, conf
 from mac_vendor_lookup import MacLookup, BaseMacLookup
 from time import time
 import os
 import json
 from argparse import ArgumentParser
 
-# Konfigurationspfade, um globale Pfade zu vermeiden
 MAC_VENDOR_FILE = "ip-atlas/data/mac_vendors.txt"
 SCANNED_CLIENTS_FILE = "ip-atlas/data/scanned_clients.json"
 
@@ -14,7 +13,6 @@ def get_vendor(mac_address, mac_lookup_instance):
         vendor = mac_lookup_instance.lookup(mac_address)
         return vendor
     except Exception as e:
-        # Optionale Fehlerprotokollierung
         print(f"Error looking up vendor for MAC {mac_address}: {e}")
         return "Unknown"
 
@@ -65,14 +63,16 @@ def update_vendor(clients):
         
     return clients
 
-def get_devices(search_range):
+def get_devices(search_range, iface=None):
     arp = ARP(pdst=search_range)
     ether = Ether(dst="ff:ff:ff:ff:ff:ff")
     packet = ether / arp
-    result = srp(packet, timeout=3, verbose=0)[0]
+    # Spezifische Netzwerkkarte verwenden
+    result = srp(packet, iface=iface, timeout=3, verbose=0)[0]
     clients = [{'ip': received.psrc, 'mac': received.hwsrc, 'vendor': ''} for sent, received in result]
     
     clients = update_vendor(clients)
+    print("Gefundende Geräte:", clients)
     save_as_json(clients)
     return clients
 
@@ -90,6 +90,8 @@ def args():
     parser = ArgumentParser(description="Python Script to Perform Network Scans")
     parser.add_argument("-r", "--range", dest="ip_range",
                         help="Specify an IP address range, e.g., --range 192.168.1.1/24")
+    parser.add_argument("-i", "--iface", dest="iface",
+                        help="Specify a network interface, e.g., --iface eth0")
     options = parser.parse_args()
     if not options.ip_range:
         parser.error("[-] Please specify a valid IP address range.")
@@ -97,7 +99,7 @@ def args():
 
 def main():
     options = args()
-    get_devices(options.ip_range)
+    get_devices(options.ip_range, options.iface)
     print("Scan Finished")
 
 if __name__ == "__main__":

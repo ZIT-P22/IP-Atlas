@@ -44,9 +44,9 @@ def add_scanned_hosts():
         print(f"An error occurred: {e}")
 
     
-def scan_devices(range):
+def scan_devices(ip_range, adapter):
     path_to_netscan = os.path.dirname(os.path.abspath(__file__)) + "/netscan.py"
-    command = "sudo -S python3 " + path_to_netscan + " -r " + range
+    command = f"sudo -S python3 {path_to_netscan} -r {ip_range} --iface {adapter}"
     process = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate(input=f"{password}\n".encode())
     print('Output:', stdout.decode())
