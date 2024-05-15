@@ -82,18 +82,48 @@
         </form>
     </div>
 </div>
-
+<!-- Existing Device Modal HTML -->
+<div id="existingDeviceModal" class="fixed inset-0 flex items-center justify-center hidden bg-black bg-opacity-50">
+    <div class="bg-gray-800 rounded-lg shadow-lg p-8 w-1/2">
+        <div class="flex justify-end">
+            <button onclick="closeModal()" class="text-white text-2xl">&times;</button>
+        </div>
+        <h1 class="mb-4 text-2xl font-bold text-gray-200">Gerät bereits vorhanden</h1>
+        <p class="mb-4 text-gray-400">Die IPv4-Adresse ist bereits in der Datenbank vorhanden. Möchten Sie das bisherige Gerät löschen oder das vorhandene Gerät ersetzen?</p>
+        <div class="flex justify-end space-x-4">
+            <button onclick="handleExistingDeviceResponse('delete')" class="px-4 py-2 font-bold text-white bg-red-500 rounded hover:bg-red-700 focus:outline-none focus:shadow-outline">
+                Löschen
+            </button>
+            <button onclick="handleExistingDeviceResponse('replace')" class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline">
+                Ersetzen
+            </button>
+        </div>
+    </div>
+</div>
 <script>
     let currentDeviceId = null;
+    let currentIPv4 = null;
 
     function openModal(ipv4, id) {
-        document.getElementById("modal-ipv4").value = ipv4;
         currentDeviceId = id;
-        document.getElementById("addIpModal").classList.remove("hidden");
+        currentIPv4 = ipv4;
+
+        fetch(`/check_ipv4/${ipv4}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.exists) {
+                    document.getElementById("existingDeviceModal").classList.remove("hidden");
+                } else {
+                    document.getElementById("modal-ipv4").value = ipv4;
+                    document.getElementById("addIpModal").classList.remove("hidden");
+                }
+            })
+            .catch(error => console.error('Error:', error));
     }
 
     function closeModal() {
         document.getElementById("addIpModal").classList.add("hidden");
+        document.getElementById("existingDeviceModal").classList.add("hidden");
     }
 
     function validateInput() {
@@ -145,7 +175,19 @@
             .catch(error => console.error('Error:', error));
         }
     }
+
+    function handleExistingDeviceResponse(choice) {
+        if (choice === 'delete') {
+            // Logic to delete the existing device goes here
+            alert("Delete functionality not implemented yet.");  // Replace this with actual delete logic
+        } else if (choice === 'replace') {
+            document.getElementById("existingDeviceModal").classList.add("hidden");
+            document.getElementById("modal-ipv4").value = currentIPv4;
+            document.getElementById("addIpModal").classList.remove("hidden");
+        }
+    }
 </script>
+
 
 
 
