@@ -1,41 +1,20 @@
 from utils.scanner import scan_devices
 from flask import Blueprint, jsonify, render_template
-from utils.crud import convert_discovered_devices_to_json_format
+from utils.crud import convert_discovered_devices_to_json_format, get_tags, set_used_of_discovered_device
 
 scan = Blueprint("scan", __name__)
 
-
 @scan.route("/discovered")
 def discovered():
-    scan_devices("192.69.69.1/24")
+    scan_devices("192.168.42.162/24","wlo1")
     devices = convert_discovered_devices_to_json_format()
+    tags = get_tags()
     print(devices)
-    return render_template("ip/discovered.html", devices=devices)
+    return render_template("ip/discovered.html", devices=devices, tags=tags)
 
 
-# @scan.route("/scan/fast")
-# def scan_fast():
-#     # Define the IP range for the scan
-#     ip_range = "192.168.178.0/24"
-#     # No specific subnets selected for this example
-#     selected_subnets = []
-#     # Initiate a fast scan
-#     try:
-#         run_scan("fast", ip_range, selected_subnets)
-#         return jsonify({"message": "Fast scan initiated successfully"}), 200
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
+@scan.route("/set_used/<int:id>", methods=["POST"])
+def set_used(id):
+    status = set_used_of_discovered_device(id)
+    return jsonify({"status": status})
 
-
-# @scan.route("/scan/advanced")
-# def scan_advanced():
-#     # Define the IP range for the scan
-#     ip_range = "192.168.178.0/24"
-#     # No specific subnets selected for this example
-#     selected_subnets = []
-#     # Initiate an advanced (deep) scan
-#     try:
-#         run_scan("deep", ip_range, selected_subnets)
-#         return jsonify({"message": "Advanced scan initiated successfully"}), 200
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
