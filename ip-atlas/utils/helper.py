@@ -1,4 +1,3 @@
-import json
 import os
 import platform
 import subprocess
@@ -60,8 +59,6 @@ def createLogFile():
 
 
 # check if there is a log file
-
-
 def checkLogFile():
     if os.path.exists(gLogPath):
         return True
@@ -69,24 +66,9 @@ def checkLogFile():
         return False
 
 
-# write to the log file
-
-
-# read the log file
 
 
 #! test functions
-
-
-# prints the json document
-def printJson():
-    data = loadJson()
-    if not checkJsonEmpty():
-        print(data)
-    else:
-        print("Json document is empty")
-
-
 # check if dokument exists
 def checkDokument(path):
     if os.path.exists(path):
@@ -126,6 +108,8 @@ def checkIfInputIsNone(input):
         return True
     else:
         return False
+
+
 
 
 #! Leons mist

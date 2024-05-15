@@ -7,18 +7,7 @@ scan = Blueprint("scan", __name__)
 
 @scan.route("/discovered")
 def discovered():
-    # Instead of loading data from a JSON file, we'll create a sample data dictionary directly in the code.
-    # This sample data mimics the structure that would be expected by the 'ip/discovered.html' template.
-    
-    scan_devices("192.168.107.226/24")
-    # data = {
-    #     "name": "Sample Device",
-    #     "ip": "192.168.1.1",
-    #     "hostname": "sample-device.local",
-    #     "mac": "00:1B:44:11:3A:B7",
-    #     "os": "Linux",
-    #     "last_active": "2023-04-01 12:34:56",
-    # }
+    scan_devices("192.69.69.1/24")
     devices = convert_discovered_devices_to_json_format()
     print(devices)
     return render_template("ip/discovered.html", devices=devices)
