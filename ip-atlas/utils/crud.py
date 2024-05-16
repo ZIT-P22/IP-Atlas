@@ -201,25 +201,22 @@ def write_edit_db(formData):
     try:
         id = formData.get("id")
         name = formData.get("name")
-        tags = formData.get("tags")
+        tags = formData.get("tags").split(',')
         ipv4 = formData.get("ipv4")
         ipv6 = formData.get("ipv6")
-        portsFB = formData.get("portsFB")
-        tags = formData.get("tags")
+        portsFB = formData.get("portsFB").split(',')
+
         print("ID:", id, "Name:", name, "Tags:", tags, "IPv4:", ipv4, "IPv6:", ipv6, "PortsFB:", portsFB)
-        
-    
+
         edit_db("host", {"id": id, "name": name, "ipv4": ipv4, "ipv6": ipv6})
-        # firstly delete all ports which are in the db for the host then add the new ones
+
         delete_portsFB_by_host_id(id)
         for portFB in portsFB:
             print("PortFB:", portFB)
             portFBID = check_portFB_exists(portFB, method="id")
-            if portFBID:
-                print("Port ", portFB, " gibt es schon")
-            else:
+            if not portFBID:
                 write_to_db("portFB", {"host_id": id, "portFB_number": portFB})
-        # delete all tags which are in the db for the host then add the new ones
+
         delete_tags_by_host_id(id)
         for tag in tags:
             print("Tag:", tag)
@@ -230,6 +227,7 @@ def write_edit_db(formData):
                 write_to_db("tag", {"tag_name": tag})
                 tagID = check_tag_exists(tag, method="id")
                 write_to_db("host_tag", {"host_id": id, "tag_id": tagID})
+
         db.session.commit()
         return True
     except Exception as e:
