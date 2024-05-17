@@ -149,9 +149,17 @@ def delete_host_by_id(id, type="trashcan"):
     
 # function which reverts the deletion of an host from the table by the given id
 def revert_host_by_id(id):
-    host = Host.query.filter_by(id=id).first()
-    host.deleted = False
-    db.session.commit()
+    try:
+        host = Host.query.get(id)
+        if host:
+            host.deleted = False
+            db.session.commit()
+            print(f"Host with id {id} reverted")  # Debugging-Ausgabe
+            return True
+    except Exception as e:
+        print(f"Error reverting host with id {id}: {e}")  # Debugging-Ausgabe
+    return False
+
     
 #deletes the portsFB from one host
 def delete_portsFB_by_host_id(id):
@@ -277,3 +285,26 @@ def set_used_of_discovered_device(id):
         print("Error: device not found")
         status = "device_not_found"
         return status
+    
+def delete_host_by_id(id):
+    try:
+        host = Host.query.get(id)
+        if host:
+            host.deleted = True
+            db.session.commit()
+            return True
+    except Exception as e:
+        print(f"Error deleting host with id {id}: {e}")  # Debugging-Ausgabe
+    return False
+
+def permanently_delete_host_by_id(id):
+    try:
+        host = Host.query.get(id)
+        if host:
+            db.session.delete(host)
+            db.session.commit()
+            return True
+    except Exception as e:
+        print(f"Error permanently deleting host with id {id}: {e}")  # Debugging-Ausgabe
+    return False
+

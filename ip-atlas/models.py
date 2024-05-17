@@ -1,6 +1,5 @@
 from extensions import db
-from sqlalchemy.orm import relationship
-from sqlalchemy.orm import validates
+from sqlalchemy.orm import relationship, validates
 import ipaddress
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
 from datetime import datetime
@@ -12,32 +11,28 @@ class Host(db.Model):
     ipv4 = Column(String, nullable=False, index=True)
     ipv6 = Column(String, index=True)
     deleted = Column(Boolean, default=False)
-    portsFB = relationship("PortFB", back_populates="host")
-    ports = relationship("Port", back_populates="host")
-    tags = relationship("HostTag", back_populates="host")
+    portsFB = relationship("PortFB", back_populates="host", cascade="all, delete-orphan")
+    ports = relationship("Port", back_populates="host", cascade="all, delete-orphan")
+    tags = relationship("HostTag", back_populates="host", cascade="all, delete-orphan")
 
     @validates("ipv4", "ipv6")
     def validate_ip(self, key, address):
         if address:
             try:
                 ip_obj = ipaddress.ip_address(address)
-                if (key == "ipv4" and ip_obj.version != 4) or (
-                    key == "ipv6" and ip_obj.version != 6
-                ):
+                if (key == "ipv4" and ip_obj.version != 4) or (key == "ipv6" and ip_obj.version != 6):
                     raise ValueError(f"Invalid {key} address: {address}")
                 return str(ip_obj)
             except ValueError:
                 raise ValueError(f"Invalid {key} address: {address}")
         return address
 
-
 class Tag(db.Model):
     __tablename__ = "tags"
     id = Column(Integer, primary_key=True, autoincrement=True)
     tag_name = Column(String, unique=True, nullable=False, index=True)
     deleted = Column(Boolean, default=False)
-    hosts = relationship("HostTag", back_populates="tag")
-
+    hosts = relationship("HostTag", back_populates="tag", cascade="all, delete-orphan")
 
 class HostTag(db.Model):
     __tablename__ = "host_tags"
@@ -45,7 +40,6 @@ class HostTag(db.Model):
     tag_id = Column(Integer, ForeignKey("tags.id"), primary_key=True)
     host = relationship("Host", back_populates="tags")
     tag = relationship("Tag", back_populates="hosts")
-
 
 class Port(db.Model):
     __tablename__ = "ports"
@@ -70,14 +64,12 @@ class AuditLog(db.Model):
     timestamp = Column(DateTime, default=datetime.utcnow)
     user = Column(String, nullable=False)
 
-
 class Statistics(db.Model):
     __tablename__ = "statistics"
     id = Column(Integer, primary_key=True, autoincrement=True)
     stat_key = Column(String, nullable=False, index=True)
     stat_value = Column(Integer, nullable=False)
     last_updated = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
 
 class DiscoveredDevice(db.Model):
     __tablename__ = "discovered_devices"
@@ -97,9 +89,7 @@ class DiscoveredDevice(db.Model):
         if address:
             try:
                 ip_obj = ipaddress.ip_address(address)
-                if (key == "ipv4" and ip_obj.version != 4) or (
-                    key == "ipv6" and ip_obj.version != 6
-                ):
+                if (key == "ipv4" and ip_obj.version != 4) or (key == "ipv6" and ip_obj.version != 6):
                     raise ValueError(f"Invalid {key} address: {address}")
                 return str(ip_obj)
             except ValueError:
