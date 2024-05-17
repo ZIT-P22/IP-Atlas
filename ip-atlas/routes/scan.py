@@ -1,19 +1,24 @@
 from utils.scanner import scan_devices
 from flask import Blueprint, jsonify, render_template, request
 from utils.crud import convert_discovered_devices_to_json_format, get_tags, set_used_of_discovered_device, write_edit_db
-from models import Host
+from utils.settings import load_settings
+from models import Host, db, DiscoveredDevice
 
 scan = Blueprint("scan", __name__)
 
 @scan.route("/discovered")
 def discovered():
-    # scan_devices("172.23.87.15/20","eth0")
-    # scan_devices("172.10.2.129/20","wlo1")
+    settings = load_settings()
+    ip_ranges = settings.get("ip_ranges", [])
+
+    # Scan-Geräte für jeden IP-Bereich
+    for ip_range in ip_ranges:
+        scan_devices(ip_range["range"], ip_range["interface"])
+
+    # Gefundene Geräte und Tags abrufen
     devices = convert_discovered_devices_to_json_format()
     tags = get_tags()
-    print(devices)
     return render_template("ip/discovered.html", devices=devices, tags=tags)
-
 
 @scan.route("/set_used/<int:id>", methods=["POST"])
 def set_used(id):
