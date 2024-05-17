@@ -1,70 +1,77 @@
-# IP-Atlas
-IP Navigator ist eine Flask-Anwendung für die unkomplizierte Verwaltung von IP-Adressen in großen Netzwerken. Benutzer können Adressen speichern, Namen zuweisen und durch die Oktetten-Sortierung den Überblick behalten. Ideal für Netzwerkadministratoren, bietet eine benutzerfreundliche Oberfläche und Netzwerkstatistiken.
+---
 
 # IP-Atlas
 
-IP Navigator is a Flask application designed for the efficient management of IP addresses in large networks. It allows users to store addresses, assign names, and maintain an overview through octet sorting. Ideal for network administrators, it offers a user-friendly interface and network statistics.
+IP-Atlas ist eine Flask-Anwendung zur effizienten Verwaltung von IP-Adressen in großen Netzwerken. Benutzer können Adressen speichern, Namen zuweisen und durch Oktettensortierung den Überblick behalten. Ideal für Netzwerkadministratoren, bietet es eine benutzerfreundliche Oberfläche und Netzwerkstatistiken.
 
 ## Features
-- Efficient IP address management
-- User-friendly interface
-- Octet sorting for easy navigation
-- Comprehensive network statistics
 
-## Prerequisites
+- Effiziente Verwaltung von IP-Adressen
+- Benutzerfreundliche Oberfläche
+- Oktettensortierung zur einfachen Navigation
+- Umfassende Netzwerkstatistiken
+
+## Voraussetzungen
+
+- Linux-Distribution (empfohlen: Ubuntu über WSL auf Windows)
 - Python 3
-- Node.js and npm
-    - https://nodejs.org/en/download/package-manager
+- Node.js und npm
+  - [Download und Installation](https://nodejs.org/en/download/package-manager)
 
-## Setup
-1. Clone the repository:
+## Einrichtung
+
+1. WSL (Windows Subsystem for Linux) installieren und Ubuntu einrichten:
+   - [Installationsanleitung für WSL](https://docs.microsoft.com/en-us/windows/wsl/install)
+
+2. Repository klonen:
     ```sh
     git clone <repository-url>
     ```
-2. Navigate to the project directory:
+3. In das Projektverzeichnis wechseln:
     ```sh
     cd ip-atlas
     ```
-3. Create a virtual environment:
+4. Installieren Sie die Python-Abhängigkeiten global mit sudo:
     ```sh
-    python3 -m venv .atlas
+    sudo pip install -r requirements.txt
     ```
-4. Activate the virtual environment:
-    - For bash: `source .atlas/bin/activate`
-    - For fish: `. .atlas/bin/activate.fish`
-    - For csh: `source .atlas/bin/activate.csh`
-    - For PowerShell: `. .atlas/bin/Activate.ps1`
-5. Install dependencies:
-    ```sh
-    pip install -r requirements.txt
-    ```
-6. Install Node.js and npm, then install the required npm packages and create the CSS files:
+5. Installieren Sie Node.js und npm, dann die erforderlichen npm-Pakete und erstellen Sie die CSS-Dateien:
     ```sh
     npm install
     npm run create-css
     ```
-7. Create an `.env` file in the IP-Atlas folder and add the necessary environment variables:
-    ```.env
-    PASSWORD = "Password of Sudoer"
+6. Erstellen Sie eine `.env` Datei im IP-Atlas Ordner und fügen Sie die notwendigen Umgebungsvariablen hinzu:
+    ```sh
+    touch .env
+    nano .env
+    ```
+    Fügen Sie die folgenden Zeilen hinzu und speichern Sie die Datei:
+    ```
+    SECRET_KEY="IhrSuperGeheimSchlüssel"
+    SETTINGS_USER="IhrBenutzername"
+    SETTINGS_PASSWORD="IhrPasswort"
     ```
 
-## Setup ARP Scanner
+## ARP Scanner einrichten
 
 - Scapy
-    - (https://rootinstall.com/tutorial/how-to-install-scapy-on-windows/)
-    - https://rootinstall.com/tutorial/how-to-install-scapy-on-ubuntu/
+  - [Installationsanleitung für Ubuntu](https://rootinstall.com/tutorial/how-to-install-scapy-on-ubuntu/)
 
-At the moment it only works on Linux Distributed Systems
+Derzeit funktioniert der Scanner nur auf Linux-Distributionen.
 
-## Starting the Application
-Run the [`atlasapp`](ip-atlas/app.py) script:
+## Anwendung starten
+
+Führen Sie das [`atlasapp`](ip-atlas/app.py) Skript aus:
 ```sh
-python ip-atlas/app.py
+python3 ip-atlas/app.py
 ```
 
-## Routes
-Application routes are defined in the [`atlas`](ip-atlas/routes/atlas.py) module.
+## Routen
 
+Die Anwendungsrouten sind im [`atlas`](ip-atlas/routes/atlas.py) Modul definiert.
 
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## Lizenz
+
+Dieses Projekt ist unter der MIT-Lizenz lizenziert - siehe die [LICENSE](LICENSE) Datei für Details.
+
+---
