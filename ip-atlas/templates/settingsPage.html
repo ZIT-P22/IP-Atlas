@@ -1,44 +1,73 @@
-{% extends "layout.html" %} {% block content %}
-    <h1>Einstellungen</h1>
-    
-    <h2>IP-Adressbereich</h2>
-    <p>Geben Sie den IP-Adressbereich in CIDR-Notation an, der gescannt werden soll.</p>
-    
-    <h2>Scan-Dauer-Warnung</h2>
-    <p>Je größer der Bereich, desto länger dauert der Scan. Bitte haben Sie Geduld.</p>
-    
-    <h2>Zu scannende Subnetze</h2>
-    <p>Geben Sie die zu scannenden Subnetze an. Sie können Subnetze nach Bedarf hinzufügen oder entfernen.</p>
-    
-    <h2>Scan-Methode</h2>
-    <p>Wählen Sie die zu verwendende Scan-Methode aus.</p>
-    
-    <h2>Scan-Frequenz</h2>
-    <p>Geben Sie an, wie oft der Scan durchgeführt werden soll.</p>
-    
-    <!-- Optional -->
-    <h2>Seitentitel / Organisationsname</h2>
-    <p>Geben Sie den Titel für die Seite oder Organisation an.</p>
-    
-    <form>
-        <label for="ipRange">IP-Adressbereich:</label>
-        <input type="text" id="ipRange" name="ipRange">
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mx-auto mt-10">
+    <h1 class="text-2xl font-semibold mb-6">Einstellungen</h1>
 
-        <label for="ipSubnets">Zu scannende Subnetze:</label>
-        <input type="text" id="ipSubnets" name="ipSubnets">
+    <form action="{{ url_for('settings.settings') }}" method="POST" class="space-y-6">
+        <h2 class="text-xl font-semibold">IP-Adressbereich</h2>
+        <p class="text-gray-600">Geben Sie den IP-Adressbereich in CIDR-Notation an, der gescannt werden soll. 
+        <br>Je größer der Bereich, desto länger dauert der Scan. Es ist ratsam, kleinere, genutzte Adressbereiche zu wählen, um die Scangeschwindigkeit zu verbessern.</p>
         
-        <label for="scanMethod">Scan-Methode:</label>
-        <select id="scanMethod" name="scanMethod">
-            <option value="ping">Ping</option>
-            <option value="tcp">TCP</option>
-            <option value="udp">UDP</option>
-        </select>
-        
-        
-        <label for="pageTitle">Seitentitel / Organisationsname:</label>
-        <input type="text" id="pageTitle" name="pageTitle">
-        
-        <button type="submit">Einstellungen speichern</button>
+        <div id="ip-ranges" class="space-y-4">
+            {% for idx, ip_range in enumerate(settings['ip_ranges']) %}
+            <div class="ip-range">
+                <label for="ip_range_{{ idx }}" class="block text-sm font-medium text-gray-700">IP-Adressbereich {{ idx + 1 }} (CIDR)</label>
+                <input type="text" name="ip_ranges[{{ idx }}][range]" value="{{ ip_range['range'] }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <label for="interface_{{ idx }}" class="block text-sm font-medium text-gray-700">Schnittstelle {{ idx + 1 }}</label>
+                <input type="text" name="ip_ranges[{{ idx }}][interface]" value="{{ ip_range['interface'] }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <button type="button" class="remove-ip-range mt-2 text-red-500">Entfernen</button>
+            </div>
+            {% endfor %}
+        </div>
+        <button type="button" id="add-ip-range" class="mt-4 text-indigo-600">IP-Adressbereich hinzufügen</button>
+
+        <h2 class="text-xl font-semibold">Scan-Frequenz</h2>
+        <p class="text-gray-600">Geben Sie an, wie oft der Scan durchgeführt werden soll.</p>
+        <div>
+            <label for="scan_frequency" class="block text-sm font-medium text-gray-700">Scan-Frequenz (in Minuten)</label>
+            <input type="number" name="scan_frequency" id="scan_frequency" value="{{ settings['scan_frequency'] }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+        </div>
+
+        <!-- Optional: Seitentitel / Organisationsname -->
+        <h2 class="text-xl font-semibold">Seitentitel / Organisationsname</h2>
+        <p class="text-gray-600">Geben Sie den Titel für die Seite oder Organisation an.</p>
+        <div>
+            <label for="site_title" class="block text-sm font-medium text-gray-700">Seitentitel / Organisationsname</label>
+            <input type="text" name="site_title" id="site_title" value="{{ settings['site_title'] }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+        </div>
+
+        <div class="flex justify-end">
+            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Einstellungen speichern
+            </button>
+        </div>
     </form>
+</div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        let ipRangeCounter = {{ settings['ip_ranges']|length }};
+
+        document.getElementById('add-ip-range').addEventListener('click', () => {
+            ipRangeCounter++;
+            const ipRangeContainer = document.getElementById('ip-ranges');
+            const newIpRange = document.createElement('div');
+            newIpRange.classList.add('ip-range');
+            newIpRange.innerHTML = `
+                <label for="ip_range_${ipRangeCounter}" class="block text-sm font-medium text-gray-700">IP-Adressbereich ${ipRangeCounter} (CIDR)</label>
+                <input type="text" name="ip_ranges[${ipRangeCounter}][range]" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <label for="interface_${ipRangeCounter}" class="block text-sm font-medium text-gray-700">Schnittstelle ${ipRangeCounter}</label>
+                <input type="text" name="ip_ranges[${ipRangeCounter}][interface]" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <button type="button" class="remove-ip-range mt-2 text-red-500">Entfernen</button>
+            `;
+            ipRangeContainer.appendChild(newIpRange);
+        });
+
+        document.getElementById('ip-ranges').addEventListener('click', (event) => {
+            if (event.target.classList.contains('remove-ip-range')) {
+                event.target.parentElement.remove();
+            }
+        });
+    });
+</script>
 {% endblock %}

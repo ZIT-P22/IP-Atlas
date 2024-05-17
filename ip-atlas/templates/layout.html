@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -40,7 +39,6 @@
         }
     </style>
 </head>
-
 <body class="font-sans text-white bg-gray-900">
     <div class="grid min-h-screen w-full lg:grid-cols-[280px_1fr]">
         <div class="hidden border-r border-gray-700 bg-900-100/40 lg:block">
@@ -89,8 +87,8 @@
                     </nav>
                 </div>
                 <div class="mt-auto">
-                    <a class="flex items-center gap-2 px-3 py-2 transition-all rounded-lg hover:text-gray-100 {% if current_page == url_for('settings.config') %}bg-gray-700{% endif %}"
-                        href="{{ url_for('settings.config') }}">
+                    <a class="flex items-center gap-2 px-3 py-2 transition-all rounded-lg hover:text-gray-100 {% if current_page == url_for('settings.settings') %}bg-gray-700{% endif %}"
+                        href="{{ url_for('settings.settings') }}">
                         <span class="text-base leading-none material-symbols-outlined">settings</span>
                         <span class="ml-1 text-sm align-middle">Einstellungen</span>
                     </a>
@@ -151,5 +149,4 @@
         </div>
     </div>
 </body>
-
 </html>
