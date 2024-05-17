@@ -31,6 +31,9 @@ atlasapp.register_blueprint(scan)
 db.init_app(atlasapp)
 migrate.init_app(atlasapp, db)
 
+# Register enumerate as a global function
+atlasapp.jinja_env.globals.update(enumerate=enumerate)
+
 if __name__ == "__main__":
     with atlasapp.app_context():
         from models import *
