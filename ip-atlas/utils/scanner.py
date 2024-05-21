@@ -68,7 +68,7 @@ def update_vendor(clients):
     
     return clients
 
-def get_devices(search_range, iface=None):
+def scan_devices(search_range, iface=None):
     arp = ARP(pdst=search_range)
     ether = Ether(dst="ff:ff:ff:ff:ff:ff")
     packet = ether / arp
