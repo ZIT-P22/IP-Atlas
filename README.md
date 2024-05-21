@@ -47,9 +47,10 @@ IP-Atlas ist eine Flask-Anwendung zur effizienten Verwaltung von IP-Adressen in 
     ```
     Fügen Sie die folgenden Zeilen hinzu und speichern Sie die Datei:
     ```
-    SECRET_KEY="IhrSuperGeheimSchlüssel"
-    SETTINGS_USER="IhrBenutzername"
-    SETTINGS_PASSWORD="IhrPasswort"
+    PASSWORD="___"
+    SETTINGS_USER="___"
+    SETTINGS_PASSWORD="___"
+    SECRET_KEY="___"
     ```
 
 ## ARP Scanner einrichten
