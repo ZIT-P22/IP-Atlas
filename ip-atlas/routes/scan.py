@@ -3,6 +3,7 @@ from flask import Blueprint, jsonify, render_template, request
 from utils.crud import convert_discovered_devices_to_json_format, get_tags, set_used_of_discovered_device, write_edit_db
 from utils.settings import load_settings
 from models import Host, db, DiscoveredDevice
+import time
 
 scan = Blueprint("scan", __name__)
 
@@ -11,9 +12,15 @@ def discovered():
     settings = load_settings()
     ip_ranges = settings.get("ip_ranges", [])
 
+    start_time = time.time()
+
     # Scan-Geräte für jeden IP-Bereich
     for ip_range in ip_ranges:
         scan_devices(ip_range["range"], ip_range["interface"])
+
+    end_time = time.time()
+    duration = end_time - start_time
+    print(f"Scan duration: {duration} seconds")
 
     # Gefundene Geräte und Tags abrufen
     devices = convert_discovered_devices_to_json_format()
