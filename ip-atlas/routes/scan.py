@@ -1,6 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor
+from flask import Blueprint, jsonify, render_template, request, current_app as app
 from utils.scanner import scan_devices
-from flask import Blueprint, jsonify, render_template, request
 from utils.crud import convert_discovered_devices_to_json_format, get_tags, set_used_of_discovered_device, write_edit_db
 from utils.settings import load_settings
 from models import Host, db, DiscoveredDevice
@@ -17,7 +17,8 @@ def discovered():
 
     # Parallelisierung der Scanvorgänge
     def scan_wrapper(ip_range):
-        scan_devices(ip_range["range"], ip_range["interface"])
+        with app.app_context():
+            scan_devices(ip_range["range"], ip_range["interface"])
 
     with ThreadPoolExecutor() as executor:
         executor.map(scan_wrapper, ip_ranges)

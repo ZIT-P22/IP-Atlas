@@ -1,55 +1,88 @@
-import subprocess
-import json
-from models import db, DiscoveredDevice
+from scapy.all import ARP, Ether, srp
+from mac_vendor_lookup import MacLookup, BaseMacLookup
+from time import time
 import os
-from datetime import datetime
+import json
 
-password = os.getenv("PASSWORD")
+MAC_VENDOR_FILE = "ip-atlas/data/mac_vendors.txt"
+SCANNED_CLIENTS_FILE = "ip-atlas/data/scanned_clients.json"
 
-
-
-# read the json file and return the data
-def read_json(path = "ip-atlas/data/scanned_clients.json"):
-    # create file and folder if it does not exist
-    if not os.path.exists("ip-atlas/data"):
-        os.makedirs("ip-atlas/data")
-        with open(path, "w") as file:
-            file.write("[]")
-    if not os.path.exists(path):
-        with open(path, "w") as file:
-            file.write("[]")
-    with open(path) as file:
-        data = json.load(file)
-    return data
-
-# function which add the hosts to the database
-def add_scanned_hosts():
+def get_vendor(mac_address, mac_lookup_instance):
     try:
-        data = read_json()
-        for host in data:
-            ipv4_address = host["ip"]
-            existing_device = DiscoveredDevice.query.filter_by(ipv4=ipv4_address).first()
-            if existing_device:
-                existing_device.last_seen = datetime.utcnow()
-                print("Diese IP gibt es bereits", ipv4_address)
-            else:
-                discoveredDevice = DiscoveredDevice(mac_address=host["mac"], ipv4=ipv4_address, vendor=host["vendor"])
-                db.session.add(discoveredDevice)
-        db.session.commit()
-    except FileNotFoundError:
-        print("JSON file not found. No hosts to add.")
-    except json.decoder.JSONDecodeError:
-        print("JSON decoding error. Check if the JSON file is valid.")
+        vendor = mac_lookup_instance.lookup(mac_address)
+        return vendor
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"Error looking up vendor for MAC {mac_address}: {e}")
+        return "Unknown"
 
+def wurde_vor_x_tagen_aktualisiert(dateipfad):
+    try:
+        letzte_aktualisierung = os.path.getmtime(dateipfad)
+    except Exception as e:
+        print(f"Error accessing file {dateipfad}: {e}")
+        return False
     
-def scan_devices(ip_range, adapter):
-    path_to_netscan = os.path.dirname(os.path.abspath(__file__)) + "/netscan.py"
-    command = f"sudo -S python3 {path_to_netscan} -r {ip_range} --iface {adapter}"
-    process = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = process.communicate(input=f"{password}\n".encode())
-    print('Output:', stdout.decode())
-    print('Error:', stderr.decode())
-    add_scanned_hosts()
-    print("Scanning complete")
+    aktuelle_zeit = time()
+    differenz_in_tagen = (aktuelle_zeit - letzte_aktualisierung) / (24 * 3600)
+    return differenz_in_tagen >= 1
+
+def update_vendor_list():
+    init = False
+    if not os.path.exists(MAC_VENDOR_FILE):
+        try:
+            with open(MAC_VENDOR_FILE, "w") as file:
+                file.write("")
+                init = True
+        except Exception as e:
+            print(f"Error creating file {MAC_VENDOR_FILE}: {e}")
+            return None
+            
+    BaseMacLookup.cache_path = MAC_VENDOR_FILE
+    mac_lookup_instance = MacLookup()
+    
+    if wurde_vor_x_tagen_aktualisiert(MAC_VENDOR_FILE) or init:
+        try:
+            mac_lookup_instance.update_vendors()
+            print("Mac lookup updated")
+        except Exception as e:
+            print(f"Error updating Mac lookup: {e}")
+    else:
+        print("Mac lookup is up to date")
+    
+    return mac_lookup_instance
+
+def update_vendor(clients):
+    mac_lookup_instance = update_vendor_list()
+    if mac_lookup_instance is None:
+        print("Failed to initialize Mac lookup")
+        return clients
+    
+    unique_macs = {client['mac'] for client in clients}
+    mac_to_vendor = {}
+    
+    for mac in unique_macs:
+        mac_to_vendor[mac] = get_vendor(mac, mac_lookup_instance)
+    
+    for client in clients:
+        client['vendor'] = mac_to_vendor.get(client['mac'], "Unknown")
+    
+    return clients
+
+def get_devices(search_range, iface=None):
+    arp = ARP(pdst=search_range)
+    ether = Ether(dst="ff:ff:ff:ff:ff:ff")
+    packet = ether / arp
+    result = srp(packet, iface=iface, timeout=3, verbose=0)[0]
+    clients = [{'ip': received.psrc, 'mac': received.hwsrc, 'vendor': ''} for sent, received in result]
+    
+    clients = update_vendor(clients)
+    print("Gefundene Geräte:", clients)
+    save_as_json(clients)
+    return clients
+
+def save_as_json(clients):
+    try:
+        with open(SCANNED_CLIENTS_FILE, "w") as file:
+            json.dump(clients, file, indent=4)
+    except Exception as e:
+        print(f"Error saving JSON file {SCANNED_CLIENTS_FILE}: {e}")
