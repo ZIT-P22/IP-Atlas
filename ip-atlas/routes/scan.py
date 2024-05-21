@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 from utils.scanner import scan_devices
 from flask import Blueprint, jsonify, render_template, request
 from utils.crud import convert_discovered_devices_to_json_format, get_tags, set_used_of_discovered_device, write_edit_db
@@ -6,6 +7,7 @@ from models import Host, db, DiscoveredDevice
 import time
 
 scan = Blueprint("scan", __name__)
+
 @scan.route("/discovered")
 def discovered():
     settings = load_settings()
@@ -13,13 +15,12 @@ def discovered():
 
     start_time = time.time()
 
-    # Scan-Geräte für jeden IP-Bereich parallel ausführen
-    import concurrent.futures
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        # Starte den Scan für jeden IP-Bereich
-        futures = [executor.submit(scan_devices, ip_range["range"], ip_range["interface"]) for ip_range in ip_ranges]
-        # Warte auf Abschluss aller Scans
-        concurrent.futures.wait(futures)
+    # Parallelisierung der Scanvorgänge
+    def scan_wrapper(ip_range):
+        scan_devices(ip_range["range"], ip_range["interface"])
+
+    with ThreadPoolExecutor() as executor:
+        executor.map(scan_wrapper, ip_ranges)
 
     end_time = time.time()
     duration = end_time - start_time
