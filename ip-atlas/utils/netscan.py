@@ -1,5 +1,6 @@
 from scapy.all import ARP, Ether, srp, conf
 from mac_vendor_lookup import MacLookup, BaseMacLookup
+from concurrent.futures import ThreadPoolExecutor
 from time import time
 import os
 import json
@@ -58,29 +59,36 @@ def update_vendor(clients):
         print("Failed to initialize Mac lookup")
         return clients
     
+    # Verwende ein Set, um doppelte MAC-Adressen zu vermeiden
+    unique_macs = {client['mac'] for client in clients}
+    mac_to_vendor = {}
+    
+    def lookup_vendor(mac):
+        return mac, get_vendor(mac, mac_lookup_instance)
+    
+    with ThreadPoolExecutor() as executor:
+        for mac, vendor in executor.map(lookup_vendor, unique_macs):
+            mac_to_vendor[mac] = vendor
+    
     for client in clients:
-        client['vendor'] = get_vendor(client['mac'], mac_lookup_instance)
-        
+        client['vendor'] = mac_to_vendor.get(client['mac'], "Unknown")
+    
     return clients
 
 def get_devices(search_range, iface=None):
     arp = ARP(pdst=search_range)
     ether = Ether(dst="ff:ff:ff:ff:ff:ff")
     packet = ether / arp
-    # Spezifische Netzwerkkarte verwenden
     result = srp(packet, iface=iface, timeout=3, verbose=0)[0]
     clients = [{'ip': received.psrc, 'mac': received.hwsrc, 'vendor': ''} for sent, received in result]
     
     clients = update_vendor(clients)
-    print("Gefundende Geräte:", clients)
+    print("Gefundene Geräte:", clients)
     save_as_json(clients)
     return clients
 
 def save_as_json(clients):
     try:
-        if os.path.exists(SCANNED_CLIENTS_FILE):
-            os.remove(SCANNED_CLIENTS_FILE)
-            
         with open(SCANNED_CLIENTS_FILE, "w") as file:
             json.dump(clients, file, indent=4)
     except Exception as e:
