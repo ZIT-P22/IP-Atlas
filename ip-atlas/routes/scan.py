@@ -1,24 +1,36 @@
-from utils.scanner import scan_devices
 from flask import Blueprint, jsonify, render_template, request
+from utils.scanner import start_background_scan, get_scan_progress
 from utils.crud import convert_discovered_devices_to_json_format, get_tags, set_used_of_discovered_device, write_edit_db
 from utils.settings import load_settings
-from models import Host, db, DiscoveredDevice
+from models import Host
 
 scan = Blueprint("scan", __name__)
 
 @scan.route("/discovered")
 def discovered():
-    settings = load_settings()
-    ip_ranges = settings.get("ip_ranges", [])
-
-    # Scan-Geräte für jeden IP-Bereich
-    for ip_range in ip_ranges:
-        scan_devices(ip_range["range"], ip_range["interface"])
-
     # Gefundene Geräte und Tags abrufen
     devices = convert_discovered_devices_to_json_format()
     tags = get_tags()
     return render_template("ip/discovered.html", devices=devices, tags=tags)
+
+@scan.route("/start_scan", methods=["POST"])
+def start_scan():
+    settings = load_settings()
+    ip_ranges = settings.get("ip_ranges", [])
+    
+    start_background_scan(ip_ranges)
+    
+    return jsonify({"status": "scan_started"})
+
+@scan.route("/scan_progress", methods=["GET"])
+def scan_progress():
+    progress = get_scan_progress()
+    return jsonify(progress)
+
+@scan.route("/get_results", methods=["GET"])
+def get_results():
+    devices = convert_discovered_devices_to_json_format()
+    return jsonify({"devices": devices})
 
 @scan.route("/set_used/<int:id>", methods=["POST"])
 def set_used(id):

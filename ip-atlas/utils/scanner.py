@@ -3,13 +3,13 @@ import json
 from models import db, DiscoveredDevice
 import os
 from datetime import datetime
+import threading
 
 password = os.getenv("PASSWORD")
-
-
+progress = {"total": 0, "completed": 0, "status": "idle"}
 
 # read the json file and return the data
-def read_json(path = "ip-atlas/data/scanned_clients.json"):
+def read_json(path="ip-atlas/data/scanned_clients.json"):
     # create file and folder if it does not exist
     if not os.path.exists("ip-atlas/data"):
         os.makedirs("ip-atlas/data")
@@ -43,7 +43,6 @@ def add_scanned_hosts():
     except Exception as e:
         print(f"An error occurred: {e}")
 
-    
 def scan_devices(ip_range, adapter):
     path_to_netscan = os.path.dirname(os.path.abspath(__file__)) + "/netscan.py"
     command = f"sudo -S python3 {path_to_netscan} -r {ip_range} --iface {adapter}"
@@ -53,3 +52,22 @@ def scan_devices(ip_range, adapter):
     print('Error:', stderr.decode())
     add_scanned_hosts()
     print("Scanning complete")
+
+def background_scan(ip_ranges):
+    global progress
+    progress["total"] = len(ip_ranges)
+    progress["completed"] = 0
+    progress["status"] = "scanning"
+
+    for ip_range in ip_ranges:
+        scan_devices(ip_range["range"], ip_range["interface"])
+        progress["completed"] += 1
+
+    progress["status"] = "completed"
+
+def start_background_scan(ip_ranges):
+    scan_thread = threading.Thread(target=background_scan, args=(ip_ranges,))
+    scan_thread.start()
+
+def get_scan_progress():
+    return progress
