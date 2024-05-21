@@ -1,7 +1,8 @@
 import os
 import json
 
-SETTINGS_FILE = 'ip-atlas/data/settings.json'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SETTINGS_FILE = os.path.join(BASE_DIR, '../data/settings.json')
 
 def load_settings():
     if os.path.exists(SETTINGS_FILE):
@@ -9,8 +10,8 @@ def load_settings():
             return json.load(f)
     return {
         'ip_ranges': [
-            {'range': '192.168.0.0/24', 'interface': 'eth0'},
-            {'range': '10.0.0.0/24', 'interface': 'wlan0'}
+            {'range': '192.168.120.0/24', 'interface': 'eth1'},
+            {'range': '172.16.0.0/16', 'interface': 'eth0'}
         ],
         'scan_frequency': 10,
         'site_title': 'IP-Atlas'

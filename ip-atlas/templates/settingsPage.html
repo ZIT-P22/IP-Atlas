@@ -5,9 +5,9 @@
 
     <form action="{{ url_for('settings.settings') }}" method="POST" class="space-y-6">
         <h2 class="text-xl font-semibold">IP-Adressbereich</h2>
-        <p class="text-gray-600">Geben Sie den IP-Adressbereich in CIDR-Notation an, der gescannt werden soll. 
+        <p class="text-gray-600">Geben Sie den IP-Adressbereich in CIDR-Notation an, der gescannt werden soll.
         <br>Je größer der Bereich, desto länger dauert der Scan. Es ist ratsam, kleinere, genutzte Adressbereiche zu wählen, um die Scangeschwindigkeit zu verbessern.</p>
-        
+
         <div id="ip-ranges" class="space-y-4">
             {% for idx, ip_range in enumerate(settings['ip_ranges']) %}
             <div class="ip-range">
@@ -49,23 +49,24 @@
         let ipRangeCounter = {{ settings['ip_ranges']|length }};
 
         document.getElementById('add-ip-range').addEventListener('click', () => {
-            ipRangeCounter++;
             const ipRangeContainer = document.getElementById('ip-ranges');
             const newIpRange = document.createElement('div');
             newIpRange.classList.add('ip-range');
             newIpRange.innerHTML = `
-                <label for="ip_range_${ipRangeCounter}" class="block text-sm font-medium text-gray-700">IP-Adressbereich ${ipRangeCounter} (CIDR)</label>
+                <label for="ip_range_${ipRangeCounter}" class="block text-sm font-medium text-gray-700">IP-Adressbereich ${ipRangeCounter + 1} (CIDR)</label>
                 <input type="text" name="ip_ranges[${ipRangeCounter}][range]" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                <label for="interface_${ipRangeCounter}" class="block text-sm font-medium text-gray-700">Schnittstelle ${ipRangeCounter}</label>
+                <label for="interface_${ipRangeCounter}" class="block text-sm font-medium text-gray-700">Schnittstelle ${ipRangeCounter + 1}</label>
                 <input type="text" name="ip_ranges[${ipRangeCounter}][interface]" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                 <button type="button" class="remove-ip-range mt-2 text-red-500">Entfernen</button>
             `;
             ipRangeContainer.appendChild(newIpRange);
+            ipRangeCounter++;
         });
 
         document.getElementById('ip-ranges').addEventListener('click', (event) => {
             if (event.target.classList.contains('remove-ip-range')) {
                 event.target.parentElement.remove();
+                ipRangeCounter--;
             }
         });
     });
