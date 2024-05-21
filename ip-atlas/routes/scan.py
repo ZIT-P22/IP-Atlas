@@ -6,7 +6,6 @@ from models import Host, db, DiscoveredDevice
 import time
 
 scan = Blueprint("scan", __name__)
-
 @scan.route("/discovered")
 def discovered():
     settings = load_settings()
@@ -14,9 +13,13 @@ def discovered():
 
     start_time = time.time()
 
-    # Scan-Geräte für jeden IP-Bereich
-    for ip_range in ip_ranges:
-        scan_devices(ip_range["range"], ip_range["interface"])
+    # Scan-Geräte für jeden IP-Bereich parallel ausführen
+    import concurrent.futures
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        # Starte den Scan für jeden IP-Bereich
+        futures = [executor.submit(scan_devices, ip_range["range"], ip_range["interface"]) for ip_range in ip_ranges]
+        # Warte auf Abschluss aller Scans
+        concurrent.futures.wait(futures)
 
     end_time = time.time()
     duration = end_time - start_time
