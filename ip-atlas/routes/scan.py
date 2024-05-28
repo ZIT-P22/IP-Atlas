@@ -12,6 +12,8 @@ def discovered():
     # Gefundene Geräte und Tags abrufen
     devices = convert_discovered_devices_to_json_format()
     tags = get_tags()
+    print(devices)  # Debug-Ausgabe
+    print(tags)     # Debug-Ausgabe
     return render_template("ip/discovered.html", devices=devices, tags=tags)
 
 @scan.route("/start_scan", methods=["POST"])

@@ -244,21 +244,24 @@ def write_edit_db(formData):
         return False
     
     
-# function which reads the data from the DiscoveryDevice table and converts it to an json format
 def convert_discovered_devices_to_json_format():
     data = {"discovered_devices": []}
     discovered_devices = DiscoveredDevice.query.filter_by(blacklist=False, used=False).all()
     for device in discovered_devices:
         device_data = {
             "id": device.id,
-            "mac": device.mac_address,
+            "mac_address": device.mac_address,  # Achte darauf, dass die Keys mit dem Frontend übereinstimmen
             "ipv4": device.ipv4,
+            "ipv6": device.ipv6,  # Falls vorhanden
+            "hostname": device.hostname,  # Falls vorhanden
             "vendor": device.vendor,
-            "first_seen": device.first_seen, # "2023-04-01 12:34:56
-            "last_seen": device.last_seen,
+            "first_seen": device.first_seen.strftime("%Y-%m-%d %H:%M:%S"), # Formatierung der Daten
+            "last_seen": device.last_seen.strftime("%Y-%m-%d %H:%M:%S"),  # Formatierung der Daten
         }
         data["discovered_devices"].append(device_data)
+    print(data)  # Debug-Ausgabe
     return data
+
 
 # sets the Blacklist to true of an DiscoveredDevice
 def blacklist_of_discovered_device(id):

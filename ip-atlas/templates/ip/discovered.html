@@ -1,109 +1,118 @@
 {% extends "layout.html" %}
+
 {% block content %}
 <div class="container mx-auto mt-10">
-    <h1 class="text-2xl font-semibold mb-6">Gefundene Geräte</h1>
-
-    <div class="flex justify-end">
-        <button id="start-scan" class="mb-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Scan jetzt starten</button>
+    <h1 class="text-2xl font-semibold mb-6 text-white">Gefundene Geräte</h1>
+    
+    <div class="flex justify-end mb-4">
+        <button id="start-scan" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Scan jetzt starten</button>
     </div>
-
+    
     <div id="progress-bar" class="hidden mb-4">
         <div class="w-full bg-gray-200 rounded-full">
             <div id="progress" class="bg-blue-500 text-xs leading-none py-1 text-center text-white rounded-full" style="width: 0%">0%</div>
         </div>
     </div>
-
-    <div id="results" class="mt-6">
-        <table class="min-w-full bg-white">
-            <thead>
-                <tr>
-                    <th class="py-2">MAC-Adresse</th>
-                    <th class="py-2">IPv4</th>
-                    <th class="py-2">IPv6</th>
-                    <th class="py-2">Hostname</th>
-                    <th class="py-2">Vendor</th>
-                    <th class="py-2">Tags</th>
-                </tr>
-            </thead>
-            <tbody id="device-list" class="text-gray-700">
-                {% for device in devices %}
-                <tr>
-                    <td class="py-2">{{ device.mac_address }}</td>
-                    <td class="py-2">{{ device.ipv4 }}</td>
-                    <td class="py-2">{{ device.ipv6 }}</td>
-                    <td class="py-2">{{ device.hostname }}</td>
-                    <td class="py-2">{{ device.vendor }}</td>
-                    <td class="py-2">{{ device.tags }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    
+    <div class="flex flex-wrap -mx-4">
+        {% for data in devices['discovered_devices'] %}
+        <div class="p-4 w-full sm:w-1/2 md:w-1/2 lg:w-1/4">
+            <div class="p-6 bg-gray-800 rounded-lg shadow-lg">
+                <div class="mb-6">
+                    <h2 class="text-xl font-semibold text-white">{{ data['id'] }}</h2>
+                    <div class="mt-2 text-sm text-gray-400">
+                        <p>IP: <span class="text-gray-300">{{ data['ipv4'] }}</span></p>
+                        <p>MAC Address: <span class="text-gray-300">{{ data['mac'] }}</span></p>
+                        <p>Vendor: <span class="text-gray-300">{{ data['vendor'] }}</span></p>
+                        <p>First Seen: <span class="text-gray-300">{{ data['first_seen'] }}</span></p>
+                        <p>Last Seen: <span class="text-gray-300">{{ data['last_seen'] }}</span></p>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-4">
+                    <button aria-label="Add to IP list" class="text-4xl" onclick="openModal('{{ data['ipv4'] }}', {{ data['id'] }})">
+                        <span class="text-gray-400 material-symbols-outlined hover:text-blue-400">add_circle</span>
+                    </button>
+                    <button aria-label="Delete device" class="text-4xl">
+                        <span class="text-gray-400 material-symbols-outlined hover:text-red-400">delete</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 </div>
 
-<style>
-    .hidden {
-        display: none;
-    }
-</style>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const startScanButton = document.getElementById('start-scan');
-        const progressBar = document.getElementById('progress-bar');
-        const progressElement = document.getElementById('progress');
-        const deviceList = document.getElementById('device-list');
-
-        startScanButton.addEventListener('click', function() {
-            progressBar.classList.remove('hidden');
-            startScanButton.disabled = true;
-
-            fetch('{{ url_for("scan.start_scan") }}', { method: 'POST' })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'scan_started') {
-                        updateProgress();
-                    }
-                });
-        });
-
-        function updateProgress() {
-            fetch('{{ url_for("scan.scan_progress") }}')
-                .then(response => response.json())
-                .then(data => {
-                    const percentage = (data.completed / data.total) * 100;
-                    progressElement.style.width = percentage + '%';
-                    progressElement.textContent = Math.round(percentage) + '%';
-
-                    if (data.status === 'scanning') {
-                        setTimeout(updateProgress, 1000);
-                    } else {
-                        fetchResults();
-                        startScanButton.disabled = false;
-                    }
-                });
-        }
-
-        function fetchResults() {
-            fetch('{{ url_for("scan.get_results") }}')
-                .then(response => response.json())
-                .then(data => {
-                    deviceList.innerHTML = '';
-                    data.devices.forEach(device => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td class="py-2">${device.mac_address}</td>
-                            <td class="py-2">${device.ipv4}</td>
-                            <td class="py-2">${device.ipv6}</td>
-                            <td class="py-2">${device.hostname}</td>
-                            <td class="py-2">${device.vendor}</td>
-                            <td class="py-2">${device.tags.join(', ')}</td>
-                        `;
-                        deviceList.appendChild(row);
-                    });
-                    progressBar.classList.add('hidden');
-                });
-        }
-    });
-</script>
+<!-- Modal HTML -->
+<div id="addIpModal" class="fixed inset-0 flex items-center justify-center hidden bg-black bg-opacity-50">
+    <div class="bg-gray-800 rounded-lg shadow-lg p-8 w-1/2">
+        <div class="flex justify-end">
+            <button onclick="closeModal()" class="text-white text-2xl">&times;</button>
+        </div>
+        <form id="addIpForm" action="{{ url_for('atlas.save') }}" method="POST" onsubmit="return handleFormSubmit(event)">
+            <h1 class="mb-4 text-2xl font-bold text-gray-200">IP-Adresse hinzufügen</h1>
+            <div class="mb-4">
+                <label class="block mb-2 text-sm font-bold text-gray-200" for="name">Name</label>
+                <input
+                    class="w-full px-3 py-2 leading-tight text-gray-200 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                    name="name" id="name" type="text" placeholder="Geben Sie den IP-Namen ein" required>
+            </div>
+            <div class="mb-4">
+                <label class="block mb-2 text-sm font-bold text-gray-200" for="ipv4">IPv4</label>
+                <input
+                    class="w-full px-3 py-2 leading-tight text-gray-200 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                    name="ipv4" id="modal-ipv4" type="text" placeholder="Geben Sie die IPv4-Adresse ein" readonly>
+            </div>
+            
+            <div class="mb-4">
+                <label class="block mb-2 text-sm font-bold text-gray-200" for="ipv6">IPv6</label>
+                <input
+                    class="w-full px-3 py-2 leading-tight text-gray-200 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                    name="ipv6" id="ipv6" type="text" placeholder="Geben Sie die IPv6-Adresse ein">
+            </div>
+            <div class="mb-4">
+                <label class="block mb-2 text-sm font-bold text-gray-200" for="ports">Ports</label>
+                <input
+                    class="w-full px-3 py-2 leading-tight text-gray-200 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                    name="portsFB" id="ports" type="text" placeholder="Geben Sie die Ports ein (durch Komma getrennt)">
+            </div>
+            <div class="mb-4">
+                <label class="block mb-2 text-sm font-bold text-gray-200" for="tags">Tags</label>
+                <input
+                    class="w-full px-3 py-2 leading-tight text-gray-200 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                    name="tags" id="tags" type="text" placeholder="Geben Sie Tags ein (durch Komma getrennt)" list="tagsList">
+                <datalist id="tagsList">
+                    {% for tag in tags %}
+                    <option value="{{ tag }}">
+                    {% endfor %}
+                </datalist>
+            </div>
+            <div class="flex items-center justify-center">
+                <button
+                    class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline"
+                    type="submit">
+                    Absenden
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Existing Device Modal HTML -->
+<div id="existingDeviceModal" class="fixed inset-0 flex items-center justify-center hidden bg-black bg-opacity-50">
+    <div class="bg-gray-800 rounded-lg shadow-lg p-8 w-1/2">
+        <div class="flex justify-end">
+            <button onclick="closeModal()" class="text-white text-2xl">&times;</button>
+        </div>
+        <h1 class="mb-4 text-2xl font-bold text-gray-200">Gerät bereits vorhanden</h1>
+        <p class="mb-4 text-gray-400">Die IPv4-Adresse ist bereits in der Datenbank vorhanden. Möchten Sie das bisherige Gerät löschen oder das vorhandene Gerät ersetzen?</p>
+        <div class="flex justify-end space-x-4">
+            <button onclick="handleExistingDeviceResponse('delete')" class="px-4 py-2 font-bold text-white bg-red-500 rounded hover:bg-red-700 focus:outline-none focus:shadow-outline">
+                Löschen
+            </button>
+            <button onclick="handleExistingDeviceResponse('replace')" class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline">
+                Ersetzen
+            </button>
+        </div>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='js/discovered.js') }}"></script>
 {% endblock %}
