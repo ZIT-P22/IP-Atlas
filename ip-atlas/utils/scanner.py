@@ -1,9 +1,14 @@
 import subprocess
 import json
-from models import db, DiscoveredDevice
 import os
 from datetime import datetime
 import threading
+from flask import Flask
+from models import db, DiscoveredDevice
+
+app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///../database/ip_atlas.db"
+db.init_app(app)
 
 password = os.getenv("PASSWORD")
 progress = {"total": 0, "completed": 0, "status": "idle"}
@@ -26,16 +31,17 @@ def read_json(path="ip-atlas/data/scanned_clients.json"):
 def add_scanned_hosts():
     try:
         data = read_json()
-        for host in data:
-            ipv4_address = host["ip"]
-            existing_device = DiscoveredDevice.query.filter_by(ipv4=ipv4_address).first()
-            if existing_device:
-                existing_device.last_seen = datetime.utcnow()
-                print("Diese IP gibt es bereits", ipv4_address)
-            else:
-                discoveredDevice = DiscoveredDevice(mac_address=host["mac"], ipv4=ipv4_address, vendor=host["vendor"])
-                db.session.add(discoveredDevice)
-        db.session.commit()
+        with app.app_context():
+            for host in data:
+                ipv4_address = host["ip"]
+                existing_device = DiscoveredDevice.query.filter_by(ipv4=ipv4_address).first()
+                if existing_device:
+                    existing_device.last_seen = datetime.utcnow()
+                    print("Diese IP gibt es bereits", ipv4_address)
+                else:
+                    discoveredDevice = DiscoveredDevice(mac_address=host["mac"], ipv4=ipv4_address, vendor=host["vendor"])
+                    db.session.add(discoveredDevice)
+            db.session.commit()
     except FileNotFoundError:
         print("JSON file not found. No hosts to add.")
     except json.decoder.JSONDecodeError:

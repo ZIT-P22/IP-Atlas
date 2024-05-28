@@ -1,4 +1,5 @@
-from scapy.all import ARP, Ether, srp, conf
+import requests
+from scapy.all import ARP, Ether, srp
 from mac_vendor_lookup import MacLookup, BaseMacLookup
 from time import time
 import os
@@ -7,6 +8,7 @@ from argparse import ArgumentParser
 
 MAC_VENDOR_FILE = "ip-atlas/data/mac_vendors.txt"
 SCANNED_CLIENTS_FILE = "ip-atlas/data/scanned_clients.json"
+FLASK_SERVER_URL = "http://127.0.0.1:8080/add_devices"
 
 def get_vendor(mac_address, mac_lookup_instance):
     try:
@@ -72,8 +74,9 @@ def get_devices(search_range, iface=None):
     clients = [{'ip': received.psrc, 'mac': received.hwsrc, 'vendor': ''} for sent, received in result]
     
     clients = update_vendor(clients)
-    print("Gefundende Geräte:", clients)
+    print("Gefundene Geräte:", clients)
     save_as_json(clients)
+    send_to_server(clients)
     return clients
 
 def save_as_json(clients):
@@ -85,6 +88,16 @@ def save_as_json(clients):
             json.dump(clients, file, indent=4)
     except Exception as e:
         print(f"Error saving JSON file {SCANNED_CLIENTS_FILE}: {e}")
+
+def send_to_server(clients):
+    try:
+        response = requests.post(FLASK_SERVER_URL, json={"devices": clients})
+        if response.status_code == 201:
+            print("Devices successfully sent to the server.")
+        else:
+            print(f"Failed to send devices. Server responded with status code {response.status_code}")
+    except Exception as e:
+        print(f"An error occurred while sending devices to the server: {e}")
 
 def args():
     parser = ArgumentParser(description="Python Script to Perform Network Scans")

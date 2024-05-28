@@ -2,7 +2,8 @@ from flask import Blueprint, jsonify, render_template, request
 from utils.scanner import start_background_scan, get_scan_progress
 from utils.crud import convert_discovered_devices_to_json_format, get_tags, set_used_of_discovered_device, write_edit_db
 from utils.settings import load_settings
-from models import Host
+from models import Host, DiscoveredDevice, db
+from datetime import datetime
 
 scan = Blueprint("scan", __name__)
 
@@ -53,3 +54,24 @@ def edit_device():
         return jsonify({"status": "success"})
     else:
         return jsonify({"status": "error"})
+    
+@scan.route("/add_devices", methods=["POST"])
+def add_devices():
+    devices = request.json.get("devices", [])
+    for client in devices:
+        ipv4_address = client["ip"]
+        existing_device = DiscoveredDevice.query.filter_by(ipv4=ipv4_address).first()
+        if existing_device:
+            existing_device.last_seen = datetime.utcnow()
+            print("Diese IP gibt es bereits", ipv4_address)
+        else:
+            discovered_device = DiscoveredDevice(
+                mac_address=client["mac"],
+                ipv4=ipv4_address,
+                vendor=client["vendor"],
+                first_seen=datetime.utcnow(),
+                last_seen=datetime.utcnow()
+            )
+            db.session.add(discovered_device)
+    db.session.commit()
+    return jsonify({"status": "devices_added"}), 201
