@@ -166,3 +166,7 @@ cython_debug/
 **/data
 ip-atlas/static/css/main.css
 ip-atlas/log/**
+database/ip_atlas.db
+database/ip_atlas.db
+database/*
+ip_atlas.db
