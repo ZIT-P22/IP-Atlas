@@ -209,10 +209,16 @@ def write_edit_db(formData):
     try:
         id = formData.get("id")
         name = formData.get("name")
-        tags = formData.get("tags").split(',')
+        tags = formData.get("tags")
         ipv4 = formData.get("ipv4")
         ipv6 = formData.get("ipv6")
-        portsFB = formData.get("portsFB").split(',')
+        portsFB = formData.get("portsFB")
+
+        # Stellen Sie sicher, dass tags und portsFB Listen sind
+        if isinstance(tags, str):
+            tags = tags.split(',')
+        if isinstance(portsFB, str):
+            portsFB = portsFB.split(',')
 
         print("ID:", id, "Name:", name, "Tags:", tags, "IPv4:", ipv4, "IPv6:", ipv6, "PortsFB:", portsFB)
 
@@ -221,9 +227,7 @@ def write_edit_db(formData):
         delete_portsFB_by_host_id(id)
         for portFB in portsFB:
             print("PortFB:", portFB)
-            portFBID = check_portFB_exists(portFB, method="id")
-            if not portFBID:
-                write_to_db("portFB", {"host_id": id, "portFB_number": portFB})
+            write_to_db("portFB", {"host_id": id, "portFB_number": portFB})
 
         delete_tags_by_host_id(id)
         for tag in tags:
