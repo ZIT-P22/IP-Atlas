@@ -171,3 +171,4 @@ database/ip_atlas.db
 database/*
 ip_atlas.db
 .*
+*.db
