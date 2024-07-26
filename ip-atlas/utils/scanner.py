@@ -47,7 +47,8 @@ def add_scanned_hosts():
     except json.decoder.JSONDecodeError:
         print("JSON decoding error. Check if the JSON file is valid.")
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"Error looking up vendor for MAC {mac_address}: {e}")
+        return "Unknown"
 
 def scan_devices(ip_range, adapter):
     path_to_netscan = os.path.dirname(os.path.abspath(__file__)) + "/netscan.py"
