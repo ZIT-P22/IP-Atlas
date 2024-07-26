@@ -2,6 +2,17 @@
 
 {% block content %}
 <div class="flex flex-wrap -mx-4">
+    <div class="w-full p-4 mb-4">
+        <div class="flex justify-end">
+            <button id="start-scan" class="mb-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Scan jetzt starten</button>
+        </div>
+        <div id="progress-bar" class="hidden mb-4">
+            <div class="w-full bg-gray-200 rounded-full">
+                <div id="progress" class="bg-blue-500 text-xs leading-none py-1 text-center text-white rounded-full" style="width: 0%">0%</div>
+            </div>
+        </div>
+    </div>
+
     {% for data in devices['discovered_devices'] %}
     <div class="p-4 md:w-1/2 lg:w-1/4">
         <div class="p-6 bg-gray-800 rounded-lg shadow-lg">
@@ -25,7 +36,7 @@
             </div>
         </div>
     </div>
-    {% endfor %}    
+    {% endfor %}
 </div>
 
 <!-- Modal HTML -->
@@ -82,6 +93,7 @@
         </form>
     </div>
 </div>
+
 <!-- Existing Device Modal HTML -->
 <div id="existingDeviceModal" class="fixed inset-0 flex items-center justify-center hidden bg-black bg-opacity-50">
     <div class="bg-gray-800 rounded-lg shadow-lg p-8 w-1/2">
@@ -100,6 +112,7 @@
         </div>
     </div>
 </div>
+
 <script>
     let currentDeviceId = null;
     let currentIPv4 = null;
@@ -229,6 +242,54 @@
             });
         }
     }
+
+    // Scan button functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const startScanButton = document.getElementById('start-scan');
+        const progressBar = document.getElementById('progress-bar');
+        const progressElement = document.getElementById('progress');
+
+        startScanButton.addEventListener('click', function() {
+            progressBar.classList.remove('hidden');
+            startScanButton.disabled = true;
+
+            fetch('{{ url_for("scan.start_scan") }}', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Start Scan Response:', data); // Debug-Ausgabe
+                    if (data.status === 'scan_started') {
+                        updateProgress();
+                    }
+                });
+        });
+
+        function updateProgress() {
+            fetch('{{ url_for("scan.scan_progress") }}')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Scan Progress:', data); // Debug-Ausgabe
+                    const percentage = (data.completed / data.total) * 100;
+                    progressElement.style.width = percentage + '%';
+                    progressElement.textContent = Math.round(percentage) + '%';
+
+                    if (data.status === 'scanning') {
+                        setTimeout(updateProgress, 1000);
+                    } else {
+                        fetchResults();
+                        startScanButton.disabled = false;
+                    }
+                });
+        }
+
+        function fetchResults() {
+            fetch('{{ url_for("scan.get_results") }}')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Scan Results:', data); // Debug-Ausgabe
+                    location.reload(); // Refresh the page to reflect the new scan results
+                });
+        }
+    });
 </script>
 
 {% endblock %}

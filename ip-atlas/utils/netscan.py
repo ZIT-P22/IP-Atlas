@@ -1,3 +1,4 @@
+import requests
 from scapy.all import ARP, Ether, srp
 from mac_vendor_lookup import MacLookup, BaseMacLookup
 from time import time
@@ -6,6 +7,7 @@ import json
 
 MAC_VENDOR_FILE = "ip-atlas/data/mac_vendors.txt"
 SCANNED_CLIENTS_FILE = "ip-atlas/data/scanned_clients.json"
+FLASK_SERVER_URL = "http://127.0.0.1:8080/add_devices"
 
 def get_vendor(mac_address, mac_lookup_instance):
     try:
@@ -78,6 +80,7 @@ def get_devices(search_range, iface=None):
     clients = update_vendor(clients)
     print("Gefundene Geräte:", clients)
     save_as_json(clients)
+    send_to_server(clients)
     return clients
 
 def save_as_json(clients):
@@ -87,11 +90,31 @@ def save_as_json(clients):
     except Exception as e:
         print(f"Error saving JSON file {SCANNED_CLIENTS_FILE}: {e}")
 
+def send_to_server(clients):
+    try:
+        response = requests.post(FLASK_SERVER_URL, json={"devices": clients})
+        if response.status_code == 201:
+            print("Devices successfully sent to the server.")
+        else:
+            print(f"Failed to send devices. Server responded with status code {response.status_code}")
+    except Exception as e:
+        print(f"An error occurred while sending devices to the server: {e}")
+
+def args():
+    parser = ArgumentParser(description="Python Script to Perform Network Scans")
+    parser.add_argument("-r", "--range", dest="ip_range",
+                        help="Specify an IP address range, e.g., --range 192.168.1.1/24")
+    parser.add_argument("-i", "--iface", dest="iface",
+                        help="Specify a network interface, e.g., --iface eth0")
+    options = parser.parse_args()
+    if not options.ip_range:
+        parser.error("[-] Please specify a valid IP address range.")
+    return options
+
+def main():
+    options = args()
+    get_devices(options.ip_range, options.iface)
+    print("Scan Finished")
+
 if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser(description="Network scanner")
-    parser.add_argument("-r", "--range", required=True, help="IP range to scan")
-    parser.add_argument("-i", "--iface", required=True, help="Network interface to use")
-    args = parser.parse_args()
-    
-    get_devices(args.range, args.iface)
+    main()

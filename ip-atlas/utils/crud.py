@@ -209,10 +209,16 @@ def write_edit_db(formData):
     try:
         id = formData.get("id")
         name = formData.get("name")
-        tags = formData.get("tags").split(',')
+        tags = formData.get("tags")
         ipv4 = formData.get("ipv4")
         ipv6 = formData.get("ipv6")
-        portsFB = formData.get("portsFB").split(',')
+        portsFB = formData.get("portsFB")
+
+        # Stellen Sie sicher, dass tags und portsFB Listen sind
+        if isinstance(tags, str):
+            tags = tags.split(',')
+        if isinstance(portsFB, str):
+            portsFB = portsFB.split(',')
 
         print("ID:", id, "Name:", name, "Tags:", tags, "IPv4:", ipv4, "IPv6:", ipv6, "PortsFB:", portsFB)
 
@@ -221,9 +227,7 @@ def write_edit_db(formData):
         delete_portsFB_by_host_id(id)
         for portFB in portsFB:
             print("PortFB:", portFB)
-            portFBID = check_portFB_exists(portFB, method="id")
-            if not portFBID:
-                write_to_db("portFB", {"host_id": id, "portFB_number": portFB})
+            write_to_db("portFB", {"host_id": id, "portFB_number": portFB})
 
         delete_tags_by_host_id(id)
         for tag in tags:
@@ -244,21 +248,24 @@ def write_edit_db(formData):
         return False
     
     
-# function which reads the data from the DiscoveryDevice table and converts it to an json format
 def convert_discovered_devices_to_json_format():
     data = {"discovered_devices": []}
     discovered_devices = DiscoveredDevice.query.filter_by(blacklist=False, used=False).all()
     for device in discovered_devices:
         device_data = {
             "id": device.id,
-            "mac": device.mac_address,
+            "mac_address": device.mac_address,  # Achte darauf, dass die Keys mit dem Frontend übereinstimmen
             "ipv4": device.ipv4,
+            "ipv6": device.ipv6,  # Falls vorhanden
+            "hostname": device.hostname,  # Falls vorhanden
             "vendor": device.vendor,
-            "first_seen": device.first_seen, # "2023-04-01 12:34:56
-            "last_seen": device.last_seen,
+            "first_seen": device.first_seen.strftime("%Y-%m-%d %H:%M:%S"), # Formatierung der Daten
+            "last_seen": device.last_seen.strftime("%Y-%m-%d %H:%M:%S"),  # Formatierung der Daten
         }
         data["discovered_devices"].append(device_data)
+    print(data)  # Debug-Ausgabe
     return data
+
 
 # sets the Blacklist to true of an DiscoveredDevice
 def blacklist_of_discovered_device(id):

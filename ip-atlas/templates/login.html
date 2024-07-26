@@ -1,44 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - IP-Atlas</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='src/input.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+    <title>Login</title>
 </head>
-
-<body class="font-sans text-white bg-gray-900">
-    <div class="min-h-screen flex flex-col justify-center items-center">
-        <div class="max-w-md w-full bg-gray-800 p-6 rounded-lg shadow-md">
-            <h1 class="text-2xl font-semibold mb-6">Login</h1>
-            <form action="{{ url_for('settings.login') }}" method="POST">
-                <div class="mb-4">
-                    <label for="username" class="block text-sm font-medium text-gray-300">Benutzername</label>
-                    <input type="text" name="username" id="username" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                </div>
-                <div class="mb-6">
-                    <label for="password" class="block text-sm font-medium text-gray-300">Passwort</label>
-                    <input type="password" name="password" id="password" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                </div>
-                <div class="flex items-center justify-between">
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Login
-                    </button>
-                </div>
-                {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                <div class="mt-4">
-                    {% for message in messages %}
-                    <div class="text-red-500">{{ message }}</div>
-                    {% endfor %}
-                </div>
-                {% endif %}
-                {% endwith %}
-            </form>
-        </div>
-    </div>
+<body>
+    <h1>Login</h1>
+    <form method="POST">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username"><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password"><br>
+        <input type="submit" value="Login">
+    </form>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
 </body>
-
 </html>

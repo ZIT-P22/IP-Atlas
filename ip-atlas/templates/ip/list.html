@@ -217,119 +217,112 @@
 </style>
 
 <script>
-    $(document).ready(function () {
-        window.makeEditable = function (button) {
-            var $row = $(button).closest('tr');
-            // Store current data for possible revert
-            $row.find('.edit-field').each(function () {
-                var content = $(this).text().trim();
-                $(this).data('original-content', content); // Store original content
-                $(this).html(`<input type="text" class="input-field form-control" value="${content}" />`);
-            });
+$(document).ready(function () {
+    window.makeEditable = function (button) {
+        var $row = $(button).closest('tr');
+        $row.find('.edit-field').each(function () {
+            var content = $(this).text().trim();
+            $(this).data('original-content', content);
+            $(this).html(`<input type="text" class="input-field form-control" value="${content}" />`);
+        });
 
-            // Update edit button to submit
-            updateButtonToSubmit(button);
+        updateButtonToSubmit(button);
 
-            // Change delete button to discard
-            var $deleteButton = $row.find('.delete');
-            $deleteButton
-                .removeClass('bg-red-600 hover:bg-red-700')
-                .addClass('bg-gray-600 hover:bg-gray-700')
-                .html('<span class="material-symbols-outlined">undo</span>') // Use 'undo' or any appropriate icon
-                .attr('onclick', 'discardChanges(this)')
-                .addClass('discard').removeClass('delete'); // Update class to differentiate
+        var $deleteButton = $row.find('.delete');
+        $deleteButton
+            .removeClass('bg-red-600 hover:bg-red-700')
+            .addClass('bg-gray-600 hover:bg-gray-700')
+            .html('<span class="material-symbols-outlined">undo</span>')
+            .attr('onclick', 'discardChanges(this)')
+            .addClass('discard').removeClass('delete');
+    };
+
+    window.discardChanges = function (button) {
+        var $row = $(button).closest('tr');
+        $row.find('.edit-field').each(function () {
+            var originalContent = $(this).data('original-content');
+            $(this).html(originalContent);
+        });
+
+        revertButtonToDelete(button);
+
+        var $submitButton = $row.find('.bg-green-500');
+        revertButtonToEdit($submitButton[0]);
+    };
+
+    function updateButtonToSubmit(button) {
+        $(button).html('<span class="material-symbols-outlined">check_circle</span>')
+            .removeClass('bg-gray-700 hover:bg-gray-800')
+            .addClass('bg-green-500')
+            .attr('onclick', 'submitChanges(this)');
+    }
+
+    function revertButtonToDelete(button) {
+        $(button)
+            .removeClass('bg-gray-600 hover:bg-gray-700')
+            .addClass('bg-red-600 hover:bg-red-700')
+            .html('<span class="material-symbols-outlined">delete</span>')
+            .attr('onclick', 'deleteItem(this)')
+            .addClass('delete').removeClass('discard');
+    }
+
+    function revertButtonToEdit(button) {
+        $(button).html('<span class="material-symbols-outlined">edit</span>')
+            .removeClass('bg-green-500')
+            .addClass('bg-gray-700 hover:bg-gray-800')
+            .attr('onclick', 'makeEditable(this)');
+    }
+
+    window.submitChanges = function (button) {
+        var $row = $(button).closest('tr');
+        var id = $row.data('id');
+        var updatedData = gatherUpdatedData($row);
+
+        $.ajax({
+            url: `/ip/update/${id}`,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(updatedData),
+            success: function (response) {
+                console.log('Update successful', response);
+                location.reload();
+            },
+            error: function (error) {
+                console.log('Update failed', error);
+            }
+        });
+    };
+
+    function gatherUpdatedData($row) {
+        return {
+            id: $row.data('id'),
+            name: $row.find('td:eq(0) input').val(),
+            ipv4: $row.find('td:eq(1) input').val(),
+            portsFB: $row.find('td:eq(2) input').val().split(',').map(item => item.trim()),
+            tags: $row.find('td:eq(3) input').val().split(',').map(item => item.trim())
         };
+    }
 
-        window.discardChanges = function (button) {
-            var $row = $(button).closest('tr');
-            // Revert data in inputs to original content
-            $row.find('.edit-field').each(function () {
-                var originalContent = $(this).data('original-content');
-                $(this).html(originalContent);
-            });
-
-            // Change discard button back to delete
-            revertButtonToDelete(button);
-
-            // Revert submit button back to edit
-            var $submitButton = $row.find('.bg-green-500');
-            revertButtonToEdit($submitButton[0]);
-        };
-
-        function updateButtonToSubmit(button) {
-            $(button).html('<span class="material-symbols-outlined">check_circle</span>')
-                .removeClass('bg-gray-700 hover:bg-gray-800')
-                .addClass('bg-green-500')
-                .attr('onclick', 'submitChanges(this)');
-        }
-
-        function revertButtonToDelete(button) {
-            $(button)
-                .removeClass('bg-blue-600 hover:bg-blue-700')
-                .addClass('bg-red-600 hover:bg-red-700')
-                .html('<span class="material-symbols-outlined">delete</span>')
-                .attr('onclick', 'deleteItem(this)')
-                .addClass('delete').removeClass('discard'); // Revert class back to delete
-        }
-
-        function revertButtonToEdit(button) {
-            $(button).html('<span class="material-symbols-outlined">edit</span>')
-                .removeClass('bg-green-500')
-                .addClass('bg-gray-700 hover:bg-gray-800')
-                .attr('onclick', 'makeEditable(this)');
-        }
-
-        // Simplify AJAX submission logic
-        window.submitChanges = function (button) {
-            var $row = $(button).closest('tr');
-            var id = $row.data('id');
-            var updatedData = gatherUpdatedData($row);
-
-            // AJAX request simplified
+    window.deleteItem = function (button) {
+        var itemId = $(button).data('id');
+        if (confirm('Möchten Sie diesen Eintrag wirklich löschen?')) {
             $.ajax({
-                url: `/ip/update/${id}`,
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(updatedData),
+                url: `/ip/delete/${itemId}?confirmed=true`,
+                type: 'GET',
                 success: function (response) {
-                    console.log('Update successful', response);
-                    location.reload(); // Reload to see the updated values
+                    $(button).closest('tr').fadeOut(600, function () {
+                        $(this).remove();
+                    });
                 },
                 error: function (error) {
-                    console.log('Update failed', error);
+                    alert('Error deleting item. Please try again.');
+                    console.error('Deletion error:', error);
                 }
             });
-        };
-
-        function gatherUpdatedData($row) {
-            return {
-                name: $row.find('td:eq(0) input').val(),
-                ipv4: $row.find('td:eq(1) input').val(),
-                portsFB: $row.find('td:eq(2) input').val().split(',').map(item => parseInt(item.trim(), 10)),
-                tags: $row.find('td:eq(3) input').val().split(',').map(item => item.trim())
-            };
         }
+    };
+});
 
-        window.deleteItem = function (button) {
-            var itemId = $(button).data('id');
-            if (confirm('Möchten Sie diesen Eintrag wirklich löschen?')) {
-                $.ajax({
-                    url: `/ip/delete/${itemId}?confirmed=true`,
-                    type: 'GET',
-                    success: function (response) {
-                        $(button).closest('tr').fadeOut(600, function () {
-                            $(this).remove(); // Removethe item row from the table
-                            // Optional: Re-fetch the list or adjust UI accordingly
-                        });
-                    },
-                    error: function (error) {
-                        alert('Error deleting item. Please try again.');
-                        console.error('Deletion error:', error);
-                    }
-                });
-            }
-        };
-    });
 </script>
 {% else %}
 <p class="text-center text-gray-500">No data available.</p>
